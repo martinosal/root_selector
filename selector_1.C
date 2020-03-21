@@ -130,6 +130,8 @@ Bool_t selector_1::Process(Long64_t entry)
    int n1=0,n2=0,n3=0; //<- the file has max=3 b-tagged particles in a single jet
    std::vector<int> is1B, is2B, is3B;
 
+   N_tot++;
+
    for(int i=0;i<jet_nBHadr.GetSize();i++) {
 
      nB+=jet_nBHadr[i];
@@ -139,6 +141,8 @@ Bool_t selector_1::Process(Long64_t entry)
      if(jet_nBHadr[i]==3)  {is3B.push_back(i); n3++;}
 
    }
+
+   if(nB==0)  {noB++;}
 
    if (n1+2*n2+3*n3!=nB) {
        std::cout << "Warning: n1+n2+n3!=nB\t" << n1<<"\t"<<n2<<"\t"<<n3<<"\t"<<nB<<"\n";
@@ -152,7 +156,8 @@ Bool_t selector_1::Process(Long64_t entry)
      if(jet_nCHadr[i]==1)  {is1C.push_back(i); nC1++;}
    }
 
-   if(nC1>0 && n1==0){
+//exclusive plots (for inclusive plots, just remove the n1==0 and nC1==0 conditions).
+   if(nC1>0){
      for(std::vector<int>::iterator it = is1C.begin(); it != is1C.end(); ++it){
        if(jet_ip2d_pb[*it]!=-99){
          hist_ip2d_llr_C->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
@@ -165,7 +170,7 @@ Bool_t selector_1::Process(Long64_t entry)
      }
   }
 
-  if(n1>0 && nC1!=0){
+  if(n1>0){
     for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
       if(jet_ip2d_pb[*it]!=-99){
         hist_ip2d_llr_B->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
@@ -431,6 +436,7 @@ void selector_1::Terminate()
     hist_E_4->Write();
 */
     file->Close();
+    std::cout<< "fraction of events without b:\t" << (double) noB/N_tot << "\n";
     std::cout<< "Score ip2d with cut=" << cut << "\t" <<(double) b_2d/N << "\n";
     std::cout<< "Score ip3d with cut=" << cut << "\t" <<(double) b_3d/N << "\n";
 }

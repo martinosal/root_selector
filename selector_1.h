@@ -370,7 +370,7 @@ public :
 private:
 
    double cut=1.;
-   int N=0,b_2d=0,b_3d=0,c_2d=0,c_3d=0;
+   int N=0,N_tot=0,b_2d=0,b_3d=0,c_2d=0,c_3d=0,noB=0;
    TFile *file;
 /*
    TH1F *hist_pt_1;
