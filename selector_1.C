@@ -175,7 +175,7 @@ Bool_t selector_1::Process(Long64_t entry)
      }
   }
 
-  if(n1>0){
+   if(n1>0){
     for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
       if(jet_ip2d_pb[*it]!=-99){
         hist_ip2d_llr_inB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
@@ -188,31 +188,31 @@ Bool_t selector_1::Process(Long64_t entry)
     }
  }
 
- if(nC1>0 && n1==0){
-   for(std::vector<int>::iterator it = is1C.begin(); it != is1C.end(); ++it){
-     if(jet_ip2d_pb[*it]!=-99){
-       hist_ip2d_llr_exC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+    if(nC1>0 && n1==0){
+      for(std::vector<int>::iterator it = is1C.begin(); it != is1C.end(); ++it){
+        if(jet_ip2d_pb[*it]!=-99){
+          hist_ip2d_llr_exC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
 //       if(jet_ip2d_llr[*it]>cut){ c_2d++; }
-     }
-     if(jet_ip3d_pb[*it]!=-99){
-       hist_ip3d_llr_exC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+        }
+        if(jet_ip3d_pb[*it]!=-99){
+          hist_ip3d_llr_exC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
 //       if(jet_ip3d_llr[*it]>cut){ c_3d++; }
-     }
-   }
-}
+        }
+      }
+    }
 
-if(n1>0 && nC1==0){
-  for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
-    if(jet_ip2d_pb[*it]!=-99){
-      hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
-//      if(jet_ip2d_llr[*it]>cut){ c_2d++; }
+    if(n1>0 && nC1==0){
+      for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
+        if(jet_ip2d_pb[*it]!=-99){
+          hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+//              if(jet_ip2d_llr[*it]>cut){ c_2d++; }
+        }
+        if(jet_ip3d_pb[*it]!=-99){
+          hist_ip3d_llr_exB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+//          if(jet_ip3d_llr[*it]>cut){ c_3d++; }
+        }
+      }
     }
-    if(jet_ip3d_pb[*it]!=-99){
-      hist_ip3d_llr_exB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
-//      if(jet_ip3d_llr[*it]>cut){ c_3d++; }
-    }
-  }
-}
 
 /*
 //select by: n1==1 && n2==0 && n3==0
@@ -309,38 +309,37 @@ if(n1>0 && nC1==0){
         }
    }
 */
-
-   //inspect tracks
-   /*
-      int cnt_1=0,cnt_2=0;
-      for(TTreeReaderArray<std::vector<float, std::allocator<float>>>::iterator it=jet_trk_d0.begin(); it!=jet_trk_d0.end(); ++it){
-          std::vector v=*it;
-          double m;
-          v.size()==0 ? m=-999. : m=std::accumulate(v.begin(), v.end(), 0.0)/v.size();
-   //       std::cout << m << "\t" << v.size() << "\n";
-          cnt_1++;
-      }
-   */
+//inspect tracks
 /*
-      std::vector<int> count(*njets);
-      int n=0;
-      for(TTreeReaderArray<std::vector<int, std::allocator<int>>>::iterator it=jet_trk_pdg_id.begin(); it!=jet_trk_pdg_id.end(); ++it){
-          std::vector v=*it;
-          int k=0;
-          count.at(n)=0;
-          for(std::vector<int>::iterator itv=v.begin(); itv!=v.end(); ++itv){
-              if(*itv==11){
-                  k++;
-                  count[n]=k;
-              }
-//              std::cout<< *itv << "\n";
+   int cnt_1=0,cnt_2=0;
+   for(TTreeReaderArray<std::vector<float, std::allocator<float>>>::iterator it=jet_trk_d0.begin(); it!=jet_trk_d0.end(); ++it){
+      std::vector v=*it;
+      double m;
+      v.size()==0 ? m=-999. : m=std::accumulate(v.begin(), v.end(), 0.0)/v.size();
+//       std::cout << m << "\t" << v.size() << "\n";
+      cnt_1++;
+  }
+*/
+/*
+   std::vector<int> count(*njets);
+   int n=0;
+   for(TTreeReaderArray<std::vector<int, std::allocator<int>>>::iterator it=jet_trk_pdg_id.begin(); it!=jet_trk_pdg_id.end(); ++it){
+      std::vector v=*it;
+      int k=0;
+      count.at(n)=0;
+      for(std::vector<int>::iterator itv=v.begin(); itv!=v.end(); ++itv){
+          if(*itv==11){
+              k++;
+              count[n]=k;
           }
-          n++;
-//        std::cout<< "\n";
+//          std::cout<< *itv << "\n";
       }
+      n++;
+//    std::cout<< "\n";
+   }
 
 
-   //    std::cout << count.size() << "\t" << n << "\n";
+//    std::cout << count.size() << "\t" << n << "\n";
    int i=0;
    for(std::vector<int>::iterator it=count.begin(); it!=count.end(); ++it) {
      std::cout << *it << "\t" << jet_nBHadr[i] << "\n";
@@ -350,38 +349,38 @@ if(n1>0 && nC1==0){
      i++;
    }
 
-     std::cout << "\n";
+  std::cout << "\n";
 
 
-   //   if (n1>3 || n2>1 || n3>1) std::cout << "Warning" << "\t"<< n1<<"\t"<<n2<<"\t"<<n3<<"\t"<<nB<<"\n";
+//   if (n1>3 || n2>1 || n3>1) std::cout << "Warning" << "\t"<< n1<<"\t"<<n2<<"\t"<<n3<<"\t"<<nB<<"\n";
 
-   //  for(int i=0;i<*njets;i++){
-   //    std::cout << jet_ip2d_pb[i] << "\n";
-
-
+//  for(int i=0;i<*njets;i++){
+//    std::cout << jet_ip2d_pb[i] << "\n";
 
 
-   //   std::cout << "\n";
 
-      for(TTreeReaderArray<std::vector<float, std::allocator<float>>>::iterator it=jet_trk_vtx_Z.begin(); it!=jet_trk_vtx_Z.end(); ++it){
-          std::vector v=*it;
-          double m=0.,sum=0.;
-          int cnt=0;
-          if(v.size()==0)   m=-999.;
-          if(v.size()!=0) {
-              for(std::vector<float>::iterator itv=v.begin(); itv!=v.end(); ++itv){
-                  if(*itv!=-999){
-                      sum+=*itv;
-                      cnt++;
-                  }
-               }
-          m=sum/cnt;
-          cnt=0;
-          }
-          std::cout << m << "\t" << v.size() << "\n";
-   //        std::cout << v.size() << "\n";
-          cnt_2++;
+
+//   std::cout << "\n";
+
+   for(TTreeReaderArray<std::vector<float, std::allocator<float>>>::iterator it=jet_trk_vtx_Z.begin(); it!=jet_trk_vtx_Z.end(); ++it){
+      std::vector v=*it;
+      double m=0.,sum=0.;
+      int cnt=0;
+      if(v.size()==0)   m=-999.;
+      if(v.size()!=0) {
+          for(std::vector<float>::iterator itv=v.begin(); itv!=v.end(); ++itv){
+              if(*itv!=-999){
+                  sum+=*itv;
+                  cnt++;
+              }
+           }
+      m=sum/cnt;
+      cnt=0;
       }
+      std::cout << m << "\t" << v.size() << "\n";
+//        std::cout << v.size() << "\n";
+      cnt_2++;
+   }
 
 
 //       std::cout << "\n";
