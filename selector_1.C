@@ -37,7 +37,7 @@ void selector_1::Begin(TTree * /*tree*/)
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
 
-   file = new TFile("output_1.root","RECREATE");
+   file = new TFile("output_files/output_1.root","RECREATE");
 /*
    hist_pt_1 = new TH1F("pT", "n1==1", 100, 0., 1000.);
    hist_eta_1 = new TH1F("eta", "n1==1", 100, -5., 5.);
