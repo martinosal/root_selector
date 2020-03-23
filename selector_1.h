@@ -398,11 +398,14 @@ private:
    TH1F *hist_dl1rnn_pc;
    TH1F *hist_dl1rnn_pu;
 
-   TH1F *hist_ip2d_llr_B;
-   TH1F *hist_ip3d_llr_B;
-   TH1F *hist_ip2d_llr_C;
-   TH1F *hist_ip3d_llr_C;
-
+   TH1F *hist_ip2d_llr_inB;
+   TH1F *hist_ip3d_llr_inB;
+   TH1F *hist_ip2d_llr_inC;
+   TH1F *hist_ip3d_llr_inC;
+   TH1F *hist_ip2d_llr_exB;
+   TH1F *hist_ip3d_llr_exB;
+   TH1F *hist_ip2d_llr_exC;
+   TH1F *hist_ip3d_llr_exC;
 /*
    TH1F *hist_pt_2b;
    TH1F *hist_eta_2b;

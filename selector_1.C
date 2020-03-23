@@ -64,11 +64,14 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_dl1rnn_pc = new TH1F("dl1rnn_pc","pc",100.,-0.1,1.);
    hist_dl1rnn_pu = new TH1F("dl1rnn_pu","pu",100.,-0.1,1.);
 
-   hist_ip2d_llr_B = new TH1F("ip2d_llr_B", "ip2d_b_jets", 100., -20., 100.);
-   hist_ip3d_llr_B = new TH1F("ip3d_llr_B", "ip3d_b_jets", 100., -20., 100.);
-   hist_ip2d_llr_C = new TH1F("ip2d_llr_C", "ip2d_c_jets", 100., -20., 100.);
-   hist_ip3d_llr_C = new TH1F("ip3d_llr_C", "ip3d_c_jets", 100., -20., 100.);
-
+   hist_ip2d_llr_inB = new TH1F("ip2d_llr_inB", "ip2d_b_jets", 100., -20., 100.);
+   hist_ip3d_llr_inB = new TH1F("ip3d_llr_inB", "ip3d_b_jets", 100., -20., 100.);
+   hist_ip2d_llr_inC = new TH1F("ip2d_llr_inC", "ip2d_c_jets", 100., -20., 100.);
+   hist_ip3d_llr_inC = new TH1F("ip3d_llr_inC", "ip3d_c_jets", 100., -20., 100.);
+   hist_ip2d_llr_exB = new TH1F("ip2d_llr_exB", "ip2d_b_jets", 100., -20., 100.);
+   hist_ip3d_llr_exB = new TH1F("ip3d_llr_exB", "ip3d_b_jets", 100., -20., 100.);
+   hist_ip2d_llr_exC = new TH1F("ip2d_llr_exC", "ip2d_c_jets", 100., -20., 100.);
+   hist_ip3d_llr_exC = new TH1F("ip3d_llr_exC", "ip3d_c_jets", 100., -20., 100.);
    /*
    hist_pt_2b = new TH1F("pT", "n2==1", 100, 0., 1000.);
    hist_eta_2b = new TH1F("eta", "n2==1", 100, -5., 5.);
@@ -149,22 +152,24 @@ Bool_t selector_1::Process(Long64_t entry)
    }
 
 
-   int nC1=0; //<- the file has max=3 b-tagged particles in a single jet
+   int nC1=0,nC2=0,nC3=0; //<- the file has max=3 b-tagged particles in a single jet
    std::vector<int> is1C;
 
    for(int i=0;i<jet_nCHadr.GetSize();i++) {
      if(jet_nCHadr[i]==1)  {is1C.push_back(i); nC1++;}
+     if(jet_nCHadr[i]==2)  {is1C.push_back(i); nC2++;}
+     if(jet_nCHadr[i]==3)  {is1C.push_back(i); nC3++;}
    }
 
 //exclusive plots (for inclusive plots, just remove the n1==0 and nC1==0 conditions).
    if(nC1>0){
      for(std::vector<int>::iterator it = is1C.begin(); it != is1C.end(); ++it){
        if(jet_ip2d_pb[*it]!=-99){
-         hist_ip2d_llr_C->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+         hist_ip2d_llr_inC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
 //       if(jet_ip2d_llr[*it]>cut){ c_2d++; }
        }
        if(jet_ip3d_pb[*it]!=-99){
-         hist_ip3d_llr_C->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+         hist_ip3d_llr_inC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
 //       if(jet_ip3d_llr[*it]>cut){ c_3d++; }
        }
      }
@@ -173,15 +178,41 @@ Bool_t selector_1::Process(Long64_t entry)
   if(n1>0){
     for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
       if(jet_ip2d_pb[*it]!=-99){
-        hist_ip2d_llr_B->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+        hist_ip2d_llr_inB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
 //      if(jet_ip2d_llr[*it]>cut){ c_2d++; }
       }
       if(jet_ip3d_pb[*it]!=-99){
-        hist_ip3d_llr_B->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+        hist_ip3d_llr_inB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
 //      if(jet_ip3d_llr[*it]>cut){ c_3d++; }
       }
     }
  }
+
+ if(nC1>0 && n1==0){
+   for(std::vector<int>::iterator it = is1C.begin(); it != is1C.end(); ++it){
+     if(jet_ip2d_pb[*it]!=-99){
+       hist_ip2d_llr_exC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+//       if(jet_ip2d_llr[*it]>cut){ c_2d++; }
+     }
+     if(jet_ip3d_pb[*it]!=-99){
+       hist_ip3d_llr_exC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+//       if(jet_ip3d_llr[*it]>cut){ c_3d++; }
+     }
+   }
+}
+
+if(n1>0 && nC1==0){
+  for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
+    if(jet_ip2d_pb[*it]!=-99){
+      hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+//      if(jet_ip2d_llr[*it]>cut){ c_2d++; }
+    }
+    if(jet_ip3d_pb[*it]!=-99){
+      hist_ip3d_llr_exB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+//      if(jet_ip3d_llr[*it]>cut){ c_3d++; }
+    }
+  }
+}
 
 /*
 //select by: n1==1 && n2==0 && n3==0
@@ -409,11 +440,14 @@ void selector_1::Terminate()
     hist_dl1rnn_pu->Write();
 
 
-    hist_ip2d_llr_B->Write();
-    hist_ip3d_llr_B->Write();
-    hist_ip2d_llr_C->Write();
-    hist_ip3d_llr_C->Write();
-
+    hist_ip2d_llr_inB->Write();
+    hist_ip3d_llr_inB->Write();
+    hist_ip2d_llr_inC->Write();
+    hist_ip3d_llr_inC->Write();
+    hist_ip2d_llr_exB->Write();
+    hist_ip3d_llr_exB->Write();
+    hist_ip2d_llr_exC->Write();
+    hist_ip3d_llr_exC->Write();
 /*
     hist_pt_2b->Write();
     hist_eta_2b->Write();
