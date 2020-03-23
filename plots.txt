@@ -7,14 +7,14 @@ root [4] ip2d_llr_C->Draw();
 root [5] c1.cd(2);
 root [6] ip2d_llr->Draw();
  
-root [11] TCanvas c1("c", "canvas", 1200, 900);
-root [12] gStyle->SetOptStat(0);
-root [13] ip2d_llr_C->SetLineColor(kBlue);
-root [14] ip3d_llr_C->SetLineWidth(3);
-root [15] ip2d_llr_C->SetLineWidth(3);
-root [16] ip2d_llr_C->Draw();
-root [17] ip2d_llr_B->SetLineColor(kGreen+2);
-root [18] ip2d_llr_B->SetLineWidth(3)
-root [19] ip2d_llr_B->Draw("same");
-root [20] gPad->BuildLegend();
+root [1] TCanvas c1("c", "canvas", 1200, 900);
+root [2] gStyle->SetOptStat(0);
+root [3] ip3d_llr_exB->SetLineColor(kGreen+2);
+root [4] ip3d_llr_exB->SetLineWidth(3);
+root [5] ip3d_llr_exB->Draw();
+root [6] ip3d_llr_exC->SetLineColor(kBlue);
+root [7] ip3d_llr_exC->SetLineWidth(3);
+root [8] ip3d_llr_exC->Draw("same");
+root [9] gPad->BuildLegend();
+
 
