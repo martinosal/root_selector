@@ -39,7 +39,7 @@ void selector_1::Begin(TTree * /*tree*/)
    // The tree argument is deprecated (on PROOF 0 is passed).
 
    file = new TFile("output_files/output.root","RECREATE");
-//   file = new TFile("output_files/lxplus_output.root","RECREATE");   
+//   file = new TFile("output_files/lxplus_output.root","RECREATE");
 /*
    hist_pt_1 = new TH1F("pT", "n1==1", 100, 0., 1000.);
    hist_eta_1 = new TH1F("eta", "n1==1", 100, -5., 5.);
@@ -151,17 +151,17 @@ Bool_t selector_1::Process(Long64_t entry)
        if(jet_nCHadr[i]>0)  m_bc_overlap++;
      }
      if(jet_nBHadr[i]==1)  {is1B.push_back(i); n1++;}
-     if(jet_nBHadr[i]==2)  {is2B.push_back(i); n2++;}
-     if(jet_nBHadr[i]==3)  {is3B.push_back(i); n3++;}
+//     if(jet_nBHadr[i]==2)  {is2B.push_back(i); n2++;}
+//     if(jet_nBHadr[i]==3)  {is3B.push_back(i); n3++;}
 
    }
 
    if(nB==0)  {m_noB++;}
 
-   if (n1+2*n2+3*n3!=nB) {
+/*   if (n1+2*n2+3*n3!=nB) {
        std::cout << "Warning: n1+n2+n3!=nB\t" << n1<<"\t"<<n2<<"\t"<<n3<<"\t"<<nB<<"\n";
    }
-
+*/
 
    int nC=0,nCjets=0;
    int nC1=0,nC2=0,nC3=0; //<- the file has max=3 b-tagged particles in a single jet
@@ -170,7 +170,10 @@ Bool_t selector_1::Process(Long64_t entry)
    for(int i=0;i<jet_nCHadr.GetSize();i++) {
 
      //     nC+=jet_nCHadr[i];
-     if(jet_nCHadr[i]>0)   {isC.push_back(i); nCjets++;}
+     if(jet_nCHadr[i]>0){
+       isC.push_back(i);
+       nCjets++;
+     }
      if(jet_nCHadr[i]==1)  {is1C.push_back(i); nC1++;}
      //     if(jet_nCHadr[i]==2)  {is2C.push_back(i); nC2++;}
      //     if(jet_nCHadr[i]==3)  {is3C.push_back(i); nC3++;}
