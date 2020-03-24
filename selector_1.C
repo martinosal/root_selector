@@ -38,7 +38,8 @@ void selector_1::Begin(TTree * /*tree*/)
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
 
-   file = new TFile("output_files/output_1.root","RECREATE");
+   file = new TFile("output_files/output.root","RECREATE");
+//   file = new TFile("output_files/lxplus_output.root","RECREATE");   
 /*
    hist_pt_1 = new TH1F("pT", "n1==1", 100, 0., 1000.);
    hist_eta_1 = new TH1F("eta", "n1==1", 100, -5., 5.);
@@ -169,7 +170,7 @@ Bool_t selector_1::Process(Long64_t entry)
    for(int i=0;i<jet_nCHadr.GetSize();i++) {
 
      //     nC+=jet_nCHadr[i];
-     if(jet_nCHadr[i]>0)  {isC.push_back(i); nCjets++;}
+     if(jet_nCHadr[i]>0)   {isC.push_back(i); nCjets++;}
      if(jet_nCHadr[i]==1)  {is1C.push_back(i); nC1++;}
      //     if(jet_nCHadr[i]==2)  {is2C.push_back(i); nC2++;}
      //     if(jet_nCHadr[i]==3)  {is3C.push_back(i); nC3++;}
@@ -247,17 +248,20 @@ double DL1=0;
     }
    }
 
-/*
+
 //select by: n1==1 && n2==0 && n3==0
    if(n1==1 && n2==0 && n3==0){
+      m_b++;
+/*
        for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
            hist_pt_1->Fill(jet_pt[*it]*0.001);
            hist_eta_1->Fill(jet_eta[*it]);
            hist_phi_1->Fill(jet_phi[*it]);
            hist_E_1->Fill(jet_E[*it]);
       }
+      */
   }
-*/
+
 
 
 
@@ -525,9 +529,11 @@ void selector_1::Terminate()
     hist_E_4->Write();
 */
     file->Close();
-    std::cout<< "b-c overlap:\t" << (double) m_bc_overlap/m_nbjets << "\n";
+
     std::cout<< "fraction of events without b:\t" << (double) m_noB/m_Ntot << "\n";
+    std::cout<< "fraction of events with one single b:\t" << (double) m_b/m_Ntot << "\n";
     std::cout<< "fraction of events with two single b's:\t" << (double) m_bb/m_Ntot << "\n";
+    std::cout<< "total b-c overlap:\t" << (double) m_bc_overlap/m_nbjets << "\n";
     std::cout<< "Score ip2d with cut=" << m_cut << "\t" <<(double) m_b2d/m_N << "\n";
     std::cout<< "Score ip3d with cut=" << m_cut << "\t" <<(double) m_b3d/m_N << "\n";
 }

@@ -1,0 +1,58 @@
+root [1] bTag_AntiKt4EMTopoJets->Process("selector_1.C")
+
+root [1] TCanvas c1("c1", "First canvas", 1200, 900);
+root [2] c1.Divide(1,2);
+root [3] c1.cd(1);
+root [4] ip2d_llr_C->Draw();
+root [5] c1.cd(2);
+root [6] ip2d_llr->Draw();
+ 
+root [1] TCanvas c1("c", "canvas", 1200, 900);
+root [2] gStyle->SetOptStat(0);
+root [3] Double_t norm_2 = ip3d_llr_exC->GetEntries();
+root [4] ip3d_llr_exC->Scale(1/norm_2);
+root [5] ip3d_llr_exC->SetLineColor(kBlue);
+root [6] ip3d_llr_exC->SetLineWidth(3);
+root [7] ip3d_llr_exC->Draw("hist");
+root [8] Double_t norm_1 = ip3d_llr_exB->GetEntries();
+root [9] ip3d_llr_exB->Scale(1/norm_1);
+root [10] ip3d_llr_exB->SetLineColor(kGreen+2);
+root [11] ip3d_llr_exB->SetLineWidth(3);
+root [12] ip3d_llr_exB->Draw("same hist");
+root [13] gPad->BuildLegend();
+
+root [1] TCanvas c1("c", "canvas", 1200, 900);
+root [2] gStyle->SetOptStat(0);
+root [3] Double_t norm_2 = ip2d_llr_exC->GetEntries();
+root [4] ip2d_llr_exC->Scale(1/norm_2);
+root [5] ip2d_llr_exC->SetLineColor(kBlue);
+root [6] ip2d_llr_exC->SetLineWidth(3);
+root [7] ip2d_llr_exC->Draw("hist");
+root [8] Double_t norm_1 = ip2d_llr_exB->GetEntries();
+root [9] ip2d_llr_exB->Scale(1/norm_1);
+root [10] ip2d_llr_exB->SetLineColor(kGreen+2);
+root [11] ip2d_llr_exB->SetLineWidth(3);
+root [12] ip2d_llr_exB->Draw("same hist");
+root [13] gPad->BuildLegend();
+
+
+
+void go()
+{
+  gROOT->ProcessLine(".L UBTF_SelectorAnalysis.C++");
+  //gROOT->ProcessLine(".x launchPVetoStudy.C");
+  /*
+  gROOT->ProcessLine("TCanvas* c1 = new TCanvas(\"c1\",\"c1\");");
+  gROOT->ProcessLine("h2pVetoEneMap->Draw(\"LEGO\");");
+  gROOT->ProcessLine("TCanvas* c3 = new TCanvas(\"c3\",\"c3\");");
+  gROOT->ProcessLine("h2pVetoMap->Draw(\"LEGO\");");
+  gROOT->ProcessLine("TCanvas* c2 = new TCanvas(\"c2\",\"c2\");");
+  gROOT->ProcessLine("hNPVetoTracks->Draw()");
+  gROOT->ProcessLine("TCanvas* c4 = new TCanvas(\"c4\",\"c4\");");
+  gROOT->ProcessLine("hNPVetoTracksAll->Draw()");
+  */
+
+  gROOT->ProcessLine(".x launch_UBTF_Selector_allSamples.C");
+  //gROOT->ProcessLine(".x launch_UBTF_Selector.C");
+
+}
