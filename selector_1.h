@@ -369,8 +369,8 @@ public :
 
 private:
 
-   double cut=1.;
-   int N=0,N_tot=0,b_2d=0,b_3d=0,c_2d=0,c_3d=0,noB=0;
+   double m_cut=1.;
+   int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0;
    TFile *file;
 /*
    TH1F *hist_pt_1;
