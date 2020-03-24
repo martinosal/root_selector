@@ -28,6 +28,7 @@
 #include "selector_1.h"
 #include <TH2.h>
 #include <TStyle.h>
+#include <math.h>
 
 
 
@@ -72,6 +73,11 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_ip3d_llr_exB = new TH1F("ip3d_llr_exB", "ip3d_b_jets", 100., -20., 100.);
    hist_ip2d_llr_exC = new TH1F("ip2d_llr_exC", "ip2d_c_jets", 100., -20., 100.);
    hist_ip3d_llr_exC = new TH1F("ip3d_llr_exC", "ip3d_c_jets", 100., -20., 100.);
+
+   hist_dl1_inC = new TH1F("DL1_inC","DL1_inC",100,-8.,12.);
+   hist_dl1_inB = new TH1F("DL1_inB","DL1_inB",100,-8.,12.);
+   hist_dl1_exC = new TH1F("DL1_exC","DL1_exC",100,-8.,12.);
+   hist_dl1_exB = new TH1F("DL1_exB","DL1_exB",100,-8.,12.);
    /*
    hist_pt_2b = new TH1F("pT", "n2==1", 100, 0., 1000.);
    hist_eta_2b = new TH1F("eta", "n2==1", 100, -5., 5.);
@@ -133,13 +139,16 @@ Bool_t selector_1::Process(Long64_t entry)
    int n1=0,n2=0,n3=0; //<- the file has max=3 b-tagged particles in a single jet
    std::vector<int> isB,is1B, is2B, is3B;
 
-
    m_Ntot++;
 
    for(int i=0;i<jet_nBHadr.GetSize();i++) {
 
      nB+=jet_nBHadr[i];
-     if(jet_nBHadr[i]>0)   {isB.push_back(i); nBjets++;}
+     if(jet_nBHadr[i]>0){
+       isB.push_back(i);
+       nBjets++;  m_nbjets++;
+       if(jet_nCHadr[i]>0)  m_bc_overlap++;
+     }
      if(jet_nBHadr[i]==1)  {is1B.push_back(i); n1++;}
      if(jet_nBHadr[i]==2)  {is2B.push_back(i); n2++;}
      if(jet_nBHadr[i]==3)  {is3B.push_back(i); n3++;}
@@ -161,12 +170,12 @@ Bool_t selector_1::Process(Long64_t entry)
 
      //     nC+=jet_nCHadr[i];
      if(jet_nCHadr[i]>0)  {isC.push_back(i); nCjets++;}
-     //     if(jet_nCHadr[i]==1)  {is1C.push_back(i); nC1++;}
+     if(jet_nCHadr[i]==1)  {is1C.push_back(i); nC1++;}
      //     if(jet_nCHadr[i]==2)  {is2C.push_back(i); nC2++;}
      //     if(jet_nCHadr[i]==3)  {is3C.push_back(i); nC3++;}
    }
 
-
+double DL1=0;
 //inclusive plots
   if(nCjets>0){
     for(std::vector<int>::iterator it = isC.begin(); it != isC.end(); ++it){
@@ -177,6 +186,10 @@ Bool_t selector_1::Process(Long64_t entry)
         if(jet_ip3d_pb[*it]!=-99){
           hist_ip3d_llr_inC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
 //               if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
+        }
+        if(jet_dl1_pb[*it]!=-99){
+          DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
+          hist_dl1_inC->Fill(DL1);
         }
       }
   }
@@ -191,8 +204,13 @@ Bool_t selector_1::Process(Long64_t entry)
          hist_ip3d_llr_inB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
 //      if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
        }
+       if(jet_dl1_pb[*it]!=-99){
+         DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
+         hist_dl1_inB->Fill(DL1);
+       }
      }
    }
+
 
 //exclusive plots
    if(nCjets>0 && nBjets==0){
@@ -205,10 +223,14 @@ Bool_t selector_1::Process(Long64_t entry)
            hist_ip3d_llr_exC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
 //       if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
          }
+         if(jet_dl1_pb[*it]!=-99){
+           DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
+           hist_dl1_exC->Fill(DL1);
+         }
        }
     }
 
-  if(nBjets>0 && nCjets==0){
+  if(nBjets>0 && nC1==0){
     for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
       if(jet_ip2d_pb[*it]!=-99){
         hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
@@ -217,6 +239,10 @@ Bool_t selector_1::Process(Long64_t entry)
       if(jet_ip3d_pb[*it]!=-99){
         hist_ip3d_llr_exB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
 //          if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
+      }
+      if(jet_dl1_pb[*it]!=-99){
+        DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
+        hist_dl1_exB->Fill(DL1);
       }
     }
    }
@@ -237,6 +263,7 @@ Bool_t selector_1::Process(Long64_t entry)
 
 //select by: n1==2 && n2==0 && n3==0
    if(n1==2 && n2==0 && n3==0){
+     m_bb++;
        for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
            m_N++;
            hist_pt_2->Fill(jet_pt[*it]*0.001);
@@ -445,7 +472,28 @@ void selector_1::Terminate()
     hist_dl1rnn_pc->Write();
     hist_dl1rnn_pu->Write();
 
-
+    hist_dl1_inC->Write();
+    hist_dl1_inB->Write();
+    hist_dl1_exC->Write();
+    hist_dl1_exB->Write();
+/*
+    Double_t norm_1 = hist_ip2d_llr_inB->GetEntries();
+    hist_ip2d_llr_inB->Scale(1/norm_1);
+    Double_t norm_2 = hist_ip3d_llr_inB->GetEntries();
+    hist_ip3d_llr_inB->Scale(1/norm_2);
+    Double_t norm_3 = hist_ip2d_llr_inC->GetEntries();
+    hist_ip2d_llr_inC->Scale(1/norm_3);
+    Double_t norm_4 = hist_ip3d_llr_inC->GetEntries();
+    hist_ip3d_llr_inC->Scale(1/norm_4);
+    Double_t norm_5 = hist_ip2d_llr_exB->GetEntries();
+    hist_ip2d_llr_exB->Scale(1/norm_5);
+    Double_t norm_6 = hist_ip3d_llr_exB->GetEntries();
+    hist_ip3d_llr_exB->Scale(1/norm_6);
+    Double_t norm_7 = hist_ip2d_llr_exC->GetEntries();
+    hist_ip2d_llr_exC->Scale(1/norm_7);
+    Double_t norm_8 = hist_ip3d_llr_exC->GetEntries();
+    hist_ip3d_llr_exC->Scale(1/norm_8);
+*/
     hist_ip2d_llr_inB->Write();
     hist_ip3d_llr_inB->Write();
     hist_ip2d_llr_inC->Write();
@@ -454,6 +502,7 @@ void selector_1::Terminate()
     hist_ip3d_llr_exB->Write();
     hist_ip2d_llr_exC->Write();
     hist_ip3d_llr_exC->Write();
+
 /*
     hist_pt_2b->Write();
     hist_eta_2b->Write();
@@ -476,7 +525,9 @@ void selector_1::Terminate()
     hist_E_4->Write();
 */
     file->Close();
+    std::cout<< "b-c overlap:\t" << (double) m_bc_overlap/m_nbjets << "\n";
     std::cout<< "fraction of events without b:\t" << (double) m_noB/m_Ntot << "\n";
+    std::cout<< "fraction of events with two single b's:\t" << (double) m_bb/m_Ntot << "\n";
     std::cout<< "Score ip2d with cut=" << m_cut << "\t" <<(double) m_b2d/m_N << "\n";
     std::cout<< "Score ip3d with cut=" << m_cut << "\t" <<(double) m_b3d/m_N << "\n";
 }

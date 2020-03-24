@@ -369,8 +369,8 @@ public :
 
 private:
 
-   double m_cut=1.;
-   int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0;
+   double m_cut=1.,m_fc=0.08;
+   int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_bc_overlap=0,m_nbjets=0;
    TFile *file;
 /*
    TH1F *hist_pt_1;
@@ -406,6 +406,11 @@ private:
    TH1F *hist_ip3d_llr_exB;
    TH1F *hist_ip2d_llr_exC;
    TH1F *hist_ip3d_llr_exC;
+
+   TH1F *hist_dl1_inC;
+   TH1F *hist_dl1_inB;
+   TH1F *hist_dl1_exC;
+   TH1F *hist_dl1_exB;         
 /*
    TH1F *hist_pt_2b;
    TH1F *hist_eta_2b;
