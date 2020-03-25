@@ -66,15 +66,18 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_dl1rnn_pc = new TH1F("dl1rnn_pc","pc",100.,-0.1,1.);
    hist_dl1rnn_pu = new TH1F("dl1rnn_pu","pu",100.,-0.1,1.);
 
-   hist_ip2d_llr_inB = new TH1F("ip2d_llr_inB", "ip2d_b_jets", 100., -20., 100.);
-   hist_ip3d_llr_inB = new TH1F("ip3d_llr_inB", "ip3d_b_jets", 100., -20., 100.);
-   hist_ip2d_llr_inC = new TH1F("ip2d_llr_inC", "ip2d_c_jets", 100., -20., 100.);
-   hist_ip3d_llr_inC = new TH1F("ip3d_llr_inC", "ip3d_c_jets", 100., -20., 100.);
-   hist_ip2d_llr_exB = new TH1F("ip2d_llr_exB", "ip2d_b_jets", 100., -20., 100.);
-   hist_ip3d_llr_exB = new TH1F("ip3d_llr_exB", "ip3d_b_jets", 100., -20., 100.);
-   hist_ip2d_llr_exC = new TH1F("ip2d_llr_exC", "ip2d_c_jets", 100., -20., 100.);
-   hist_ip3d_llr_exC = new TH1F("ip3d_llr_exC", "ip3d_c_jets", 100., -20., 100.);
+   hist_ip2d_llr_l = new TH1F("ip2d_llr_l","ip2d_light_jets",100., -20., 50.);
+   hist_ip3d_llr_l = new TH1F("ip3d_llr_l","ip3d_light_jets",100., -20., 50.);
+   hist_ip2d_llr_inB = new TH1F("ip2d_llr_inB", "ip2d_b_jets", 100., -20., 50.);
+   hist_ip3d_llr_inB = new TH1F("ip3d_llr_inB", "ip3d_b_jets", 100., -20., 50.);
+   hist_ip2d_llr_inC = new TH1F("ip2d_llr_inC", "ip2d_c_jets", 100., -20., 50.);
+   hist_ip3d_llr_inC = new TH1F("ip3d_llr_inC", "ip3d_c_jets", 100., -20., 50.);
+   hist_ip2d_llr_exB = new TH1F("ip2d_llr_exB", "ip2d_b_jets", 100., -20., 50.);
+   hist_ip3d_llr_exB = new TH1F("ip3d_llr_exB", "ip3d_b_jets", 100., -20., 50.);
+   hist_ip2d_llr_exC = new TH1F("ip2d_llr_exC", "ip2d_c_jets", 100., -20., 50.);
+   hist_ip3d_llr_exC = new TH1F("ip3d_llr_exC", "ip3d_c_jets", 100., -20., 50.);
 
+   hist_dl1_l = new TH1F("DL1_light","DL1_light",100,-8.,12.);
    hist_dl1_inC = new TH1F("DL1_inC","DL1_inC",100,-8.,12.);
    hist_dl1_inB = new TH1F("DL1_inB","DL1_inB",100,-8.,12.);
    hist_dl1_exC = new TH1F("DL1_exC","DL1_exC",100,-8.,12.);
@@ -138,9 +141,19 @@ Bool_t selector_1::Process(Long64_t entry)
 
    int nB=0,nBjets=0;
    int n1=0,n2=0,n3=0; //<- the file has max=3 b-tagged particles in a single jet
-   std::vector<int> isB,is1B, is2B, is3B;
+   std::vector<int> isB,is1B,is2B,is3B;
+
+   int nl=0;
+   std::vector<int> isl;
 
    m_Ntot++;
+
+   for(int i=0;i<*njets;i++) {
+     if(jet_nBHadr[i]==0 && jet_nCHadr[i]==0){
+        nl++;  //m_nl++;
+        isl.push_back(i);
+     }
+   }
 
    for(int i=0;i<jet_nBHadr.GetSize();i++) {
 
@@ -179,12 +192,31 @@ Bool_t selector_1::Process(Long64_t entry)
      //     if(jet_nCHadr[i]==3)  {is3C.push_back(i); nC3++;}
    }
 
+
+
+
+//DISCRIMINANTS
 double DL1=0;
+   if(nl>0){
+     for(std::vector<int>::iterator it = isl.begin(); it != isl.end(); ++it){
+       if(jet_ip2d_pb[*it]!=-99){
+         hist_ip2d_llr_l->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+       }
+       if(jet_ip3d_pb[*it]!=-99){
+         hist_ip3d_llr_l->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+       }
+       if(jet_dl1_pb[*it]!=-99){
+         DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
+         hist_dl1_l->Fill(DL1);
+       }
+     }
+   }
+
 //inclusive plots
   if(nCjets>0){
     for(std::vector<int>::iterator it = isC.begin(); it != isC.end(); ++it){
         if(jet_ip2d_pb[*it]!=-99){
-        hist_ip2d_llr_inC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+          hist_ip2d_llr_inC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
 //        if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
         }
         if(jet_ip3d_pb[*it]!=-99){
@@ -234,12 +266,12 @@ double DL1=0;
        }
     }
 
-  if(nBjets>0 && nC1==0){
+  if(nBjets>0 && nCjets==0){
     for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
       if(jet_ip2d_pb[*it]!=-99){
         hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
 //              if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
-        }
+      }
       if(jet_ip3d_pb[*it]!=-99){
         hist_ip3d_llr_exB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
 //          if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
@@ -479,10 +511,6 @@ void selector_1::Terminate()
     hist_dl1rnn_pc->Write();
     hist_dl1rnn_pu->Write();
 
-    hist_dl1_inC->Write();
-    hist_dl1_inB->Write();
-    hist_dl1_exC->Write();
-    hist_dl1_exB->Write();
 /*
     Double_t norm_1 = hist_ip2d_llr_inB->GetEntries();
     hist_ip2d_llr_inB->Scale(1/norm_1);
@@ -501,6 +529,8 @@ void selector_1::Terminate()
     Double_t norm_8 = hist_ip3d_llr_exC->GetEntries();
     hist_ip3d_llr_exC->Scale(1/norm_8);
 */
+    hist_ip2d_llr_l->Write();
+    hist_ip3d_llr_l->Write();
     hist_ip2d_llr_inB->Write();
     hist_ip3d_llr_inB->Write();
     hist_ip2d_llr_inC->Write();
@@ -509,6 +539,12 @@ void selector_1::Terminate()
     hist_ip3d_llr_exB->Write();
     hist_ip2d_llr_exC->Write();
     hist_ip3d_llr_exC->Write();
+
+    hist_dl1_l->Write();
+    hist_dl1_inC->Write();
+    hist_dl1_inB->Write();
+    hist_dl1_exC->Write();
+    hist_dl1_exB->Write();
 
 /*
     hist_pt_2b->Write();
@@ -533,9 +569,9 @@ void selector_1::Terminate()
 */
     file->Close();
 
-    std::cout<< "fraction of events without b:\t" << (double) m_noB/m_Ntot << "\n";
     std::cout<< "fraction of events with one single b:\t" << (double) m_b/m_Ntot << "\n";
     std::cout<< "fraction of events with two single b's:\t" << (double) m_bb/m_Ntot << "\n";
+    std::cout<< "fraction of events without b:\t" << (double) m_noB/m_Ntot << "\n";
     std::cout<< "total b-c overlap:\t" << (double) m_bc_overlap/m_nbjets << "\n";
     std::cout<< "Score ip2d with cut=" << m_cut << "\t" <<(double) m_b2d/m_N << "\n";
     std::cout<< "Score ip3d with cut=" << m_cut << "\t" <<(double) m_b3d/m_N << "\n";

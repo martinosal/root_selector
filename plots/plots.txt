@@ -1,43 +1,229 @@
-TCanvas c("c", "canvas", 1200, 900);
+//IP2D LogLikelihoodRatio inclusive
+
+TCanvas c1("c", "canvas", 1200, 900);
 gStyle->SetOptStat(0);
+Double_t norm_1 = ip2d_llr_l->GetEntries();
+ip2d_llr_l->Scale(1/norm_1);
+ip2d_llr_l->SetLineColor(kRed);
+ip2d_llr_l->SetLineWidth(3);
+ip2d_llr_l->GetYaxis()->SetRangeUser(1e-4, 1.);
+ip2d_llr_l->SetTitle("IP2D LogLikelihoodRatio");
+ip2d_llr_l->Draw("hist");
 Double_t norm_2 = ip2d_llr_inC->GetEntries();
 ip2d_llr_inC->Scale(1/norm_2);
 ip2d_llr_inC->SetLineColor(kBlue);
 ip2d_llr_inC->SetLineWidth(3);
-ip2d_llr_inC->Draw("hist");
-Double_t norm_1 = ip2d_llr_inB->GetEntries();
-ip2d_llr_inB->Scale(1/norm_1);
+ip2d_llr_inC->Draw("same hist");
+Double_t norm_3 = ip2d_llr_inB->GetEntries();
+ip2d_llr_inB->Scale(1/norm_3);
 ip2d_llr_inB->SetLineColor(kGreen+2);
 ip2d_llr_inB->SetLineWidth(3);
 ip2d_llr_inB->Draw("same hist");
-gPad->BuildLegend();
+leg = new TLegend(0.6,0.8,0.9,0.9);
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(ip2d_llr_l,"light jets","l");
+leg->AddEntry(ip2d_llr_inC,"c jets","l");
+leg->AddEntry(ip2d_llr_inB,"b jets","l");
+leg->Draw();
+
+
+//IP3D LogLikelihoodRatio inclusive
+
+TCanvas c2("c", "canvas", 1200, 900);
+gStyle->SetOptStat(0);
+Double_t norm_1 = ip3d_llr_l->GetEntries();
+ip3d_llr_l->Scale(1/norm_1);
+ip3d_llr_l->SetLineColor(kRed);
+ip3d_llr_l->SetLineWidth(3);
+ip3d_llr_l->GetYaxis()->SetRangeUser(1e-4, 1.);
+ip3d_llr_l->SetTitle("IP3D LogLikelihoodRatio");
+ip3d_llr_l->Draw("hist");
+Double_t norm_2 = ip3d_llr_inC->GetEntries();
+ip3d_llr_inC->Scale(1/norm_2);
+ip3d_llr_inC->SetLineColor(kBlue);
+ip3d_llr_inC->SetLineWidth(3);
+ip3d_llr_inC->Draw("same hist");
+Double_t norm_3 = ip3d_llr_inB->GetEntries();
+ip3d_llr_inB->Scale(1/norm_3);
+ip3d_llr_inB->SetLineColor(kGreen+2);
+ip3d_llr_inB->SetLineWidth(3);
+ip3d_llr_inB->Draw("same hist");
+leg = new TLegend(0.6,0.8,0.9,0.9);
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(ip3d_llr_l,"light jets","l");
+leg->AddEntry(ip3d_llr_inC,"c jets","l");
+leg->AddEntry(ip3d_llr_inB,"b jets","l");
+leg->Draw();
+
+
+//IP2D LogLikelihoodRatio exclusive
+
+TCanvas c2("c", "canvas", 1200, 900);
+gStyle->SetOptStat(0);
+Double_t norm_1 = ip2d_llr_l->GetEntries();
+ip2d_llr_l->Scale(1/norm_1);
+ip2d_llr_l->SetLineColor(kRed);
+ip2d_llr_l->SetLineWidth(3);
+ip2d_llr_l->GetYaxis()->SetRangeUser(1e-4, 1.);
+ip2d_llr_l->SetTitle("IP2D LogLikelihoodRatio");
+ip2d_llr_l->Draw("hist");
+Double_t norm_2 = ip2d_llr_exC->GetEntries();
+ip2d_llr_exC->Scale(1/norm_2);
+ip2d_llr_exC->SetLineColor(kBlue);
+ip2d_llr_exC->SetLineWidth(3);
+ip2d_llr_exC->Draw("same hist");
+Double_t norm_3 = ip2d_llr_exB->GetEntries();
+ip2d_llr_exB->Scale(1/norm_3);
+ip2d_llr_exB->SetLineColor(kGreen+2);
+ip2d_llr_exB->SetLineWidth(3);
+ip2d_llr_exB->Draw("same hist");
+leg = new TLegend(0.6,0.8,0.9,0.9);
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(ip2d_llr_l,"light jets","l");
+leg->AddEntry(ip2d_llr_exC,"c jets","l");
+leg->AddEntry(ip2d_llr_exB,"b jets","l");
+leg->Draw();
+
+
+//IP3D LogLikelihoodRatio exclusive
+
+TCanvas c("c", "canvas", 1200, 900);
+gStyle->SetOptStat(0);
+Double_t norm_1 = ip2d_llr_l->GetEntries();
+ip3d_llr_l->Scale(1/norm_1);
+ip3d_llr_l->SetLineColor(kRed);
+ip3d_llr_l->SetLineWidth(3);
+ip3d_llr_l->GetYaxis()->SetRangeUser(1e-4, 1.);
+ip3d_llr_l->SetTitle("IP3D LogLikelihoodRatio");
+ip3d_llr_l->Draw("hist");
+Double_t norm_2 = ip3d_llr_exC->GetEntries();
+ip3d_llr_exC->Scale(1/norm_2);
+ip3d_llr_exC->SetLineColor(kBlue);
+ip3d_llr_exC->SetLineWidth(3);
+ip3d_llr_exC->Draw("same hist");
+Double_t norm_3 = ip3d_llr_exB->GetEntries();
+ip3d_llr_exB->Scale(1/norm_3);
+ip3d_llr_exB->SetLineColor(kGreen+2);
+ip3d_llr_exB->SetLineWidth(3);
+ip3d_llr_exB->Draw("same hist");
+leg = new TLegend(0.6,0.8,0.9,0.9);
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(ip3d_llr_l,"light jets","l");
+leg->AddEntry(ip3d_llr_exC,"c jets","l");
+leg->AddEntry(ip3d_llr_exB,"b jets","l");
+leg->Draw();
+
+
+//IP2D LogLikelihoodRatio C_ex_B_in
+
+TCanvas c("c", "canvas", 1200, 900);
+gStyle->SetOptStat(0);
+Double_t norm_1 = ip2d_llr_l->GetEntries();
+ip2d_llr_l->Scale(1/norm_1);
+ip2d_llr_l->SetLineColor(kRed);
+ip2d_llr_l->SetLineWidth(3);
+ip2d_llr_l->GetYaxis()->SetRangeUser(1e-4, 1.);
+ip2d_llr_l->SetTitle("IP2D LogLikelihoodRatio");
+ip2d_llr_l->Draw("hist");
+Double_t norm_2 = ip2d_llr_exC->GetEntries();
+ip2d_llr_exC->Scale(1/norm_2);
+ip2d_llr_exC->SetLineColor(kBlue);
+ip2d_llr_exC->SetLineWidth(3);
+ip2d_llr_exC->Draw("same hist");
+Double_t norm_3 = ip2d_llr_inB->GetEntries();
+ip2d_llr_inB->Scale(1/norm_3);
+ip2d_llr_inB->SetLineColor(kGreen+2);
+ip2d_llr_inB->SetLineWidth(3);
+ip2d_llr_inB->Draw("same hist");
+leg = new TLegend(0.6,0.8,0.9,0.9);
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(ip2d_llr_l,"light jets","l");
+leg->AddEntry(ip2d_llr_exC,"c jets","l");
+leg->AddEntry(ip2d_llr_inB,"b jets","l");
+leg->Draw();
+
+
+//IP3D LogLikelihoodRatio C_ex_B_in
+
+TCanvas c("c", "canvas", 1200, 900);
+gStyle->SetOptStat(0);
+Double_t norm_1 = ip3d_llr_l->GetEntries();
+ip3d_llr_l->Scale(1/norm_1);
+ip3d_llr_l->SetLineColor(kRed);
+ip3d_llr_l->SetLineWidth(3);
+ip3d_llr_l->GetYaxis()->SetRangeUser(1e-4, 1.);
+ip3d_llr_l->SetTitle("IP3D LogLikelihoodRatio");
+ip3d_llr_l->Draw("hist");
+Double_t norm_2 = ip3d_llr_exC->GetEntries();
+ip3d_llr_exC->Scale(1/norm_2);
+ip3d_llr_exC->SetLineColor(kBlue);
+ip3d_llr_exC->SetLineWidth(3);
+ip3d_llr_exC->SetTitle("hist");
+ip3d_llr_exC->Draw("same hist");
+Double_t norm_3 = ip3d_llr_inB->GetEntries();
+ip3d_llr_inB->Scale(1/norm_3);
+ip3d_llr_inB->SetLineColor(kGreen+2);
+ip3d_llr_inB->SetLineWidth(3);
+ip3d_llr_inB->Draw("same hist");
+leg = new TLegend(0.6,0.8,0.9,0.9);
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(ip3d_llr_l,"light jets","l");
+leg->AddEntry(ip3d_llr_exC,"c jets","l");
+leg->AddEntry(ip3d_llr_inB,"b jets","l");
+leg->Draw();
+
+
 
 
 TCanvas c("c", "canvas", 1200, 900);
 gStyle->SetOptStat(0);
-Double_t norm_1 = DL1_exC->GetEntries();
-DL1_exC->Scale(1/norm_1);
+Double_t norm_1 = DL1_light->GetEntries();
+DL1_light->Scale(1/norm_1);
+DL1_light->SetLineColor(kRed);
+DL1_light->SetLineWidth(3);
+DL1_light->GetYaxis()->SetRangeUser(1e-4, 1.);
+DL1_light->SetTitle("DL1");
+DL1_light->Draw("hist");
+Double_t norm_2 = DL1_exC->GetEntries();
+DL1_exC->Scale(1/norm_2);
 DL1_exC->SetLineColor(kGreen+2);
 DL1_exC->SetLineWidth(3);
-DL1_exC->Draw("hist");
-Double_t norm_2 = DL1_exB->GetEntries();
-DL1_exB->Scale(1/norm_2);
+DL1_exC->Draw("same hist");
+Double_t norm_3 = DL1_exB->GetEntries();
+DL1_exB->Scale(1/norm_3);
 DL1_exB->SetLineColor(kBlue);
 DL1_exB->SetLineWidth(3);
 DL1_exB->Draw("same hist");
-gPad->BuildLegend();
+leg = new TLegend(0.6,0.8,0.9,0.9);
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(DL1_light,"light jets","l");
+leg->AddEntry(DL1_exC,"c jets","l");
+leg->AddEntry(DL1_exB,"b jets","l");
+leg->Draw();
 
 
 TCanvas c("c", "canvas", 1200, 900);
 gStyle->SetOptStat(0);
-Double_t norm_1 = DL1_inC->GetEntries();
-DL1_inC->Scale(1/norm_1);
+Double_t norm_1 = DL1_light->GetEntries();
+DL1_light->Scale(1/norm_1);
+DL1_light->SetLineColor(kRed);
+DL1_light->SetLineWidth(3);
+DL1_light->GetYaxis()->SetRangeUser(1e-4, 1.);
+DL1_light->SetTitle("DL1");
+DL1_light->Draw("hist");
+Double_t norm_2 = DL1_inC->GetEntries();
+DL1_inC->Scale(1/norm_2);
 DL1_inC->SetLineColor(kGreen+2);
 DL1_inC->SetLineWidth(3);
-DL1_inC->Draw("hist");
-Double_t norm_2 = DL1_inB->GetEntries();
-DL1_inB->Scale(1/norm_2);
+DL1_inC->Draw("same hist");
+Double_t norm_3 = DL1_inB->GetEntries();
+DL1_inB->Scale(1/norm_3);
 DL1_inB->SetLineColor(kBlue);
 DL1_inB->SetLineWidth(3);
 DL1_inB->Draw("same hist");
-gPad->BuildLegend();
+leg = new TLegend(0.6,0.8,0.9,0.9);
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(DL1_light,"light jets","l");
+leg->AddEntry(DL1_inC,"c jets","l");
+leg->AddEntry(DL1_inB,"b jets","l");
+leg->Draw();
