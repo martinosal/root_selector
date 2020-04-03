@@ -40,12 +40,16 @@ void selector_1::Begin(TTree * /*tree*/)
 
    file = new TFile("output_files/output.root","RECREATE");
 //   file = new TFile("output_files/lxplus_output.root","RECREATE");
-/*
+
    hist_pt_1 = new TH1F("pT", "n1==1", 100, 0., 1000.);
    hist_eta_1 = new TH1F("eta", "n1==1", 100, -5., 5.);
    hist_phi_1 = new TH1F("phi", "n1==1", 100, -4.,4.);
    hist_E_1 = new TH1F("E", "n1==1", 100, 0., 10e5);
-*/
+   hist_DR_1 = new TH1F("Delta_R", "n1==1", 100, 0., 1.);
+   hist_std_dev_DR_1 = new TH1F("Standard Deviation from Delta_R", "n1==1", 100, 0., 1.);
+   jet_DR_pT = new TH2F("jets Delta_R-pT","n1==1", 100, 0., 500., 100, 0., 1.);
+
+
    hist_pt_2 = new TH1F("pT_n1==2", "n1==2", 100, 0., 1000.);
    hist_eta_2 = new TH1F("eta_n1==2", "n1==2", 100, -5., 5.);
    hist_phi_2 = new TH1F("phi_n1==2", "n1==2", 100, -4.,4.);
@@ -283,19 +287,54 @@ double DL1=0;
     }
    }
 
-
 //select by: n1==1 && n2==0 && n3==0
    if(n1==1 && n2==0 && n3==0){
+
       m_b++;
-/*
-       for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
-           hist_pt_1->Fill(jet_pt[*it]*0.001);
-           hist_eta_1->Fill(jet_eta[*it]);
-           hist_phi_1->Fill(jet_phi[*it]);
-           hist_E_1->Fill(jet_E[*it]);
+      int i=is1B.at(0);
+      if(jet_pt[i]*0.001<pt_max){
+        hist_pt_1->Fill(jet_pt[i]*0.001);
+        hist_eta_1->Fill(jet_eta[i]);
+        hist_phi_1->Fill(jet_phi[i]);
+        hist_E_1->Fill(jet_E[i]);
+
+        std::vector<float> eta=jet_trk_eta[i];
+        std::vector<float> phi=jet_trk_phi[i];
+        if(eta.size()!=phi.size()) std::cout<< "ERROR"<< "\n";
+        if(eta.size()!=0){
+
+          std::vector<float> R(eta.size());
+          for(int j=0;j<eta.size();j++){
+            R.at(j)=sqrt(eta.at(j)*eta.at(j)+phi.at(j)*phi.at(j));
+          }
+          double R_m;
+          R_m=std::accumulate(R.begin(), R.end(), 0.0)/R.size();
+
+          float DR_Max=0,tmp_M=0,sq_sum=0,std_dev=0;
+          for(int j=0;j<eta.size();j++){
+            tmp_M=abs(R.at(j)-R_m);
+            sq_sum+=tmp_M*tmp_M;
+            if(tmp_M>DR_Max)  DR_Max=tmp_M;
+          }
+
+          if(eta.size()>1){
+            std_dev=sqrt(sq_sum/(eta.size()-1));
+            hist_std_dev_DR_1->Fill(std_dev);
+//          std::cout << std::fixed << std::setprecision(5) << DR_Max << "\t\t" << std_dev << "\t\t" << R.size() << "\n";
+          }
+//        else std::cout << "ONLY ONE TRACK: " << std::fixed << std::setprecision(5) << DR_Max << "\t\t" << std_dev << "\t\t" << R.size() << "\n";"\n";
+
+//        g->SetPoint(g->GetN(), jet_pt[i]*0.001, DR_Max);
+          jet_DR_pT->Fill(jet_pt[i]*0.001, DR_Max);
+          hist_DR_1->Fill(DR_Max);
+
+          int quot=(int) jet_pt[i]*0.001/Delta;
+//          std::cout << jet_pt[i]*0.001 << "\t" << Delta << "\t" << quot << "\n";
+//        double result = remquo (jet_pt[i]*0.001,Delta,&quot);
+          bin_v.at(quot).push_back(DR_Max);
+        }
       }
-      */
-  }
+    }
 
 
 
@@ -383,16 +422,16 @@ double DL1=0;
    }
 */
 //inspect tracks
-/*
-   int cnt_1=0,cnt_2=0;
-   for(TTreeReaderArray<std::vector<float, std::allocator<float>>>::iterator it=jet_trk_d0.begin(); it!=jet_trk_d0.end(); ++it){
-      std::vector v=*it;
-      double m;
-      v.size()==0 ? m=-999. : m=std::accumulate(v.begin(), v.end(), 0.0)/v.size();
+
+//   for(TTreeReaderArray<std::vector<float, std::allocator<float>>>::iterator it=jet_trk_eta.begin(); it!=jet_trk_eta.end(); ++it){
+//      std::vector v=*it;
+
+//      double m;
+//      v.size()==0 ? m=-999. : m=std::accumulate(v.begin(), v.end(), 0.0)/v.size();
 //       std::cout << m << "\t" << v.size() << "\n";
-      cnt_1++;
-  }
-*/
+//      cnt_1++;
+//  }
+
 /*
    std::vector<int> count(*njets);
    int n=0;
@@ -484,12 +523,15 @@ void selector_1::Terminate()
 
 //    hist_1->Draw();
 //    hist_2->Draw();
-/*
+
     hist_pt_1->Write();
     hist_eta_1->Write();
     hist_phi_1->Write();
     hist_E_1->Write();
-*/
+    hist_DR_1->Write();
+    hist_std_dev_DR_1->Write();
+    jet_DR_pT->SetMarkerStyle(kFullCircle);
+    jet_DR_pT->Write();
 
     hist_pt_2->Write();
     hist_eta_2->Write();
@@ -567,6 +609,15 @@ void selector_1::Terminate()
     hist_phi_4->Write();
     hist_E_4->Write();
 */
+    float R_bin[bin];
+    for(int i=0;i<bin;i++){
+      if(bin_v.at(i).size()!=0){
+        R_bin[i]=std::accumulate(bin_v.at(i).begin(), bin_v.at(i).end(), 0.0)/bin_v.at(i).size();
+        std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t\t" << "with\t" << bin_v.at(i).size() << "\tpoints with pT in between\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
+//        std::cout<< bin_v.at(i).size() << "\t\t" << i << "\n";
+      }
+    }
+//    g->Draw();
     file->Close();
 
     std::cout<< "fraction of events with one single b:\t" << (double) m_b/m_Ntot << "\n";

@@ -21,8 +21,9 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+//#include "matrix.h"
 
-
+//#include </usr/include/eigen3/Eigen/Dense>
 
 class selector_1 : public TSelector {
 public :
@@ -371,13 +372,23 @@ private:
 
    double m_cut=1.,m_fc=0.08;
    int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0;
+   float pt_max=500., pt_min=0.;
+   int bin=50;
+   float Delta=(pt_max-pt_min)/bin;
+
+   std::vector< std::vector<float> > bin_v = std::vector< std::vector<float> >(bin);
+
    TFile *file;
-/*
+//   TGraph *g = new TGraph ();
+   TH2F *jet_DR_pT;
+
    TH1F *hist_pt_1;
    TH1F *hist_eta_1;
    TH1F *hist_phi_1;
    TH1F *hist_E_1;
-*/
+   TH1F *hist_DR_1;
+   TH1F *hist_std_dev_DR_1;
+
    TH1F *hist_pt_2;
    TH1F *hist_eta_2;
    TH1F *hist_phi_2;
