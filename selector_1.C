@@ -609,15 +609,35 @@ void selector_1::Terminate()
     hist_phi_4->Write();
     hist_E_4->Write();
 */
-    float R_bin[bin];
+    float R_bin[bin]{0},dev_R[bin]{0},std_dev_R[bin]{0};
+    float x[bin]{0},y[bin]{0},ex[bin]{0},ey[bin]{0};
+    int n=0;
     for(int i=0;i<bin;i++){
-      if(bin_v.at(i).size()!=0){
+      if(bin_v.at(i).size()>2){
         R_bin[i]=std::accumulate(bin_v.at(i).begin(), bin_v.at(i).end(), 0.0)/bin_v.at(i).size();
-        std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t\t" << "with\t" << bin_v.at(i).size() << "\tpoints with pT in between\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
+        for(int j=0;j<bin_v.at(i).size();j++){
+          dev_R[i]+=(bin_v.at(i).at(j)-R_bin[i])*(bin_v.at(i).at(j)-R_bin[i]);
+        }
+      std_dev_R[i]=sqrt(dev_R[i]/(bin_v.at(i).size()-1));
+
+      std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t+-\t" << std_dev_R[i] << "\t\t" << "with\t" << bin_v.at(i).size() << "\tpoints with pT in between\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
 //        std::cout<< bin_v.at(i).size() << "\t\t" << i << "\n";
+
+      if(bin_v.at(i).size()>2){
+        x[i]=i*Delta+Delta*0.5;
+        y[i]=R_bin[i];
+        ey[i]=std_dev_R[i];
+        n++;
+      }
       }
     }
-//    g->Draw();
+    TGraphErrors* g_E = new TGraphErrors(n, x, y, ex, ey);
+//    g_E->RemovePoint(0);
+    g_E->SetMarkerColor(1);
+    g_E->SetMarkerSize(1.);
+    g_E->SetMarkerStyle(20);
+    g_E->Draw("AP");
+
     file->Close();
 
     std::cout<< "fraction of events with one single b:\t" << (double) m_b/m_Ntot << "\n";

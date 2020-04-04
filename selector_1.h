@@ -7,6 +7,7 @@
 
 #ifndef selector_1_h
 #define selector_1_h
+#define bin 50
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -372,14 +373,15 @@ private:
 
    double m_cut=1.,m_fc=0.08;
    int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0;
+
    float pt_max=500., pt_min=0.;
-   int bin=50;
    float Delta=(pt_max-pt_min)/bin;
 
    std::vector< std::vector<float> > bin_v = std::vector< std::vector<float> >(bin);
 
    TFile *file;
 //   TGraph *g = new TGraph ();
+//   TGraphErrors *g_E = new TGraphErrors ();
    TH2F *jet_DR_pT;
 
    TH1F *hist_pt_1;
