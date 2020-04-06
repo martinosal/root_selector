@@ -45,8 +45,10 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_eta_1 = new TH1F("eta", "n1==1", 100, -5., 5.);
    hist_phi_1 = new TH1F("phi", "n1==1", 100, -4.,4.);
    hist_E_1 = new TH1F("E", "n1==1", 100, 0., 10e5);
+   hist_n_tracks = new TH1F("n tracks", "n1==1", 100, 0, 50);
+   hist_tracks_DR = new TH2F("n tracks-Delta_R", "n1==1", 100, 0., 1., 100., 0., 100.);
    hist_DR_1 = new TH1F("Delta_R", "n1==1", 100, 0., 1.);
-   hist_std_dev_DR_1 = new TH1F("Standard Deviation from Delta_R", "n1==1", 100, 0., 1.);
+//   hist_std_dev_DR_1 = new TH1F("Standard Deviation from Delta_R", "n1==1", 100, 0., 1.);
    jet_DR_pT = new TH2F("jets Delta_R-pT","n1==1", 100, 0., 500., 100, 0., 1.);
 
 
@@ -301,38 +303,35 @@ double DL1=0;
         std::vector<float> eta=jet_trk_eta[i];
         std::vector<float> phi=jet_trk_phi[i];
         if(eta.size()!=phi.size()) std::cout<< "ERROR"<< "\n";
-        if(eta.size()!=0){
-
-          std::vector<float> R(eta.size());
-          for(int j=0;j<eta.size();j++){
+        int size=eta.size();//size is the number of tracks, on which we make a cut
+//        if(size>=m_track_cut){
+          std::vector<float> R(size);
+          for(int j=0;j<size;j++){
             R.at(j)=sqrt(eta.at(j)*eta.at(j)+phi.at(j)*phi.at(j));
           }
           double R_m;
           R_m=std::accumulate(R.begin(), R.end(), 0.0)/R.size();
 
           float DR_Max=0,tmp_M=0,sq_sum=0,std_dev=0;
-          for(int j=0;j<eta.size();j++){
+          for(int j=0;j<size;j++){
             tmp_M=abs(R.at(j)-R_m);
-            sq_sum+=tmp_M*tmp_M;
-            if(tmp_M>DR_Max)  DR_Max=tmp_M;
+            if(tmp_M>DR_Max){
+                DR_Max=tmp_M;
+//                sq_sum+=tmp_M*tmp_M;
+            }
           }
 
-          if(eta.size()>1){
-            std_dev=sqrt(sq_sum/(eta.size()-1));
-            hist_std_dev_DR_1->Fill(std_dev);
-//          std::cout << std::fixed << std::setprecision(5) << DR_Max << "\t\t" << std_dev << "\t\t" << R.size() << "\n";
-          }
-//        else std::cout << "ONLY ONE TRACK: " << std::fixed << std::setprecision(5) << DR_Max << "\t\t" << std_dev << "\t\t" << R.size() << "\n";"\n";
-
+//          std_dev=sqrt(sq_sum/(size-1));
+//          hist_std_dev_DR_1->Fill(std_dev);
+          hist_n_tracks->Fill(size);
 //        g->SetPoint(g->GetN(), jet_pt[i]*0.001, DR_Max);
           jet_DR_pT->Fill(jet_pt[i]*0.001, DR_Max);
+          hist_tracks_DR->Fill(DR_Max, size);
           hist_DR_1->Fill(DR_Max);
 
           int quot=(int) jet_pt[i]*0.001/Delta;
-//          std::cout << jet_pt[i]*0.001 << "\t" << Delta << "\t" << quot << "\n";
-//        double result = remquo (jet_pt[i]*0.001,Delta,&quot);
           bin_v.at(quot).push_back(DR_Max);
-        }
+//        }
       }
     }
 
@@ -528,8 +527,12 @@ void selector_1::Terminate()
     hist_eta_1->Write();
     hist_phi_1->Write();
     hist_E_1->Write();
+    hist_n_tracks->Write();
+    hist_tracks_DR->SetMarkerStyle(kFullCircle);
+//    hist_tracks_DR->SetMarkerSize(10);
+    hist_tracks_DR->Write();
     hist_DR_1->Write();
-    hist_std_dev_DR_1->Write();
+//    hist_std_dev_DR_1->Write();
     jet_DR_pT->SetMarkerStyle(kFullCircle);
     jet_DR_pT->Write();
 
@@ -611,35 +614,76 @@ void selector_1::Terminate()
 */
     float R_bin[bin]{0},dev_R[bin]{0},std_dev_R[bin]{0};
     float x[bin]{0},y[bin]{0},ex[bin]{0},ey[bin]{0};
+
     int n=0;
+    std::cout <<"\n";
+    std::vector<float> tmp(tracksize,0.),max(tracksize,0.);
+
+    float sup=0;
+    if(tracksize<=m_track_cut)  sup=tracksize;
+    if(tracksize>m_track_cut)  sup=m_track_cut;
+
     for(int i=0;i<bin;i++){
-      if(bin_v.at(i).size()>2){
-        R_bin[i]=std::accumulate(bin_v.at(i).begin(), bin_v.at(i).end(), 0.0)/bin_v.at(i).size();
-        for(int j=0;j<bin_v.at(i).size();j++){
+
+      std::fill(tmp.begin(), tmp.end(), 0);
+      std::fill(max.begin(), max.end(), 0);
+
+      if(bin_v.at(i).size()>=m_track_cut){
+
+
+        for(int l=0;l<sup;l++){
+          for(int k=0;k<bin_v.at(i).size();k++){
+            if(l==0){
+              tmp[l]=bin_v.at(i).at(k);
+              if(tmp[l]>max[l]) max[l]=tmp[l];
+            }
+            if(l>0){
+              tmp[l]=bin_v.at(i).at(k);
+              if(tmp[l]>max[l] && tmp[l]<max[l-1]) max[l]=tmp[l];
+            }
+          }
+        }
+/*
+        for(int a=0;a<max.size();a++){
+          std::cout << std::fixed << std::setprecision(5)<<max[a]<<"\t";
+        }
+        std::cout<<"\n";
+*/
+//        R_bin[i]=std::accumulate(bin_v.at(i).begin(), bin_v.at(i).end(), 0.0)/bin_v.at(i).size();
+        R_bin[i]=std::accumulate(max.begin(), max.end(), 0.0)/max.size();
+
+/*        for(int j=0;j<bin_v.at(i).size();j++){
           dev_R[i]+=(bin_v.at(i).at(j)-R_bin[i])*(bin_v.at(i).at(j)-R_bin[i]);
         }
-      std_dev_R[i]=sqrt(dev_R[i]/(bin_v.at(i).size()-1));
-
-      std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t+-\t" << std_dev_R[i] << "\t\t" << "with\t" << bin_v.at(i).size() << "\tpoints with pT in between\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
-//        std::cout<< bin_v.at(i).size() << "\t\t" << i << "\n";
-
-      if(bin_v.at(i).size()>2){
-        x[i]=i*Delta+Delta*0.5;
-        y[i]=R_bin[i];
-        ey[i]=std_dev_R[i];
-        n++;
+*/
+      for(int j=0;j<max.size();j++){
+        dev_R[i]+=(max.at(j)-R_bin[i])*(max.at(j)-R_bin[i]);
       }
+//      std_dev_R[i]=sqrt(dev_R[i]/(bin_v.at(i).size()-1));
+      std_dev_R[i]=sqrt(dev_R[i]/(max.size()-1));
+
+
+//      std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t+-\t" << std_dev_R[i] << "\t\t" << "with\t" << bin_v.at(i).size() << "\tpoints with pT in\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
+      std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t+- " << std_dev_R[i] << "\t" << "with\t" << max.size() << "\tpoints with pT in\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
+
+      x[i]=i*Delta+Delta*0.5;
+      y[i]=R_bin[i];
+      ey[i]=std_dev_R[i];
+      n++;
+
       }
     }
+
     TGraphErrors* g_E = new TGraphErrors(n, x, y, ex, ey);
 //    g_E->RemovePoint(0);
     g_E->SetMarkerColor(1);
     g_E->SetMarkerSize(1.);
     g_E->SetMarkerStyle(20);
-    g_E->Draw("AP");
+    g_E->Write("AP");
 
     file->Close();
 
+    std::cout<< std::fixed << std::setprecision(5) << "\n";
     std::cout<< "fraction of events with one single b:\t" << (double) m_b/m_Ntot << "\n";
     std::cout<< "fraction of events with two single b's:\t" << (double) m_bb/m_Ntot << "\n";
     std::cout<< "fraction of events without b:\t" << (double) m_noB/m_Ntot << "\n";
