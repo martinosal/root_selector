@@ -47,7 +47,7 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_E_1 = new TH1F("E", "n1==1", 100, 0., 10e5);
    hist_n_tracks = new TH1F("n tracks", "n1==1", 100, 0, 50);
    hist_tracks_DR = new TH2F("n tracks-Delta_R", "n1==1", 100, 0., 1., 100., 0., 100.);
-   hist_DR_1 = new TH1F("Delta_R", "n1==1", 100, 0., 1.);
+   hist_DR_1 = new TH1F("Delta_R", "n1==1", 100, 0., 10.);
 //   hist_std_dev_DR_1 = new TH1F("Standard Deviation from Delta_R", "n1==1", 100, 0., 1.);
    jet_DR_pT = new TH2F("jets Delta_R-pT","n1==1", 100, 0., 500., 100, 0., 1.);
 
@@ -310,14 +310,24 @@ double DL1=0;
             R.at(j)=sqrt(eta.at(j)*eta.at(j)+phi.at(j)*phi.at(j));
           }
           double R_m;
-          R_m=std::accumulate(R.begin(), R.end(), 0.0)/R.size();
+//          R_m=std::accumulate(R.begin(), R.end(), 0.0)/R.size();
+          R_m=sqrt(jet_eta[i]*jet_eta[i]+jet_phi[i]*jet_phi[i]);
 
+          float D_phi=0;
           float DR_Max=0,tmp_M=0,sq_sum=0,std_dev=0;
           for(int j=0;j<size;j++){
-            tmp_M=abs(R.at(j)-R_m);
+//            tmp_M=abs(R.at(j)-R_m);//<---------------------------------------WRONG!!!!!!!!!!!!!
+            if(abs(jet_trk_phi[i].at(j)-jet_phi[i])>M_PI){
+              D_phi=2*M_PI-abs(jet_trk_phi[i].at(j)-jet_phi[i]);
+            }
+            if(abs(jet_trk_phi[i].at(j)-jet_phi[i])<M_PI){
+              D_phi=jet_trk_phi[i].at(j)-jet_phi[i];
+            }
+            //if(jet_trk_phi[i].at(j)>0 && jet_phi[i]<0) std::cout<<D_phi<<"\n";
+            tmp_M=sqrt((eta.at(j)-jet_eta[i])*(eta.at(j)-jet_eta[i])+D_phi*D_phi);
+//            sq_sum+=tmp_M*tmp_M;
             if(tmp_M>DR_Max){
-                DR_Max=tmp_M;
-//                sq_sum+=tmp_M*tmp_M;
+              DR_Max=tmp_M;
             }
           }
 
@@ -331,6 +341,7 @@ double DL1=0;
 
           int quot=(int) jet_pt[i]*0.001/Delta;
           bin_v.at(quot).push_back(DR_Max);
+
 //        }
       }
     }
@@ -619,7 +630,7 @@ void selector_1::Terminate()
     std::cout <<"\n";
     std::vector<float> tmp(tracksize,0.),max(tracksize,0.);
 
-    float sup=0;
+    int sup=0;
     if(tracksize<=m_track_cut)  sup=tracksize;
     if(tracksize>m_track_cut)  sup=m_track_cut;
 
@@ -664,7 +675,7 @@ void selector_1::Terminate()
 
 
 //      std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t+-\t" << std_dev_R[i] << "\t\t" << "with\t" << bin_v.at(i).size() << "\tpoints with pT in\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
-      std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t+- " << std_dev_R[i] << "\t" << "with\t" << max.size() << "\tpoints with pT in\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
+      std::cout << std::fixed << std::setprecision(5) << R_bin[i] << "\t+- " << std_dev_R[i] << "\t" << "with\t" << sup << "\tpoints with pT in\t" << "["  << std::fixed << std::setprecision(1) << i*Delta << ","  << (i+1)*Delta << "]\tGeV" << "\n";
 
       x[i]=i*Delta+Delta*0.5;
       y[i]=R_bin[i];
@@ -673,13 +684,24 @@ void selector_1::Terminate()
 
       }
     }
-
-    TGraphErrors* g_E = new TGraphErrors(n, x, y, ex, ey);
+    TMultiGraph *mg = new TMultiGraph();
+    TGraphErrors* g_E = new TGraphErrors(n-1, x, y, ex, ey);
 //    g_E->RemovePoint(0);
     g_E->SetMarkerColor(1);
     g_E->SetMarkerSize(1.);
     g_E->SetMarkerStyle(20);
-    g_E->Write("AP");
+    mg->Add(g_E, "PL");
+    double x2[30]{0},y2[30]{0},p1=0.239,p2=-1.220,p3=-1.64*1e-2;
+    for(int i=0;i<30;i++){
+      x2[i]=200*i/30;
+      y2[i]=p1+exp(p2+p3*x2[i]);
+    }
+    TGraph* g_E2 = new TGraph(30, x2, y2);
+    g_E2->SetMarkerColor(2);
+//    g_E2->SetMarkerSize(1.);
+    g_E2->SetMarkerStyle(20);
+    mg->Add(g_E2,"A");
+    mg->Draw("A");
 
     file->Close();
 
