@@ -40,7 +40,7 @@ void selector_1::Begin(TTree * /*tree*/)
 
    file = new TFile("output_files/output.root","RECREATE");
 //   file = new TFile("output_files/lxplus_output.root","RECREATE");
-
+/*
    hist_pt_1 = new TH1F("pT", "n1==1", 100, 0., 1000.);
    hist_eta_1 = new TH1F("eta", "n1==1", 100, -5., 5.);
    hist_phi_1 = new TH1F("phi", "n1==1", 100, -4.,4.);
@@ -50,7 +50,7 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_DR_1 = new TH1F("Delta_R", "n1==1", 100, 0., 10.);
 //   hist_std_dev_DR_1 = new TH1F("Standard Deviation from Delta_R", "n1==1", 100, 0., 1.);
    jet_DR_pT = new TH2F("jets Delta_R-pT","n1==1", 100, 0., 500., 100, 0., 1.);
-
+*/
 
    hist_pt_2 = new TH1F("pT_n1==2", "n1==2", 100, 0., 1000.);
    hist_eta_2 = new TH1F("eta_n1==2", "n1==2", 100, -5., 5.);
@@ -88,6 +88,12 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_dl1_inB = new TH1F("DL1_inB","DL1_inB",100,-8.,12.);
    hist_dl1_exC = new TH1F("DL1_exC","DL1_exC",100,-8.,12.);
    hist_dl1_exB = new TH1F("DL1_exB","DL1_exB",100,-8.,12.);
+   hist_trk_DR_inB = new TH1F("trk_DR_inB","trk_DR_inB",100,-0.1,1.);
+   hist_child_DR_inB = new TH1F("child_DR_inB","child_DR_inB",100,-0.1,2.);
+   hist_child_Deta_inB = new TH1F("child_Deta_inB","child_Deta_inB",100,-4.,4.);
+   hist_child_Dphi_inB = new TH1F("child_Dphi_inB","child_Dphi_inB",100,-4.,4.);
+   hist_trk_Deta_Dphi_inB = new TH2F("trk_Deta-Dphi","trk_Deta-Dphi", 100, -4., 4., 100, -4., 4.);
+   hist_child_trk_Deta_Dphi_inB = new TH2F("child_trk_Deta-Dphi","child_trk_Deta-Dphi", 100, -4., 4., 100, -4., 4.);
    /*
    hist_pt_2b = new TH1F("pT", "n2==1", 100, 0., 1000.);
    hist_eta_2b = new TH1F("eta", "n2==1", 100, -5., 5.);
@@ -202,7 +208,7 @@ Bool_t selector_1::Process(Long64_t entry)
 
 
 //DISCRIMINANTS
-double DL1=0;
+  double DL1=0;
    if(nl>0){
      for(std::vector<int>::iterator it = isl.begin(); it != isl.end(); ++it){
        if(jet_ip2d_pb[*it]!=-99){
@@ -236,6 +242,8 @@ double DL1=0;
       }
   }
 
+//if(jet_bH_child_px.GetSize()!=*njets) {std::cout<<"W"<<"\n";}
+
    if(nBjets>0){
      for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
        if(jet_ip2d_pb[*it]!=-99){
@@ -250,8 +258,52 @@ double DL1=0;
          DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
          hist_dl1_inB->Fill(DL1);
        }
+//         int b=(jet_bH_pdgId[*it][i]/100)%10;
+       int size_jet=jet_trk_pt[*it].size();
+       int size_child=jet_bH_child_px[*it].size();
+       double D_phi=0.,D_eta=0.,DR=0.;
+//       std::cout<<size<<"\t"<<size_child<<"\n";
+//       std::cout<<"\n";
+       for(int i=0;i<size_child;i++){
+//         std::cout<<jet_bH_child_parent_pdg_id[*it][i]<<"\n";
+         TLorentzVector v(
+           jet_bH_child_px[*it][i],
+           jet_bH_child_py[*it][i],
+           jet_bH_child_pz[*it][i],
+           jet_bH_child_E[*it][i]
+         );
+         if(abs(v.Eta())<2.5 && v.Pt()>400.){
+           D_eta=v.Eta()-jet_eta[*it];
+           hist_child_Deta_inB->Fill(D_eta);
+           if(abs(v.Phi()-jet_phi[*it])>M_PI){
+             D_phi=2*M_PI-abs(v.Phi()-jet_phi[*it]);
+             hist_child_Dphi_inB->Fill(D_phi);
+           }
+           if(abs(v.Phi()-jet_phi[*it])<M_PI){
+             D_phi=v.Phi()-jet_phi[*it];
+             hist_child_Dphi_inB->Fill(D_phi);
+           }
+           DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+           hist_child_DR_inB->Fill(DR);
+           hist_child_trk_Deta_Dphi_inB->Fill(D_phi,D_eta);
+//                if(DR>1.) std::cout<<D_phi<<"\t"<<D_eta << "\t"<<jet_eta[*it] <<"\t"<<DR<<"\n";
+          }
+        }
+        for(int i=0;i<size_jet;i++){
+         if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])>M_PI){
+           D_phi=2*M_PI-abs(jet_trk_phi[*it].at(i)-jet_phi[*it]);
+         }
+         if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])<M_PI){
+           D_phi=jet_trk_phi[*it].at(i)-jet_phi[*it];
+         }
+         D_eta=jet_trk_eta[*it].at(i)-jet_eta[*it];
+         hist_trk_Deta_Dphi_inB->Fill(D_phi,D_eta);
+         DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+         hist_trk_DR_inB->Fill(DR);
+       }
      }
    }
+
 
 
 //exclusive plots
@@ -289,6 +341,11 @@ double DL1=0;
     }
    }
 
+   if(n1==1 && n2==0 && n3==0){
+      m_b++;
+    }
+
+/*
 //select by: n1==1 && n2==0 && n3==0
    if(n1==1 && n2==0 && n3==0){
 
@@ -345,7 +402,7 @@ double DL1=0;
 //        }
       }
     }
-
+*/
 
 
 
@@ -533,7 +590,7 @@ void selector_1::Terminate()
 
 //    hist_1->Draw();
 //    hist_2->Draw();
-
+/*
     hist_pt_1->Write();
     hist_eta_1->Write();
     hist_phi_1->Write();
@@ -546,7 +603,7 @@ void selector_1::Terminate()
 //    hist_std_dev_DR_1->Write();
     jet_DR_pT->SetMarkerStyle(kFullCircle);
     jet_DR_pT->Write();
-
+*/
     hist_pt_2->Write();
     hist_eta_2->Write();
     hist_phi_2->Write();
@@ -601,6 +658,12 @@ void selector_1::Terminate()
     hist_dl1_inB->Write();
     hist_dl1_exC->Write();
     hist_dl1_exB->Write();
+    hist_trk_DR_inB->Write();
+    hist_child_DR_inB->Write();
+    hist_child_Dphi_inB->Write();
+    hist_child_Deta_inB->Write();
+    hist_trk_Deta_Dphi_inB->Write();
+    hist_child_trk_Deta_Dphi_inB->Write();
 
 /*
     hist_pt_2b->Write();
@@ -623,6 +686,7 @@ void selector_1::Terminate()
     hist_phi_4->Write();
     hist_E_4->Write();
 */
+/*
     float R_bin[bin]{0},dev_R[bin]{0},std_dev_R[bin]{0};
     float x[bin]{0},y[bin]{0},ex[bin]{0},ey[bin]{0};
 
@@ -654,19 +718,19 @@ void selector_1::Terminate()
             }
           }
         }
-/*
-        for(int a=0;a<max.size();a++){
-          std::cout << std::fixed << std::setprecision(5)<<max[a]<<"\t";
-        }
+
+//        for(int a=0;a<max.size();a++){
+//          std::cout << std::fixed << std::setprecision(5)<<max[a]<<"\t";
+//        }
         std::cout<<"\n";
-*/
+
 //        R_bin[i]=std::accumulate(bin_v.at(i).begin(), bin_v.at(i).end(), 0.0)/bin_v.at(i).size();
         R_bin[i]=std::accumulate(max.begin(), max.end(), 0.0)/max.size();
 
-/*        for(int j=0;j<bin_v.at(i).size();j++){
-          dev_R[i]+=(bin_v.at(i).at(j)-R_bin[i])*(bin_v.at(i).at(j)-R_bin[i]);
-        }
-*/
+//        for(int j=0;j<bin_v.at(i).size();j++){
+//          dev_R[i]+=(bin_v.at(i).at(j)-R_bin[i])*(bin_v.at(i).at(j)-R_bin[i]);
+//        }
+
       for(int j=0;j<max.size();j++){
         dev_R[i]+=(max.at(j)-R_bin[i])*(max.at(j)-R_bin[i]);
       }
@@ -702,7 +766,7 @@ void selector_1::Terminate()
     g_E2->SetMarkerStyle(20);
     mg->Add(g_E2,"A");
     mg->Draw("A");
-
+*/
     file->Close();
 
     std::cout<< std::fixed << std::setprecision(5) << "\n";
