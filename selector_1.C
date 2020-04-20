@@ -94,6 +94,9 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_child_Dphi_inB = new TH1F("child_Dphi_inB","child_Dphi_inB",100,-4.,4.);
    hist_trk_Deta_Dphi_inB = new TH2F("trk_Deta-Dphi","trk_Deta-Dphi", 100, -4., 4., 100, -4., 4.);
    hist_child_trk_Deta_Dphi_inB = new TH2F("child_trk_Deta-Dphi","child_trk_Deta-Dphi", 100, -4., 4., 100, -4., 4.);
+   hist_efficiency_inB = new TH1F("efficiency","efficiency",50,-0.1,1.1);
+   hist_matchedchild_DR_inB = new TH1F("matchedchild_DR_inB","matchedchild_DR_inB",100,-0.1,2.);
+
    /*
    hist_pt_2b = new TH1F("pT", "n2==1", 100, 0., 1000.);
    hist_eta_2b = new TH1F("eta", "n2==1", 100, -5., 5.);
@@ -242,8 +245,7 @@ Bool_t selector_1::Process(Long64_t entry)
       }
   }
 
-//if(jet_bH_child_px.GetSize()!=*njets) {std::cout<<"W"<<"\n";}
-
+   double D_phi=0.,D_eta=0.,DR=0.;
    if(nBjets>0){
      for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
        if(jet_ip2d_pb[*it]!=-99){
@@ -258,19 +260,139 @@ Bool_t selector_1::Process(Long64_t entry)
          DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
          hist_dl1_inB->Fill(DL1);
        }
+
 //         int b=(jet_bH_pdgId[*it][i]/100)%10;
        int size_jet=jet_trk_pt[*it].size();
        int size_child=jet_bH_child_px[*it].size();
-       double D_phi=0.,D_eta=0.,DR=0.;
-//       std::cout<<size<<"\t"<<size_child<<"\n";
-//       std::cout<<"\n";
-       for(int i=0;i<size_child;i++){
-//         std::cout<<jet_bH_child_parent_pdg_id[*it][i]<<"\n";
+       int match=0;
+
+       int max_size=0;
+       if(size_jet<=size_child) max_size=size_child;
+       else max_size=size_jet;
+//       std::cout<<size_jet<<"\t"<<size_child<<"\n";
+
+
+       int bool_matrix[size_jet][size_child];
+       for(int k=0;k<size_child;k++){
+         for(int l=0;l<size_jet;l++)
+           bool_matrix[l][k]=0;
+       }
+       for(int i=0;i<size_jet;i++){
+         for(int j=0;j<size_child;j++){
+             TLorentzVector v(
+               jet_bH_child_px[*it][j],
+               jet_bH_child_py[*it][j],
+               jet_bH_child_pz[*it][j],
+               jet_bH_child_E[*it][j]
+             );
+             if(abs(v.Eta())<2.5 && v.Pt()>400.){
+               if(abs(jet_trk_parent_pdgid[*it][i])==abs(jet_bH_child_parent_pdg_id[*it][j]) && abs(jet_trk_pdg_id[*it][i])==abs(jet_bH_child_pdg_id[*it][j])){
+                 bool_matrix[i][j]=1;
+               }
+             }
+           }
+         }
+
+/*
+std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m_Ntot;
+         for(int i=0;i<size_jet;i++){
+           std::cout<<"\n";
+           for(int j=0;j<size_child;j++){
+             std::cout << bool_matrix[i][j]<<"\t";
+           }
+         }
+         std::cout<<"\n";*/
+
+         float tmp_f=0.,tmp_min_f=1e6;
+         int a=0,b=0;
+         for(int q=0;q<max_size;q++){
+           tmp_f=0.;tmp_min_f=1e6;
+           a=-2;b=-2;
+           for(int j=0;j<size_child;j++){
+             if(bool_matrix[q%size_child][j]==1){
+               TLorentzVector v(
+                 jet_bH_child_px[*it][j],
+                 jet_bH_child_py[*it][j],
+                 jet_bH_child_pz[*it][j],
+                 jet_bH_child_E[*it][j]
+               );
+               tmp_f=1e-6*(jet_trk_pt[*it][q]-v.Pt())*(jet_trk_pt[*it][q]-v.Pt());
+               if(tmp_f<=tmp_min_f && tmp_f<0.1){
+                 tmp_min_f=tmp_f;
+                 a=q%size_jet;
+                 b=j;
+               }
+             }
+           }
+           for(int i=0;i<size_jet;i++){
+             if(bool_matrix[i][q%size_jet]==1){
+               TLorentzVector v(
+                 jet_bH_child_px[*it][q],
+                 jet_bH_child_py[*it][q],
+                 jet_bH_child_pz[*it][q],
+                 jet_bH_child_E[*it][q]
+               );
+              tmp_f=1e-6*(jet_trk_pt[*it][i]-v.Pt())*(jet_trk_pt[*it][i]-v.Pt());
+              if(tmp_f<=tmp_min_f && tmp_f<0.01){
+                tmp_min_f=tmp_f;
+                a=i;
+                b=q%size_child;
+              }
+            }
+          }
+
+          if(a!=-2 && b!=-2){
+            match++;
+            TLorentzVector v(
+              jet_bH_child_px[*it][b],
+              jet_bH_child_py[*it][b],
+              jet_bH_child_pz[*it][b],
+              jet_bH_child_E[*it][b]
+            );
+            D_eta=v.Eta()-jet_eta[*it];
+            if(abs(v.Phi()-jet_phi[*it])>M_PI){
+              D_phi=2*M_PI-abs(v.Phi()-jet_phi[*it]);
+            }
+            if(abs(v.Phi()-jet_phi[*it])<M_PI){
+              D_phi=v.Phi()-jet_phi[*it];
+            }
+            DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+//            std::cout<<DR<<"\tevent:\t"<<m_Ntot<<"\tn of child:\t"<<b<<"/"<<size_child<<"\n";
+            hist_matchedchild_DR_inB->Fill(DR);
+          }
+
+//std::cout<<"\n"<<"q="<<q<<"\t(a,b)=("<<a+1<<","<<b+1<<")"<<"\n";
+
+           for(int j=0;j<size_child;j++){
+             bool_matrix[a][j]=0;
+           }
+           for(int i=0;i<size_jet;i++){
+             bool_matrix[i][b]=0;
+           }
+/*
+std::cout<<"ELIMINATION STARTS:\n";
+           for(int i=0;i<size_jet;i++){
+             std::cout<<"\n";
+             for(int j=0;j<size_child;j++){
+               std::cout << bool_matrix[i][j]<<"\t";
+             }
+           }
+         std::cout<<"\n";*/
+         }
+
+//std::cout<<"event:\t"<<m_Ntot<< "\tn of matched tracks:\t"<< match << "\tn of child tracks(denominator):\t" << size_child << "\tratio:\t" <<(float) match/size_child<<"\t";
+       hist_efficiency_inB->Fill((float) match/size_child);
+       match=0;
+
+
+
+       for(int j=0;j<size_child;j++){
+//         std::cout<<jet_bH_child_pdg_id[*it][i]<<"\n";
          TLorentzVector v(
-           jet_bH_child_px[*it][i],
-           jet_bH_child_py[*it][i],
-           jet_bH_child_pz[*it][i],
-           jet_bH_child_E[*it][i]
+           jet_bH_child_px[*it][j],
+           jet_bH_child_py[*it][j],
+           jet_bH_child_pz[*it][j],
+           jet_bH_child_E[*it][j]
          );
          if(abs(v.Eta())<2.5 && v.Pt()>400.){
            D_eta=v.Eta()-jet_eta[*it];
@@ -286,7 +408,6 @@ Bool_t selector_1::Process(Long64_t entry)
            DR=sqrt(D_eta*D_eta+D_phi*D_phi);
            hist_child_DR_inB->Fill(DR);
            hist_child_trk_Deta_Dphi_inB->Fill(D_phi,D_eta);
-//                if(DR>1.) std::cout<<D_phi<<"\t"<<D_eta << "\t"<<jet_eta[*it] <<"\t"<<DR<<"\n";
           }
         }
         for(int i=0;i<size_jet;i++){
@@ -301,6 +422,7 @@ Bool_t selector_1::Process(Long64_t entry)
          DR=sqrt(D_eta*D_eta+D_phi*D_phi);
          hist_trk_DR_inB->Fill(DR);
        }
+
      }
    }
 
@@ -664,6 +786,8 @@ void selector_1::Terminate()
     hist_child_Deta_inB->Write();
     hist_trk_Deta_Dphi_inB->Write();
     hist_child_trk_Deta_Dphi_inB->Write();
+    hist_efficiency_inB->Write();
+    hist_matchedchild_DR_inB->Write();
 
 /*
     hist_pt_2b->Write();

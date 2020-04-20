@@ -1,3 +1,31 @@
+TCanvas c1("c", "canvas", 1200, 900);
+Double_t norm_1 = efficiency->GetEntries();
+efficiency->Scale(1/norm_1);
+efficiency->SetLineColor(kRed);
+efficiency->SetLineWidth(3);
+efficiency->SetTitle("matching efficiency");
+efficiency->Draw("hist");
+
+
+TCanvas c1("c", "canvas", 1200, 900);
+Double_t norm_2 = child_DR_inB->GetEntries();
+child_DR_inB->Scale(1/norm_2);
+child_DR_inB->SetLineColor(kBlue);
+child_DR_inB->SetLineWidth(3);
+child_DR_inB->Draw("hist");
+leg = new TLegend(0.4,0.6,0.9,0.9);
+Double_t norm_1 = matchedchild_DR_inB->GetEntries();
+matchedchild_DR_inB->Scale(1/norm_1);
+matchedchild_DR_inB->SetLineColor(kRed);
+matchedchild_DR_inB->SetLineWidth(3);
+matchedchild_DR_inB->SetTitle("DeltaR");
+matchedchild_DR_inB->Draw("same hist");
+//leg->SetHeader("The Legend Title");
+leg->AddEntry(matchedchild_DR_inB,"matchedchild_DR","l");
+leg->AddEntry(child_DR_inB,"child_DR","l");
+leg->Draw();
+
+
 //IP2D LogLikelihoodRatio inclusive
 
 TCanvas c1("c", "canvas", 1200, 900);
