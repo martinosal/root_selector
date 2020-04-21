@@ -439,6 +439,9 @@ private:
    TH2F *hist_child_trk_Deta_Dphi_inB;
    TH1F *hist_efficiency_inB;
    TH1F *hist_matchedchild_DR_inB;
+
+   TH1D *hist_n_child;
+   TH1D *hist_n_match;
 /*
    TH1F *hist_pt_2b;
    TH1F *hist_eta_2b;

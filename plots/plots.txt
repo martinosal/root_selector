@@ -1,4 +1,8 @@
 TCanvas c1("c", "canvas", 1200, 900);
+n_match->Divide(n_child);
+
+
+TCanvas c1("c", "canvas", 1200, 900);
 Double_t norm_1 = efficiency->GetEntries();
 efficiency->Scale(1/norm_1);
 efficiency->SetLineColor(kRed);
@@ -6,16 +10,29 @@ efficiency->SetLineWidth(3);
 efficiency->SetTitle("matching efficiency");
 efficiency->Draw("hist");
 
+TCanvas c2("c", "canvas", 1200, 900);
+gStyle->SetOptStat(0);
+n_match->SetLineColor(kRed);
+n_match->SetLineWidth(3);
+n_match->SetTitle("hist");
+n_match->Draw("hist");
+n_child->SetLineColor(kBlue);
+n_child->SetLineWidth(3);
+n_child->Draw("same hist");
+leg = new TLegend(0.6,0.8,0.9,0.9);
+leg->AddEntry(n_child,"number of childs","l");
+leg->AddEntry(n_match,"number of matched tracks","l");
+leg->Draw();
+
+
+
 
 TCanvas c1("c", "canvas", 1200, 900);
-Double_t norm_2 = child_DR_inB->GetEntries();
-child_DR_inB->Scale(1/norm_2);
+gStyle->SetOptStat(0);
 child_DR_inB->SetLineColor(kBlue);
 child_DR_inB->SetLineWidth(3);
 child_DR_inB->Draw("hist");
-leg = new TLegend(0.4,0.6,0.9,0.9);
-Double_t norm_1 = matchedchild_DR_inB->GetEntries();
-matchedchild_DR_inB->Scale(1/norm_1);
+leg = new TLegend(0.6,0.8,0.9,0.9);
 matchedchild_DR_inB->SetLineColor(kRed);
 matchedchild_DR_inB->SetLineWidth(3);
 matchedchild_DR_inB->SetTitle("DeltaR");
