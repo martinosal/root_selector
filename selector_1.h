@@ -372,7 +372,7 @@ public :
 
 private:
 
-   double m_cut=1.,m_fc=0.08;
+   double m_cut=1.,m_fc=0.08,m_pTcut=0.1,m_DRcut=0.01,m_fcut=0.1;
    int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0;
 //   int m_track_cut=10;
 /*
@@ -399,7 +399,12 @@ private:
    TH1F *hist_eta_2;
    TH1F *hist_phi_2;
    TH1F *hist_E_2;
-
+/*
+   TH1F *hist_pt_inB;
+   TH1F *hist_eta_inB;
+   TH1F *hist_phi_inB;
+   TH1F *hist_E_inB;
+*/
    TH1F *hist_ip2d_pb;
    TH1F *hist_ip2d_pc;
    TH1F *hist_ip2d_pu;
@@ -431,14 +436,25 @@ private:
    TH1F *hist_dl1_inB;
    TH1F *hist_dl1_exC;
    TH1F *hist_dl1_exB;
-   TH1F *hist_trk_DR_inB;
-   TH1F *hist_child_DR_inB;
-   TH1F *hist_child_Deta_inB;
-   TH1F *hist_child_Dphi_inB;
+   TH1F *hist_trk_pT_inB;
+   TH1F *hist_trk_Deta_inB;
+   TH1F *hist_trk_eta_inB;
+   TH1F *hist_trk_Dphi_inB;
+   TH1F *hist_trk_phi_inB;
    TH2F *hist_trk_Deta_Dphi_inB;
-   TH2F *hist_child_trk_Deta_Dphi_inB;
+   TH1F *hist_trk_DR_inB;
+   TH1F *hist_child_pT_inB;
+   TH1F *hist_child_Deta_inB;
+   TH1F *hist_child_eta_inB;
+   TH1F *hist_child_Dphi_inB;
+   TH1F *hist_child_phi_inB;
+   TH2F *hist_child_Deta_Dphi_inB;
+   TH1F *hist_child_DR_inB;
    TH1F *hist_efficiency_inB;
-   TH1F *hist_matchedchild_DR_inB;
+   TH1F *hist_matched_pT_inB;
+   TH1F *hist_matched_DR_inB;
+   TH1F *hist_matched_eta_inB;
+   TH1F *hist_matched_phi_inB;
 
    TH1D *hist_n_child;
    TH1D *hist_n_match;

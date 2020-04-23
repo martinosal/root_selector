@@ -56,7 +56,12 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_eta_2 = new TH1F("eta_n1==2", "n1==2", 100, -5., 5.);
    hist_phi_2 = new TH1F("phi_n1==2", "n1==2", 100, -4.,4.);
    hist_E_2 = new TH1F("E_n1==2", "n1==2", 100, 0., 10e5);
-
+/*
+   hist_pt_inB = new TH1F("pT_inB", "inB", 100, 0., 1000.);
+   hist_eta_inB = new TH1F("eta_inB", "inB", 100, -5., 5.);
+   hist_phi_inB = new TH1F("phi_inB", "inB", 100, -4.,4.);
+   hist_E_inB = new TH1F("E_inB", "inB", 100, 0., 10e5);
+*/
    hist_ip2d_pb = new TH1F("ip2d_pb", "pb", 100., -0.1, 1.);
    hist_ip2d_pc = new TH1F("ip2d_pc", "pc", 100., -0.1, 1.);
    hist_ip2d_pu = new TH1F("ip2d_pu", "pu", 100., -0.1, 1.);
@@ -88,14 +93,25 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_dl1_inB = new TH1F("DL1_inB","DL1_inB",100,-8.,12.);
    hist_dl1_exC = new TH1F("DL1_exC","DL1_exC",100,-8.,12.);
    hist_dl1_exB = new TH1F("DL1_exB","DL1_exB",100,-8.,12.);
-   hist_trk_DR_inB = new TH1F("trk_DR_inB","trk_DR_inB",100,-0.1,1.);
-   hist_child_DR_inB = new TH1F("child_DR_inB","child_DR_inB",100,-0.1,2.);
-   hist_child_Deta_inB = new TH1F("child_Deta_inB","child_Deta_inB",100,-4.,4.);
-   hist_child_Dphi_inB = new TH1F("child_Dphi_inB","child_Dphi_inB",100,-4.,4.);
-   hist_trk_Deta_Dphi_inB = new TH2F("trk_Deta-Dphi","trk_Deta-Dphi", 100, -4., 4., 100, -4., 4.);
-   hist_child_trk_Deta_Dphi_inB = new TH2F("child_trk_Deta-Dphi","child_trk_Deta-Dphi", 100, -4., 4., 100, -4., 4.);
+   hist_trk_pT_inB = new TH1F("trk_pT_400_inB", "trk_pT_400_inB", 500, 0., 150.);
+   hist_trk_Deta_inB = new TH1F("trk_Deta_400_inB","trk_Deta_400_inB",500,-1.,1.);
+   hist_trk_eta_inB = new TH1F("trk_eta_400_inB","trk_eta_400_inB",500,-2.6,2.6);
+   hist_trk_Dphi_inB = new TH1F("trk_Dphi_400_inB","trk_Dphi_400_inB",500,-1.,1.);
+   hist_trk_phi_inB = new TH1F("trk_phi_400_inB","trk_phi_400_inB",500,-4.,4.);
+   hist_trk_Deta_Dphi_inB = new TH2F("trk_Deta-Dphi_400","trk_Deta-Dphi_400", 100, -1.,1., 100, -1.,1.);
+   hist_trk_DR_inB = new TH1F("trk_DR_400_inB","trk_DR_400_inB",500,-0.1,1.);
+   hist_child_pT_inB = new TH1F("child_pT_400_inB", "child_pT_400_inB", 500, 0., 150.);
+   hist_child_Deta_inB = new TH1F("child_Deta_400_inB","child_Deta_400_inB",500,-1.,1.);
+   hist_child_eta_inB = new TH1F("child_eta_400_inB","child_eta_400_inB",500,-2.6,2.6);
+   hist_child_Dphi_inB = new TH1F("child_Dphi_400_inB","child_Dphi_400_inB",500,-1.,1.);
+   hist_child_phi_inB = new TH1F("child_phi_400_inB","child_phi_400_inB",500,-4.,4.);
+   hist_child_Deta_Dphi_inB = new TH2F("child_trk_Deta-Dphi_400","child_trk_Deta-Dphi_400", 100, -1.,1., 100, -1.,1.);
+   hist_child_DR_inB = new TH1F("child_DR_400_inB","child_DR_400_inB",500,-0.1,2.);
    hist_efficiency_inB = new TH1F("efficiency","efficiency",50,-0.1,1.1);
-   hist_matchedchild_DR_inB = new TH1F("matchedchild_DR_inB","matchedchild_DR_inB",100,-0.1,2.);
+   hist_matched_pT_inB = new TH1F("matched_pT_400_inB","matched_pT_400_inB", 500, 0., 150.);
+   hist_matched_DR_inB = new TH1F("matched_DR_400_inB","matched_DR_400_inB",500,-0.1,2.);
+   hist_matched_eta_inB = new TH1F("matched_eta_400_inB","matched_eta_400_inB",500,-2.6,2.6);
+   hist_matched_phi_inB = new TH1F("matched_phi_400_inB","matched_phi_400_inB",500,-4.,4.);
 
    hist_n_child = new TH1D("n_child","n_child",100,0.,50);
    hist_n_match = new TH1D("n_match","n_match",100,0.,50);
@@ -251,13 +267,19 @@ Bool_t selector_1::Process(Long64_t entry)
    double D_phi=0.,D_eta=0.,DR=0.;
    int match=0,max_size=0;
    float tmp_f=0.,tmp_min_f=1e6;
+   float tmp_DR=0.,tmp_min_DR=1e6;
    int a=0,b=0;
 
 
 
    if(nBjets>0){
      for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
-
+/*
+       hist_pt_inB->Fill(jet_pt[*it]*0.001);
+       hist_eta_inB->Fill(jet_eta[*it]);
+       hist_phi_inB->Fill(jet_phi[*it]);
+       hist_E_inB->Fill(jet_E[*it]);
+*/
        if(jet_ip2d_pb[*it]!=-99){
          hist_ip2d_llr_inB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
 //      if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
@@ -325,9 +347,20 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
                  jet_bH_child_pz[*it][j],
                  jet_bH_child_E[*it][j]
                );
+               D_eta=v.Eta()-jet_trk_eta[*it].at(q%size_child);
+               if(abs(v.Phi()-jet_trk_phi[*it].at(q%size_child))>M_PI){
+                 D_phi=2*M_PI-abs(v.Phi()-jet_trk_phi[*it].at(q%size_child));
+               }
+               if(abs(v.Phi()-jet_trk_phi[*it].at(q%size_child))<M_PI){
+                 D_phi=v.Phi()-jet_trk_phi[*it].at(q%size_child);
+               }
+               tmp_DR=sqrt(D_eta*D_eta+D_phi*D_phi);
                tmp_f=1e-6*(jet_trk_pt[*it][q%size_child]-v.Pt())*(jet_trk_pt[*it][q%size_child]-v.Pt());
-               if(tmp_f<=tmp_min_f && tmp_f<0.01){
+               if((tmp_f<=tmp_min_f && tmp_f<m_pTcut) || (tmp_DR<=tmp_min_DR && tmp_DR<m_DRcut)){
+//               tmp_f=1e-6*(jet_trk_pt[*it].at(q%size_child)-v.Pt())*(jet_trk_pt[*it].at(q%size_child)-v.Pt())+tmp_DR*tmp_DR;
+//               if(tmp_f<=tmp_min_f && tmp_f<m_fcut){
                  tmp_min_f=tmp_f;
+                 tmp_min_DR=tmp_DR;
                  a=q%size_jet;
                  b=j;
                }
@@ -341,12 +374,23 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
                  jet_bH_child_pz[*it][q%size_jet],
                  jet_bH_child_E[*it][q%size_jet]
                );
-              tmp_f=1e-6*(jet_trk_pt[*it][i]-v.Pt())*(jet_trk_pt[*it][i]-v.Pt());
-              if(tmp_f<=tmp_min_f && tmp_f<0.01){
-                tmp_min_f=tmp_f;
-                a=i;
-                b=q%size_child;
-              }
+               D_eta=v.Eta()-jet_trk_eta[*it].at(i);
+               if(abs(v.Phi()-jet_trk_phi[*it].at(i))>M_PI){
+                 D_phi=2*M_PI-abs(v.Phi()-jet_trk_phi[*it].at(i));
+               }
+               if(abs(v.Phi()-jet_trk_phi[*it].at(i))<M_PI){
+                 D_phi=v.Phi()-jet_trk_phi[*it].at(i);
+               }
+               tmp_DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+               tmp_f=1e-6*(jet_trk_pt[*it].at(i)-v.Pt())*(jet_trk_pt[*it].at(i)-v.Pt());
+               if((tmp_f<=tmp_min_f && tmp_f<m_pTcut) || (tmp_DR<=tmp_min_DR && tmp_DR<m_DRcut)){
+//               tmp_f=1e-6*(jet_trk_pt[*it][i]-v.Pt())*(jet_trk_pt[*it][i]-v.Pt())+tmp_DR*tmp_DR;
+//               if(tmp_f<=tmp_min_f && tmp_f<m_fcut){
+                 tmp_min_f=tmp_f;
+                 tmp_min_DR=tmp_DR;
+                 a=i;
+                 b=q%size_child;
+               }
             }
           }
 
@@ -367,7 +411,10 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
             }
             DR=sqrt(D_eta*D_eta+D_phi*D_phi);
 //            std::cout<<DR<<"\tevent:\t"<<m_Ntot<<"\tn of child:\t"<<b<<"/"<<size_child<<"\n";
-            hist_matchedchild_DR_inB->Fill(DR);
+            hist_matched_DR_inB->Fill(DR);
+            hist_matched_pT_inB->Fill(1e-3*v.Pt());
+            hist_matched_eta_inB->Fill(v.Eta());
+            hist_matched_phi_inB->Fill(v.Phi());
           }
 
 //std::cout<<"\n"<<"q="<<q<<"\t(a,b)=("<<a+1<<","<<b+1<<")"<<"\n";
@@ -416,23 +463,35 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
              D_phi=v.Phi()-jet_phi[*it];
              hist_child_Dphi_inB->Fill(D_phi);
            }
+           hist_child_Deta_Dphi_inB->Fill(D_phi,D_eta);
            DR=sqrt(D_eta*D_eta+D_phi*D_phi);
            hist_child_DR_inB->Fill(DR);
-           hist_child_trk_Deta_Dphi_inB->Fill(D_phi,D_eta);
+           hist_child_pT_inB->Fill(1e-3*v.Pt());
+           hist_child_eta_inB->Fill(v.Eta());
+           hist_child_phi_inB->Fill(v.Phi());
           }
         }
+
         for(int i=0;i<size_jet;i++){
-         if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])>M_PI){
-           D_phi=2*M_PI-abs(jet_trk_phi[*it].at(i)-jet_phi[*it]);
-         }
-         if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])<M_PI){
-           D_phi=jet_trk_phi[*it].at(i)-jet_phi[*it];
-         }
-         D_eta=jet_trk_eta[*it].at(i)-jet_eta[*it];
-         hist_trk_Deta_Dphi_inB->Fill(D_phi,D_eta);
-         DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-         hist_trk_DR_inB->Fill(DR);
-       }
+          if(abs(jet_trk_eta[*it].at(i))<2.5 && jet_trk_pt[*it].at(i)>400.){
+            D_eta=jet_trk_eta[*it][i]-jet_eta[*it];
+            hist_trk_Deta_inB->Fill(D_eta);
+            if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])>M_PI){
+              D_phi=2*M_PI-abs(jet_trk_phi[*it].at(i)-jet_phi[*it]);
+              hist_trk_Dphi_inB->Fill(D_phi);
+            }
+            if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])<M_PI){
+              D_phi=jet_trk_phi[*it].at(i)-jet_phi[*it];
+              hist_trk_Dphi_inB->Fill(D_phi);
+            }
+            hist_trk_Deta_Dphi_inB->Fill(D_phi,D_eta);
+            DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+            hist_trk_DR_inB->Fill(DR);
+            hist_trk_pT_inB->Fill(1e-3*jet_trk_pt[*it].at(i));
+            hist_trk_eta_inB->Fill(jet_trk_eta[*it].at(i));
+            hist_trk_phi_inB->Fill(jet_trk_phi[*it].at(i));
+          }
+        }
 
      }
    }
@@ -458,11 +517,11 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
     }
 
   if(nBjets>0 && nCjets==0){
-/*
-       std::cout<<"\nevent #: "<<m_Ntot<<"\n";
+
+//       std::cout<<"\nevent #: "<<m_Ntot<<"\n";
 
     for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
-
+/*
       std::cout<<"Jet #: "<<*it<<"\t# of b jets: "<<jet_bH_pdgId[*it].size()<<"\t# of c jets: "<<jet_cH_pdgId[*it].size()<<"\n";
 //       std::cout<<jet_bH_nBtracks[*it].size()<<"\n"; //1 (98%), 2 or 3.
     for(int i=0;i<jet_bH_pdgId[*it].size();i++){
@@ -774,7 +833,12 @@ void selector_1::Terminate()
     hist_eta_2->Write();
     hist_phi_2->Write();
     hist_E_2->Write();
-
+/*
+    hist_pt_inB->Write();
+    hist_eta_inB->Write();
+    hist_phi_inB->Write();
+    hist_E_inB->Write();
+*/
     hist_ip2d_pb->Write();
     hist_ip2d_pc->Write();
     hist_ip2d_pu->Write();
@@ -827,14 +891,26 @@ void selector_1::Terminate()
     hist_dl1_inB->Write();
     hist_dl1_exC->Write();
     hist_dl1_exB->Write();
-    hist_trk_DR_inB->Write();
-    hist_child_DR_inB->Write();
-    hist_child_Dphi_inB->Write();
-    hist_child_Deta_inB->Write();
+    hist_trk_pT_inB->Write();
+    hist_trk_Deta_inB->Write();
+    hist_trk_eta_inB->Write();
+    hist_trk_Dphi_inB->Write();
+    hist_trk_phi_inB->Write();
     hist_trk_Deta_Dphi_inB->Write();
-    hist_child_trk_Deta_Dphi_inB->Write();
+    hist_trk_DR_inB->Write();
+    hist_child_pT_inB->Write();
+    hist_child_Deta_inB->Write();
+    hist_child_eta_inB->Write();
+    hist_child_Dphi_inB->Write();
+    hist_child_phi_inB->Write();
+    hist_child_Deta_Dphi_inB->Write();
+    hist_child_DR_inB->Write();
+
     hist_efficiency_inB->Write();
-    hist_matchedchild_DR_inB->Write();
+    hist_matched_pT_inB->Write();
+    hist_matched_DR_inB->Write();
+    hist_matched_eta_inB->Write();
+    hist_matched_phi_inB->Write();
 
 /*
     hist_pt_2b->Write();
