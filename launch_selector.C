@@ -10,5 +10,5 @@ void launch_selector()
   if(list)  {list_files(f);}
 
   f->Process("selector_1.C");
-//  f->Process("selector_1.C","",10,1); //for developing
+//  f->Process("selector_1.C","",100,1); //for developing
 }

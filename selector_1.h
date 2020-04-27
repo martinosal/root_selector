@@ -372,8 +372,14 @@ public :
 
 private:
 
-   double m_cut=1.,m_fc=0.08,m_pTcut=0.1,m_DRcut=0.01,m_fcut=0.1;
-   int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0;
+   double m_cut=1.,m_fc=0.08;
+   int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_match=0;
+   int m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0;
+   double D_phi=0.,D_eta=0.,DR=0.;
+   int match=0,max_size=0;
+   double tmp_DpT=0.,tmp_min_DpT=1.,m_pTcut=1.,tmp_DR=0.,tmp_min_DR=0.5,m_DRcut=0.1;
+   int size_jet=0,size_child=0;
+
 //   int m_track_cut=10;
 /*
    float pt_max=500., pt_min=0.;
@@ -450,11 +456,16 @@ private:
    TH1F *hist_child_phi_inB;
    TH2F *hist_child_Deta_Dphi_inB;
    TH1F *hist_child_DR_inB;
+   TH2F *hist_child_pT_DR_inB;
    TH1F *hist_efficiency_inB;
    TH1F *hist_matched_pT_inB;
    TH1F *hist_matched_DR_inB;
+   TH2F *hist_matched_pT_DR_inB;
    TH1F *hist_matched_eta_inB;
    TH1F *hist_matched_phi_inB;
+   TH1F *hist_single_matched_pT_inB;
+   TH1F *hist_single_matched_DR_inB;
+   TH2F *hist_single_matched_pT_DR_inB;
 
    TH1D *hist_n_child;
    TH1D *hist_n_match;
