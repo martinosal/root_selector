@@ -117,6 +117,7 @@ void selector_1::Begin(TTree * /*tree*/)
    hist_single_matched_pT_inB = new TH1F("single_matched_pT_400_inB","single_matched_pT_400_inB", 500, 0., 150.);
    hist_single_matched_DR_inB = new TH1F("single_matched_DR_400_inB","single_matched_DR_400_inB",500,-0.1,2.);
    hist_single_matched_pT_DR_inB = new TH2F("single_matched_pT_DR_400_inB","single_matched_pT_DR_400_inB",80,0.,150.,80,0.,0.6);
+   hist_single_matched_pTfraction_inB = new TH1F("single_matched_pTfraction_inB","single_matched_pTfraction_inB", 500, 0., 10.);
 
    hist_n_child = new TH1D("n_child","n_child",100,0.,50);
    hist_n_match = new TH1D("n_match","n_match",100,0.,50);
@@ -302,7 +303,14 @@ Bool_t selector_1::Process(Long64_t entry)
 
 //         int b=(jet_bH_pdgId[*it][i]/100)%10;
        size_jet=jet_trk_pt[*it].size();
+
+       if(size_jet!=jet_trk_eta[*it].size() || size_jet!=jet_trk_phi[*it].size()){
+         std::cout<<"W\n";
+       }
        size_child=jet_bH_child_px[*it].size();
+       if(size_child!=jet_bH_child_py[*it].size() || size_child!=jet_bH_child_pz[*it].size() || size_child!=jet_bH_child_E[*it].size()){
+         std::cout<<"W\n";
+       }
 
        if(size_jet!=0 && size_child!=0){
 
@@ -311,32 +319,43 @@ Bool_t selector_1::Process(Long64_t entry)
 //            std::cout<<size_jet<<"\t"<<size_child<<"\n";
 
          hist_n_child->Fill(size_child);
-         double child_Pt[size_child],child_Eta[size_child],child_Phi[size_child];
+//         double child_Pt[size_child],child_Eta[size_child],child_Phi[size_child];
+         std::vector<double> child_Pt,child_Eta,child_Phi;
 
          int bool_matrix[size_jet][size_child];
-         for(int k=0;k<size_child;k++){
-           for(int l=0;l<size_jet;l++)
+         for(unsigned l=0;l<size_jet;l++){
+           for(unsigned k=0;k<size_child;k++){
               bool_matrix[l][k]=0;
            }
-
-         for(int j=0;j<size_child;j++){
+         }
+         den=0;
+         for(unsigned j=0;j<size_child;j++){
            TLorentzVector v(
              jet_bH_child_px[*it].at(j),
              jet_bH_child_py[*it].at(j),
              jet_bH_child_pz[*it].at(j),
              jet_bH_child_E[*it].at(j)
            );
-           child_Pt[j]=v.Pt();
-           child_Eta[j]=v.Eta();
-           child_Phi[j]=v.Phi();
-           for(int i=0;i<size_jet;i++){
-               if(abs(child_Eta[j])<2.5 && child_Pt[j]>400.){
-                 if(jet_trk_parent_pdgid[*it].at(i)==jet_bH_child_parent_pdg_id[*it].at(j) && jet_trk_pdg_id[*it].at(i)==jet_bH_child_pdg_id[*it].at(j)){
-                   bool_matrix[i][j]=1;
-                 }
+//           child_Pt[j]=v.Pt();
+//           child_Eta[j]=v.Eta();
+//           child_Phi[j]=v.Phi();
+           child_Pt.push_back(v.Pt());
+           child_Eta.push_back(v.Eta());
+           child_Phi.push_back(v.Phi());
+           if(abs(child_Eta[j])<2.5 && child_Pt[j]>400.){
+             den++;
+             for(unsigned i=0;i<size_jet;i++){
+               if(jet_trk_parent_pdgid[*it].at(i)==jet_bH_child_parent_pdg_id[*it].at(j) && jet_trk_pdg_id[*it].at(i)==jet_bH_child_pdg_id[*it].at(j)){
+                 bool_matrix[i][j]=1;
                }
+             }
            }
          }
+         if(child_Pt.size()!=size_child || child_Eta.size()!=size_child || child_Phi.size()!=size_child){
+           std::cout<<"W\n";
+         }
+
+
 
 /*
 std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m_Ntot;
@@ -349,9 +368,12 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
          std::cout<<"\n";*/
 
            for(q=0;q<max_size;q++){
-             m_qc=q%size_child;
-             m_qj=q%size_jet;
-//            std::cout<<q<<"\t"<<size_child<<"\t"<<size_jet<<"\t"<<m_qc<<"\t"<<m_qj<<"\n";
+             m_qc=(int) q%size_child;
+             m_qj=(int) q%size_jet;
+
+             if(m_qc>=size_child || m_qj>=size_jet){
+               std::cout<<m_Ntot<<"\t"<<q<<"\t"<<size_jet<<","<<m_qj<<"\t"<<size_child<<","<<m_qc<<"\n";
+             }
 
              sc=0;
              tmp_min_DpT=m_pTcut;
@@ -360,17 +382,18 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
 
              for(int j=0;j<size_child;j++){
                if(bool_matrix[m_qc][j]==1){
+//                 std::cout<<"row\n";
                  sc=sc+1;
 
-                 D_eta=child_Eta[j]-jet_trk_eta[*it].at(m_qc);
-                 if(abs(child_Phi[j]-jet_trk_phi[*it].at(m_qc))>M_PI){
-                   D_phi=2*M_PI-abs(child_Phi[j]-jet_trk_phi[*it].at(m_qc));
+                 D_eta=child_Eta.at(j)-jet_trk_eta[*it].at(m_qj);
+                 if(abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj))>M_PI){
+                   D_phi=2*M_PI-abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj));
                  }
-                 if(abs(child_Phi[j]-jet_trk_phi[*it].at(m_qc))<M_PI){
-                   D_phi=child_Phi[j]-jet_trk_phi[*it].at(m_qc);
+                 if(abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj))<M_PI){
+                   D_phi=child_Phi.at(j)-jet_trk_phi[*it].at(m_qj);
                  }
                  tmp_DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-                 tmp_DpT=1e-3*(jet_trk_pt[*it].at(m_qc)-child_Pt[j]);
+                 tmp_DpT=1e-3*abs(jet_trk_pt[*it].at(m_qj)-child_Pt.at(j));
 
                  if((tmp_DpT<=tmp_min_DpT) && (tmp_DR<=tmp_min_DR)){
 //               tmp_f=1e-6*(jet_trk_pt[*it].at(q%size_child)-v.Pt())*(jet_trk_pt[*it].at(q%size_child)-v.Pt())+tmp_DR*tmp_DR;
@@ -384,17 +407,18 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
              }
              for(int i=0;i<size_jet;i++){
                if(bool_matrix[i][m_qj]==1){
+//                 std::cout<<"col\n";
                  sc=sc+1;
 
-                 D_eta=child_Eta[m_qj]-jet_trk_eta[*it].at(i);
-                 if(abs(child_Phi[m_qj]-jet_trk_phi[*it].at(i))>M_PI){
-                   D_phi=2*M_PI-abs(child_Phi[m_qj]-jet_trk_phi[*it].at(i));
+                 D_eta=child_Eta.at(m_qc)-jet_trk_eta[*it].at(i);
+                 if(abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i))>M_PI){
+                   D_phi=2*M_PI-abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i));
                  }
-                 if(abs(child_Phi[m_qj]-jet_trk_phi[*it].at(i))<M_PI){
-                   D_phi=child_Phi[m_qj]-jet_trk_phi[*it].at(i);
+                 if(abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i))<M_PI){
+                   D_phi=child_Phi.at(m_qc)-jet_trk_phi[*it].at(i);
                  }
                  tmp_DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-                 tmp_DpT=1e-3*(jet_trk_pt[*it].at(i)-child_Pt[m_qj]);
+                 tmp_DpT=1e-3*abs(jet_trk_pt[*it].at(i)-child_Pt.at(m_qc));
 
                  if((tmp_DpT<=tmp_min_DpT) && (tmp_DR<=tmp_min_DR)){
 //               tmp_f=1e-6*(jet_trk_pt[*it][i]-v.Pt())*(jet_trk_pt[*it][i]-v.Pt())+tmp_DR*tmp_DR;
@@ -406,10 +430,16 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
                  }
                }
              }
-
+/*
+             if(a==-2 && b==-2 && sc>0){
+               std::cout<<m_Ntot<<"\t"<<tmp_DpT<<"\t"<<tmp_DR<<"\n";
+//               den--;
+             }
+*/
              if(a!=-2 && b!=-2){
                match++;
 
+               DpT=1e-3*abs(child_Pt[b]-jet_trk_pt[*it][a]);
                D_eta=child_Eta[b]-jet_eta[*it];
                if(abs(child_Phi[b]-jet_phi[*it])>M_PI){
                  D_phi=2*M_PI-abs(child_Phi[b]-jet_phi[*it]);
@@ -428,6 +458,13 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
                  hist_single_matched_DR_inB->Fill(DR);
                  hist_single_matched_pT_inB->Fill(1e-3*child_Pt[b]);
                  hist_single_matched_pT_DR_inB->Fill(1e-3*child_Pt[b],DR);
+                 hist_single_matched_pTfraction_inB->Fill(DpT/(1e-3*child_Pt[b]));
+               }
+               if(sc==2){
+                 m_sc2++;
+               }
+               if(sc==3){
+                 m_sc3++;
                }
              }
 
@@ -450,10 +487,11 @@ std::cout<<"ELIMINATION STARTS:\n";
          std::cout<<"\n";*/
            }
 
-//std::cout<<"event:\t"<<m_Ntot<< "\tn of matched tracks:\t"<< match << "\tn of child tracks(denominator):\t" << size_child << "\tratio:\t" <<(float) match/size_child<<"\t";
+//std::cout<<"event:\t"<<m_Ntot<< "\tn of matched tracks:\t"<< match << "\tn of child tracks(denominator):\t" << den << "\tratio:\t" <<(float) match/den<<"\t";
            m_match+=match;
+           m_den+=den;
            hist_n_match->Fill(match);
-           hist_efficiency_inB->Fill((float) match/size_child);
+           hist_efficiency_inB->Fill((float) match/den);
            match=0;
 
 
@@ -935,6 +973,7 @@ void selector_1::Terminate()
     hist_single_matched_pT_inB->Write();
     hist_single_matched_DR_inB->Write();
     hist_single_matched_pT_DR_inB->Write();
+    hist_single_matched_pTfraction_inB->Write();
 /*
     hist_pt_2b->Write();
     hist_eta_2b->Write();
@@ -1040,11 +1079,16 @@ void selector_1::Terminate()
     file->Close();
 
     std::cout<< std::fixed << std::setprecision(5) << "\n";
-    std::cout<< "single matches:\t" << m_sc <<"\t"<< m_match<<"\t"<<(float) m_sc/m_match << "\n";
+    std::cout<< "number of childs_400:\t" << m_den << "\n";
+    std::cout<< "matches:\t\t"<< m_match <<"\n";
+    std::cout<< "average efficiency:\t" << (float) m_match/m_den << "\n";
+    std::cout<< "single matches:\t" << m_sc <<"\tfraction:\t"<<(float) m_sc/m_match << "\n";
+    std::cout<< "double matches:\t" << m_sc2 <<"\tfraction:\t"<<(float) m_sc2/m_match << "\n";
+    std::cout<< "triple matches:\t" << m_sc3 <<"\tfraction:\t"<<(float) m_sc3/m_match << "\n";
     std::cout<< "fraction of events with one single b:\t" << (double) m_b/m_Ntot << "\n";
-    std::cout<< "fraction of events with two single b's:\t" << (double) m_bb/m_Ntot << "\n";
-    std::cout<< "fraction of events without b:\t" << (double) m_noB/m_Ntot << "\n";
+    std::cout<< "fraction of events with two single b:\t" << (double) m_bb/m_Ntot << "\n";
+    std::cout<< "fraction of events without b:\t\t" << (double) m_noB/m_Ntot << "\n";
     std::cout<< "total b-c overlap:\t" << (double) m_bc_overlap/m_nbjets << "\n";
-    std::cout<< "Score ip2d with cut=" << m_cut << "\t" <<(double) m_b2d/m_N << "\n";
-    std::cout<< "Score ip3d with cut=" << m_cut << "\t" <<(double) m_b3d/m_N << "\n";
+//    std::cout<< "Score ip2d with cut=" << m_cut << "\t" <<(double) m_b2d/m_N << "\n";
+//    std::cout<< "Score ip3d with cut=" << m_cut << "\t" <<(double) m_b3d/m_N << "\n";
 }
