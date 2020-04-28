@@ -370,18 +370,18 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
            for(q=0;q<max_size;q++){
              m_qc=(int) q%size_child;
              m_qj=(int) q%size_jet;
-
+/*
              if(m_qc>=size_child || m_qj>=size_jet){
                std::cout<<m_Ntot<<"\t"<<q<<"\t"<<size_jet<<","<<m_qj<<"\t"<<size_child<<","<<m_qc<<"\n";
              }
-
+*/
              sc=0;
              tmp_min_DpT=m_pTcut;
              tmp_min_DR=m_DRcut;
              a=-2;b=-2;
 
              for(int j=0;j<size_child;j++){
-               if(bool_matrix[m_qc][j]==1){
+               if(bool_matrix[m_qj][j]==1){
 //                 std::cout<<"row\n";
                  sc=sc+1;
 
@@ -406,7 +406,7 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
                }
              }
              for(int i=0;i<size_jet;i++){
-               if(bool_matrix[i][m_qj]==1){
+               if(bool_matrix[i][m_qc]==1){
 //                 std::cout<<"col\n";
                  sc=sc+1;
 
@@ -430,12 +430,12 @@ std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m
                  }
                }
              }
-/*
+
              if(a==-2 && b==-2 && sc>0){
                std::cout<<m_Ntot<<"\t"<<tmp_DpT<<"\t"<<tmp_DR<<"\n";
 //               den--;
              }
-*/
+
              if(a!=-2 && b!=-2){
                match++;
 
