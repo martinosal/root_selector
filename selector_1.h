@@ -373,9 +373,10 @@ public :
 private:
 
    double m_cut=1.,m_fc=0.08;
-   int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0;
+   int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0;
    int m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0;
-   double D_phi=0.,D_eta=0.,DR=0.,DpT=0.;
+   double D_phi=0.,D_eta=0.,DR=0.;
+   double D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
    int match=0,max_size=0;
    double tmp_DpT=0.,tmp_DR=0.,tmp_min_DpT=1.,tmp_min_DR=1.,m_pTcut=1e6,m_DRcut=1e6;
    int size_jet=0,size_child=0,den=0,m_den=0;
@@ -442,6 +443,7 @@ private:
    TH1F *hist_dl1_inB;
    TH1F *hist_dl1_exC;
    TH1F *hist_dl1_exB;
+
    TH1F *hist_trk_pT_inB;
    TH1F *hist_trk_Deta_inB;
    TH1F *hist_trk_eta_inB;
@@ -449,6 +451,8 @@ private:
    TH1F *hist_trk_phi_inB;
    TH2F *hist_trk_Deta_Dphi_inB;
    TH1F *hist_trk_DR_inB;
+   TH2F *hist_trk_pT_DR_inB;
+
    TH1F *hist_child_pT_inB;
    TH1F *hist_child_Deta_inB;
    TH1F *hist_child_eta_inB;
@@ -457,19 +461,43 @@ private:
    TH2F *hist_child_Deta_Dphi_inB;
    TH1F *hist_child_DR_inB;
    TH2F *hist_child_pT_DR_inB;
+
    TH1F *hist_efficiency_inB;
+   TH1D *hist_n_child;
+   TH1D *hist_n_trk;
+   TH1D *hist_n_match;
+
    TH1F *hist_matched_pT_inB;
-   TH1F *hist_matched_DR_inB;
-   TH2F *hist_matched_pT_DR_inB;
    TH1F *hist_matched_eta_inB;
    TH1F *hist_matched_phi_inB;
+   TH1F *hist_matched_Deta_inB;
+   TH1F *hist_matched_Dphi_inB;
+   TH2F *hist_matched_Deta_Dphi_inB;
+   TH1F *hist_matched_DR_inB;
+   TH2F *hist_matched_pT_DR_inB;
+   TH1F *hist_matched_pTfraction_inB;
+   TH1F *hist_matched_DRfraction_inB;
+
+   TH1F *hist_nomatched_pT_inB;
+   TH1F *hist_nomatched_eta_inB;
+   TH1F *hist_nomatched_phi_inB;
+   TH1F *hist_nomatched_Deta_inB;
+   TH1F *hist_nomatched_Dphi_inB;
+   TH2F *hist_nomatched_Deta_Dphi_inB;
+   TH1F *hist_nomatched_DR_inB;
+   TH2F *hist_nomatched_pT_DR_inB;
+
    TH1F *hist_single_matched_pT_inB;
+   TH1F *hist_single_matched_eta_inB;
+   TH1F *hist_single_matched_phi_inB;
+   TH1F *hist_single_matched_Deta_inB;
+   TH1F *hist_single_matched_Dphi_inB;
+   TH2F *hist_single_matched_Deta_Dphi_inB;
    TH1F *hist_single_matched_DR_inB;
    TH2F *hist_single_matched_pT_DR_inB;
    TH1F *hist_single_matched_pTfraction_inB;
+   TH1F *hist_single_matched_DRfraction_inB;
 
-   TH1D *hist_n_child;
-   TH1D *hist_n_match;
 /*
    TH1F *hist_pt_2b;
    TH1F *hist_eta_2b;
