@@ -1,0 +1,11 @@
+number of childs_400:   804481
+matches:                653602
+no matches:             150879
+average efficiency:     0.81245
+single matches: 366818  fraction:       0.56123
+double matches: 241245  fraction:       0.36910
+triple matches: 32156   fraction:       0.04920
+fraction of events with one single b:   0.15676
+fraction of events with two single b:   0.79981
+fraction of events without b:           0.00726
+total b-c overlap:      0.97568 
