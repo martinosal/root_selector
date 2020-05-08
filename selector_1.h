@@ -378,7 +378,7 @@ private:
    double D_phi=0.,D_eta=0.,DR=0.,Dx=0.,Dy=0.,Dz=0.,Dxy=0.;
    double D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
    int match=0,max_size=0;
-   double tmp_DpT=0.,tmp_DR=0.,tmp_min_DpT=1.,tmp_min_DR=1.,DpT_cut=1.,m_pTcut=1.,m_DRcut=0.1,m_pTnocut=1e6,m_DRnocut=1e6;
+   double tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.,m_pTfraction_cut=1.,m_DRcut=0.1,m_pTfraction_nocut=1e6,m_DRnocut=1e6;
    int size_jet=0,size_child=0,den=0,m_den=0;
 
 //   int m_track_cut=10;
@@ -478,7 +478,8 @@ private:
    TH1F *hist_matched_DR_inB;
    TH2F *hist_matched_pT_DR_inB;
    TH2F *hist_matched_pT_jet_DR_inB;
-   TH1F *hist_matched_pTfraction_inB;
+   TH1F *hist_matched_pdgId_inB;
+   TH2F *hist_matched_pT_child_pTfraction_inB;
    TH1F *hist_matched_DR_trk_inB;
    TH2F *hist_matched_DR_trk_pTfraction;
 
@@ -491,6 +492,7 @@ private:
    TH1F *hist_nomatched_DR_inB;
    TH2F *hist_nomatched_pT_DR_inB;
    TH2F *hist_nomatched_pT_jet_DR_inB;
+   TH1F *hist_nomatched_pdgId_inB;
 
    TH1F *hist_single_matched_pT_inB;
    TH1F *hist_single_matched_eta_inB;
@@ -501,7 +503,8 @@ private:
    TH1F *hist_single_matched_DR_inB;
    TH2F *hist_single_matched_pT_DR_inB;
    TH2F *hist_single_matched_pT_jet_DR_inB;
-   TH1F *hist_single_matched_pTfraction_inB;
+   TH1F *hist_single_matched_pdgId_inB;
+   TH2F *hist_single_matched_pT_child_pTfraction_inB;
    TH1F *hist_single_matched_DR_trk_inB;
    TH2F *hist_single_matched_DR_trk_pTfraction;
 
