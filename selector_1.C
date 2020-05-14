@@ -187,11 +187,12 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_child_DR_inB = new TH1F("child_DR_400_inB","child_DR_400_inB",500,-0.1,2.);
      hist_child_pT_DR_inB = new TH2F("child_pT_DR_400_inB","child_pT_DR_400_inB",80,0.,150.,80,0.,0.6);
      hist_child_pT_jet_DR_inB = new TH2F("child_pT_jet_DR_400_inB","child_pT_jet_DR_400_inB",100,0.,500.,100,0.,2.);
-     hist_child_Lxyz_inB = new TH1F("child_400_Lxy_inB","child_400_Lxy_inB",300,0.,1000.);
+     hist_child_Lxy_inB = new TH1F("child_400_Lxy_inB","child_400_Lxy_inB",300,0.,1000.);
+     hist_child_Lxyz_inB = new TH1F("child_400_Lxyz_inB","child_400_Lxyz_inB",300,0.,1000.);
      hist_child_decay_IP = new TH1F("child_400_decay_IP_inB","child_400_decay_IP_inB",300,-15.,15.);
      hist_child_nodecay_IP = new TH1F("child_400_nodecay_IP_inB","child_400_nodecay_IP_inB",300,-15.,15.);
+     hist_child_linear_IP = new TH1F("child_400_linear_IP_inB","child_400_linear_IP_inB",300,-15.,15.);
      hist_pT_vs_R0_ratio_inB = new TH1F("child_pT_vs_R0_ratio_inB","child_pT_vs_R0_ratio_inB",300,-1.2,2.4);
-//     hist_child_linearIP = new TH1F("child_400_linearIP_inB","child_400_linearIP_inB",300,-15.,1500.);
 
      hist_matched_pT_inB = new TH1F("matched_child_pT_400_inB","matched_child_pT_400_inB", 500, 0., 150.);
      hist_matched_eta_inB = new TH1F("matched_child_eta_400_inB","matched_child_eta_400_inB",500,-2.6,2.6);
@@ -207,6 +208,9 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_matched_pT_child_pTfraction_inB = new TH2F("matched_pT_child_pTfraction_400_inB","matched_pT_child_vs_DpT/pT_child_400_inB",500,0.,150.,500,-1.1,10.);
      hist_matched_DR_trk_inB = new TH1F("matched_DR_trk_400_inB","matched_DR_trk_inB_400_inB",500,0.,1.);
      hist_matched_DR_trk_pTfraction = new TH2F("matched_DR_trk_pTfraction_400_inB","matched_DR_trk_pTfraction_400_inB",500,0.,1.,500,-1.,10.);
+     hist_matched_IP_inB = new TH1F("matched_child_400_IP_inB","matched_child_400_IP_inB",300,-15.,15.);
+     hist_matched_Lxy_inB = new TH1F("matched_child_400_Lxy_inB","matched_child_400_Lxy_inB",300,0.,1000.);
+     hist_matched_Lxyz_inB = new TH1F("matched_child_400_Lxyz_inB","matched_child_400_Lxyz_inB",300,0.,1000.);
 
      hist_nomatched_pT_inB = new TH1F("nomatched_child_pT_400_inB", "nomatched_child_pT_400_inB", 500, 0., 150.);
      hist_nomatched_eta_inB = new TH1F("nomatched_child_eta_400_inB","nomatched_child_eta_400_inB",500,-2.6,2.6);
@@ -671,8 +675,10 @@ Bool_t selector_1::Process(Long64_t entry)
              }
            }
 
-           std::vector<double> child_Pt,child_Eta,child_Phi,child_Lxy,child_Lz;
+           std::vector<double> child_Pt,child_Eta,child_Phi;
            std::vector<int> child_idx;
+
+           double child_IP[size_child],child_Lxy[size_child],child_Lxyz[size_child];
 
            int bool_matrix[size_jet][size_child];
            for(unsigned l=0;l<size_jet;l++){
@@ -692,6 +698,7 @@ Bool_t selector_1::Process(Long64_t entry)
              child_Pt.push_back(v.Pt());
              child_Eta.push_back(v.Eta());
              child_Phi.push_back(v.Phi());
+
              if(abs(child_Eta.at(j))<2.5 && child_Pt.at(j)>400.){//CHILD SELECTION CRITERIA
                if(jet_bH_child_prod_x[*it].size()!=size_child || jet_bH_child_decay_x[*it].size()!=size_child){
                  std::cout<<"WARNING\n";
@@ -704,18 +711,19 @@ Bool_t selector_1::Process(Long64_t entry)
                Dy_1=(*PVx)-jet_bH_child_prod_y[*it].at(j);
                Dz_1=(*PVx)-jet_bH_child_prod_z[*it].at(j);
                Dxy_1=sqrt(Dx_1*Dx_1+Dy_1*Dy_1);
-               child_Lxy.push_back(Dxy_1);
-               child_Lz.push_back(Dz_1);
+               hist_child_Lxy_inB->Fill(sqrt(Dxy_1*Dxy_1));
                hist_child_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
-
+               child_Lxy[j]=Dxy_1;
+               child_Lxyz[j]=sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1);
                px=jet_bH_child_px[*it].at(j);
                py=jet_bH_child_py[*it].at(j);
 
-               if(jet_bH_child_decay_x[*it].at(j)==-999){//NO CHILD DECAY
+               if(jet_bH_child_decay_x[*it].at(j)==-999){//NO DECAY CHILD
+
                  TRandom3 *rand = new TRandom3(0);
                  rand_n=rand->Gaus(0.59,0.05943);
 //                 std::cout<<rand_n<<"\n";
-                 R0=child_Pt.at(j)/rand_n;//mm
+                 R0=abs(child_Pt.at(j)/rand_n);//mm
                  if(jet_bH_child_charge[*it].at(j)>0){
                    sgn=-1;
                  }
@@ -728,12 +736,12 @@ Bool_t selector_1::Process(Long64_t entry)
                  Dy_3=(*PVy)-y0;
                  Dxy_3=sqrt((Dx_3*Dx_3)+(Dy_3*Dy_3));
 
-                 d0=Dxy_3-abs(R0);
-                 //                 std::cout<<d0<<"\n";
+                 d0=Dxy_3-R0;
                  hist_child_nodecay_IP->Fill(d0);
+
                }
 
-               if(jet_bH_child_decay_x[*it].at(j)!=-999){//CHILD DECAY
+               if(jet_bH_child_decay_x[*it].at(j)!=-999){//DECAY CHILD
 //                 std::cout<<jet_bH_child_decay_x[*it].at(j)<<"\n";
                  Dx_2=jet_bH_child_decay_x[*it].at(j)-jet_bH_child_prod_x[*it].at(j);//x_DV - x_SV
                  Dy_2=jet_bH_child_decay_y[*it].at(j)-jet_bH_child_prod_y[*it].at(j);
@@ -755,11 +763,11 @@ Bool_t selector_1::Process(Long64_t entry)
                  hist_child_decay_IP->Fill(d0);
                  hist_pT_vs_R0_ratio_inB->Fill(child_Pt.at(j)/R0);
 //                 std::cout<<jet_bH_child_charge[*it].at(j)<<"\t"<<d0*jet_bH_child_charge[*it].at(j)/abs(d0*jet_bH_child_charge[*it].at(j))<<"\n";
-//                 nx=Dx_1/Dxy;
-//                 ny=Dy_1/Dxy;
-//                 d0=sqrt( (Dx_2-nx*(nx*Dx_2+ny*Dy_2))*(Dx_2-nx*(nx*Dx_2+ny*Dy_2))+(Dy_2-ny*(nx*Dx_2+ny*Dy_2))*(Dy_2-ny*(nx*Dx_2+ny*Dy_2)) );
-//                 hist_child_linearIP->Fill(d0);
                }
+
+               hist_child_linear_IP->Fill((px*(-Dy_1)-py*(-Dx_1))/sqrt(px*px+py*py));
+
+               child_IP[j]=d0;
 
                D_eta=child_Eta[j]-jet_eta[*it];
                if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
@@ -785,6 +793,7 @@ Bool_t selector_1::Process(Long64_t entry)
                    bool_matrix[i][j]=1;
                  }
                }
+
              }
            }
            if(child_Pt.size()!=size_child || child_Eta.size()!=size_child || child_Phi.size()!=size_child){
@@ -908,6 +917,9 @@ Bool_t selector_1::Process(Long64_t entry)
                hist_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
                hist_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
                hist_matched_origin_inB->Fill(jet_trk_orig[*it].at(a));
+               hist_matched_IP_inB->Fill(child_IP[b]);
+               hist_matched_Lxy_inB->Fill(child_Lxy[b]);
+               hist_matched_Lxyz_inB->Fill(child_Lxyz[b]);
 
                //CINEMATICA RISPETTO ALLA TRACCIA
                DpT_trk=1e-3*(child_Pt.at(b)-jet_trk_pt[*it].at(a));
@@ -1237,9 +1249,11 @@ void selector_1::Terminate()
       hist_child_DR_inB->Write();
       hist_child_pT_DR_inB->Write();
       hist_child_pT_jet_DR_inB->Write();
+      hist_child_Lxy_inB->Write();
       hist_child_Lxyz_inB->Write();
       hist_child_decay_IP->Write();
       hist_child_nodecay_IP->Write();
+      hist_child_linear_IP->Write();
       hist_pT_vs_R0_ratio_inB->Write();
 //      hist_child_linearIP->Write();
 
@@ -1262,6 +1276,9 @@ void selector_1::Terminate()
       hist_matched_pT_child_pTfraction_inB->Write();
       hist_matched_DR_trk_inB->Write();
       hist_matched_DR_trk_pTfraction->Write();
+      hist_matched_IP_inB->Write();
+      hist_matched_Lxy_inB->Write();
+      hist_matched_Lxyz_inB->Write();
 
       hist_nomatched_pT_inB->Write();
       hist_nomatched_eta_inB->Write();

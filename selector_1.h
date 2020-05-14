@@ -381,7 +381,7 @@ public :
 
 private:
 
-   bool selections=1,discriminants=0,shrinking_cone=0,selection_alg=1,cut=1,retagT=0,lxplus=0,debug=1;
+   bool selections=1,discriminants=0,shrinking_cone=0,selection_alg=1,cut=0,retagT=0,lxplus=0,debug=1;
 
    double m_cut=1.,m_fc=0.08;
    int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_truth_match=0,m_truth_tot=0;
@@ -493,9 +493,11 @@ private:
    TH1F *hist_child_DR_inB;
    TH2F *hist_child_pT_DR_inB;
    TH2F *hist_child_pT_jet_DR_inB;
+   TH1F *hist_child_Lxy_inB;
    TH1F *hist_child_Lxyz_inB;
    TH1F *hist_child_decay_IP;
    TH1F *hist_child_nodecay_IP;
+   TH1F *hist_child_linear_IP;
    TH1F *hist_pT_vs_R0_ratio_inB;
 //   TH1F *hist_child_linearIP;
 
@@ -518,6 +520,9 @@ private:
    TH2F *hist_matched_pT_child_pTfraction_inB;
    TH1F *hist_matched_DR_trk_inB;
    TH2F *hist_matched_DR_trk_pTfraction;
+   TH1F *hist_matched_IP_inB;
+   TH1F *hist_matched_Lxy_inB;
+   TH1F *hist_matched_Lxyz_inB;
 
    TH1F *hist_nomatched_pT_inB;
    TH1F *hist_nomatched_eta_inB;
