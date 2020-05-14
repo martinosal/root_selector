@@ -26,9 +26,8 @@
 
 
 #include "selector_1.h"
-#include <TH2.h>
 #include <TStyle.h>
-#include <math.h>
+
 
 
 
@@ -177,6 +176,7 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_trk_Dphi_Deta_inB = new TH2F("trk_Dphi_Deta_400","trk_Dphi_Deta_400", 100, -1.,1., 100, -1.,1.);
      hist_trk_DR_inB = new TH1F("trk_DR_400_inB","trk_DR_400_inB",500,-0.1,2.);
      hist_trk_pT_DR_inB = new TH2F("trk_pT_DR_400_inB","trk_pT_DR_400_inB",80,0.,150.,80,0.,0.6);
+     hist_trk_origin_inB = new TH1F("trk_origin_inB","trk_origin_inB",7,-2,5);
 
      hist_child_pT_inB = new TH1F("child_pT_400_inB", "child_pT_400_inB", 500, 0., 150.);
      hist_child_eta_inB = new TH1F("child_eta_400_inB","child_eta_400_inB",500,-2.6,2.6);
@@ -187,7 +187,11 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_child_DR_inB = new TH1F("child_DR_400_inB","child_DR_400_inB",500,-0.1,2.);
      hist_child_pT_DR_inB = new TH2F("child_pT_DR_400_inB","child_pT_DR_400_inB",80,0.,150.,80,0.,0.6);
      hist_child_pT_jet_DR_inB = new TH2F("child_pT_jet_DR_400_inB","child_pT_jet_DR_400_inB",100,0.,500.,100,0.,2.);
-     hist_child_Lxyz_inB = new TH1F("child_400_Lxy_inB","child_400_Lxy_inB",50,0.,5.);
+     hist_child_Lxyz_inB = new TH1F("child_400_Lxy_inB","child_400_Lxy_inB",300,0.,1000.);
+     hist_child_decay_IP = new TH1F("child_400_decay_IP_inB","child_400_decay_IP_inB",300,-15.,15.);
+     hist_child_nodecay_IP = new TH1F("child_400_nodecay_IP_inB","child_400_nodecay_IP_inB",300,-15.,15.);
+     hist_pT_vs_R0_ratio_inB = new TH1F("child_pT_vs_R0_ratio_inB","child_pT_vs_R0_ratio_inB",300,-1.2,2.4);
+//     hist_child_linearIP = new TH1F("child_400_linearIP_inB","child_400_linearIP_inB",300,-15.,1500.);
 
      hist_matched_pT_inB = new TH1F("matched_child_pT_400_inB","matched_child_pT_400_inB", 500, 0., 150.);
      hist_matched_eta_inB = new TH1F("matched_child_eta_400_inB","matched_child_eta_400_inB",500,-2.6,2.6);
@@ -199,6 +203,7 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_matched_pT_DR_inB = new TH2F("matched_child_pT_DR_400_inB","matched_child_pT_DR_400_inB",80,0.,150.,80,0.,0.6);
      hist_matched_pT_jet_DR_inB = new TH2F("matched_child_pT_jet_DR_400_inB","matched_child_pT_jet_DR_400_inB",100,0.,500.,100,0.,2.);
      hist_matched_pdgId_inB = new TH1F("matched_child_pdgId_400_inB","matched_child_pdgId_400_inB",2000,-1000,1000);
+     hist_matched_origin_inB = new TH1F("matched_trk_origin_inB","matched_trk_origin_inB",7,-2,5);
      hist_matched_pT_child_pTfraction_inB = new TH2F("matched_pT_child_pTfraction_400_inB","matched_pT_child_vs_DpT/pT_child_400_inB",500,0.,150.,500,-1.1,10.);
      hist_matched_DR_trk_inB = new TH1F("matched_DR_trk_400_inB","matched_DR_trk_inB_400_inB",500,0.,1.);
      hist_matched_DR_trk_pTfraction = new TH2F("matched_DR_trk_pTfraction_400_inB","matched_DR_trk_pTfraction_400_inB",500,0.,1.,500,-1.,10.);
@@ -224,6 +229,7 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_single_matched_pT_DR_inB = new TH2F("single_matched_pT_DR_400_inB","single_matched_pT_DR_400_inB",80,0.,150.,80,0.,0.6);
      hist_single_matched_pT_jet_DR_inB = new TH2F("single_matched_child_pT_jet_DR_400_inB","single_matched_child_pT_jet_DR_400_inB",100,0.,500.,100,0.,2.);
      hist_single_matched_pdgId_inB = new TH1F("single_matched_child_pdgId_400_inB","single_matched_child_pdgId_400_inB",2000,-1000,1000);
+     hist_single_matched_origin_inB = new TH1F("single_matched_trk_origin_inB","single_matched_trk_origin_inB",7,-2,5);
      hist_single_matched_pT_child_pTfraction_inB = new TH2F("single_matched_pT_child_pTfraction_400_inB","single_matched_pT_child_vs_DpT/pT_child_400_inB",500,0.,150.,500,-1.1,10.);
      hist_single_matched_DR_trk_inB = new TH1F("single_matched_DR_trk_400_inB","single_matched_DR_trk_400_inB", 500, 0., 1.);
      hist_single_matched_DR_trk_pTfraction = new TH2F("single_matched_DR_trk_pTfraction_400_inB","single_matched_DR_trk_pTfraction_400_inB",500,0.,1.,500,-1.1,10.);
@@ -280,7 +286,7 @@ Bool_t selector_1::Process(Long64_t entry)
      }
    }
 
-   for(int i=0;i<jet_nBHadr.GetSize();i++) {
+   for(unsigned i=0;i<jet_nBHadr.GetSize();i++) {
 
      nB+=jet_nBHadr[i];
      if(jet_nBHadr[i]>0){
@@ -290,30 +296,29 @@ Bool_t selector_1::Process(Long64_t entry)
      }
      if(jet_nBHadr[i]==1)  {is1B.push_back(i); n1++;}
      if(jet_nBHadr[i]==2)  {is2B.push_back(i); n2++;}
-    //     if(jet_nBHadr[i]==3)  {is3B.push_back(i); n3++;}
+     if(jet_nBHadr[i]==3)  {is3B.push_back(i); n3++;}
 
    }
 
    if(nB==0)  {m_noB++;}
 
-    /*   if (n1+2*n2+3*n3!=nB) {
+   if (n1+2*n2+3*n3!=nB) {
         std::cout << "Warning: n1+n2+n3!=nB\t" << n1<<"\t"<<n2<<"\t"<<n3<<"\t"<<nB<<"\n";
     }
-    */
 
    int nC=0,nCjets=0;
    int nC1=0,nC2=0,nC3=0; //<- the file has max=3 b-tagged particles in a single jet
    std::vector<int> isC,is1C,is2C,is3C;
 
-   for(int i=0;i<jet_nCHadr.GetSize();i++) {
+   for(unsigned i=0;i<jet_nCHadr.GetSize();i++) {
 
      if(jet_nCHadr[i]>0){
        isC.push_back(i);
        nCjets++;
      }
      if(jet_nCHadr[i]==1)  {is1C.push_back(i); nC1++;}
-      //     if(jet_nCHadr[i]==2)  {is2C.push_back(i); nC2++;}
-      //     if(jet_nCHadr[i]==3)  {is3C.push_back(i); nC3++;}
+     if(jet_nCHadr[i]==2)  {is2C.push_back(i); nC2++;}
+     if(jet_nCHadr[i]==3)  {is3C.push_back(i); nC3++;}
    }
 
 
@@ -334,12 +339,10 @@ Bool_t selector_1::Process(Long64_t entry)
        m_bb++;
        for(std::vector<int>::iterator it = is1B.begin(); it != is1B.end(); ++it){
          m_N++;
-         if(discriminants){
-           hist_pt_2->Fill(jet_pt[*it]*0.001);
-           hist_eta_2->Fill(jet_eta[*it]);
-           hist_phi_2->Fill(jet_phi[*it]);
-           hist_E_2->Fill(jet_E[*it]);
-         }
+         hist_pt_2->Fill(jet_pt[*it]*0.001);
+         hist_eta_2->Fill(jet_eta[*it]);
+         hist_phi_2->Fill(jet_phi[*it]);
+         hist_E_2->Fill(jet_E[*it]);
        }
      }
 
@@ -398,343 +401,6 @@ Bool_t selector_1::Process(Long64_t entry)
 
 
    }
-
-
-   if(selection_alg){
-     if(nBjets>0){
-       for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
-
-  //         int b=(jet_bH_pdgId[*it][i]/100)%10;
-         size_jet=jet_trk_pt[*it].size();
-
-         if(size_jet!=jet_trk_eta[*it].size() || size_jet!=jet_trk_phi[*it].size()){
-           std::cout<<"WARNING\n";
-         }
-         size_child=jet_bH_child_px[*it].size();
-         if(size_child!=jet_bH_child_py[*it].size() || size_child!=jet_bH_child_pz[*it].size() || size_child!=jet_bH_child_E[*it].size()){
-           std::cout<<"WARNING\n";
-         }
-
-  //       if(size_jet!=jet_trk_orig[*it].size()) std::cout<<"W\n";
-
-         if(size_jet!=0 && size_child!=0){
-
-           if(size_jet<=size_child) max_size=size_child;
-           else max_size=size_jet;
-
-           hist_n_trk->Fill(size_jet);
-           hist_n_child->Fill(size_child);
-
-           for(unsigned i=0;i<size_jet;i++){
-             if(abs(jet_trk_eta[*it].at(i))<2.5 && jet_trk_pt[*it].at(i)>400.){
-
-               if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
-                 m_truth_tot++;
-               }
-
-               D_eta=jet_trk_eta[*it][i]-jet_eta[*it];
-               if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])>M_PI){
-                 D_phi=2*M_PI-abs(jet_trk_phi[*it].at(i)-jet_phi[*it]);
-               }
-               if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])<M_PI){
-                 D_phi=jet_trk_phi[*it].at(i)-jet_phi[*it];
-               }
-               DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-               hist_trk_pT_inB->Fill(1e-3*jet_trk_pt[*it].at(i));
-               hist_trk_eta_inB->Fill(jet_trk_eta[*it].at(i));
-               hist_trk_phi_inB->Fill(jet_trk_phi[*it].at(i));
-               hist_trk_Deta_inB->Fill(D_eta);
-               hist_trk_Dphi_inB->Fill(D_phi);
-               hist_trk_Dphi_Deta_inB->Fill(D_phi,D_eta);
-               hist_trk_DR_inB->Fill(DR);
-               hist_trk_pT_DR_inB->Fill(1e-3*jet_trk_pt[*it].at(i),DR);
-             }
-           }
-
-           std::vector<double> child_Pt,child_Eta,child_Phi,child_Lxy,child_Lz;
-           std::vector<int> child_idx;
-
-           int bool_matrix[size_jet][size_child];
-           for(unsigned l=0;l<size_jet;l++){
-             for(unsigned k=0;k<size_child;k++){
-                bool_matrix[l][k]=0;
-             }
-           }
-           den=0;
-
-           for(unsigned j=0;j<size_child;j++){
-             TLorentzVector v(
-               jet_bH_child_px[*it].at(j),
-               jet_bH_child_py[*it].at(j),
-               jet_bH_child_pz[*it].at(j),
-               jet_bH_child_E[*it].at(j)
-             );
-             child_Pt.push_back(v.Pt());
-             child_Eta.push_back(v.Eta());
-             child_Phi.push_back(v.Phi());
-             if(abs(child_Eta.at(j))<2.5 && child_Pt.at(j)>400.){//CHILD SELECTION CRITERIA
-               den++;
-               child_idx.push_back(j);
-               if(jet_bH_child_prod_x[*it].size()==size_child){
-                 Dx=jet_bH_child_prod_x[*it].at(j)-jet_bH_child_decay_x[*it].at(j);
-                 Dy=jet_bH_child_prod_y[*it].at(j)-jet_bH_child_decay_y[*it].at(j);
-                 Dz=jet_bH_child_prod_z[*it].at(j)-jet_bH_child_decay_z[*it].at(j);
-                 Dxy=sqrt((Dx*Dx)+(Dy*Dy));
-                 child_Lxy.push_back(Dxy);
-                 child_Lz.push_back(Dz);
-                 hist_child_Lxyz_inB->Fill(sqrt(Dxy*Dxy+Dz*Dz));
-               }
-               if(jet_bH_child_prod_x[*it].size()!=size_child || jet_bH_child_decay_x[*it].size()!=size_child){
-                 std::cout<<"WARNING\n";
-               }
-
-               D_eta=child_Eta[j]-jet_eta[*it];
-               if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
-                 D_phi=2*M_PI-abs(child_Phi[j]-jet_phi[*it]);
-               }
-               if(abs(child_Phi[j]-jet_phi[*it])<M_PI){
-                 D_phi=child_Phi[j]-jet_phi[*it];
-               }
-               DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-               hist_child_pT_inB->Fill(1e-3*child_Pt[j]);
-               hist_child_eta_inB->Fill(child_Eta[j]);
-               hist_child_phi_inB->Fill(child_Phi[j]);
-               hist_child_Deta_inB->Fill(D_eta);
-               hist_child_Dphi_inB->Fill(D_phi);
-               hist_child_Dphi_Deta_inB->Fill(D_phi,D_eta);
-               hist_child_DR_inB->Fill(DR);
-               hist_child_pT_DR_inB->Fill(1e-3*child_Pt[j],DR);
-               hist_child_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-
-               for(unsigned i=0;i<size_jet;i++){
-                 if((jet_trk_parent_pdgid[*it].at(i)==jet_bH_child_parent_pdg_id[*it].at(j) && jet_trk_pdg_id[*it].at(i)==jet_bH_child_pdg_id[*it].at(j)) && (abs(jet_trk_parent_pdgid[*it].at(i))!=99 && abs(jet_trk_pdg_id[*it].at(i))!=99)){
-  //               if(jet_trk_pdg_id[*it].at(i)==jet_bH_child_pdg_id[*it].at(j)){
-                   bool_matrix[i][j]=1;
-                 }
-               }
-             }
-           }
-           if(child_Pt.size()!=size_child || child_Eta.size()!=size_child || child_Phi.size()!=size_child){
-             std::cout<<"WARNING\n";
-           }
-
-
-
-  /*
-  std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m_Ntot;
-           for(int i=0;i<size_jet;i++){
-             std::cout<<"\n";
-             for(int j=0;j<size_child;j++){
-               std::cout << bool_matrix[i][j]<<"\t";
-             }
-           }
-           std::cout<<"\n";*/
-
-           for(q=0;q<max_size;q++){
-             m_qc=(int) q%size_child;
-             m_qj=(int) q%size_jet;
-             sc=0;
-  /*
-               if(m_qc>=size_child || m_qj>=size_jet){
-                 std::cout<<m_Ntot<<"\t"<<q<<"\t"<<size_jet<<","<<m_qj<<"\t"<<size_child<<","<<m_qc<<"\n";
-               }
-  */
-
-             if(cut){
-               tmp_min_pTfraction=m_pTfraction_cut;//CUT
-               tmp_min_DR=m_DRcut;//CUT
-             }
-             if(!cut){
-               tmp_min_pTfraction=m_pTfraction_nocut;//NOCUT
-               tmp_min_DR=m_DRnocut;//NOCUT
-             }
-
-             a=-2;b=-2;
-
-             for(int j=0;j<size_child;j++){
-               if(bool_matrix[m_qj][j]==1){
-  //                 std::cout<<"row\n";
-                 sc=sc+1;
-
-                 D_eta=child_Eta.at(j)-jet_trk_eta[*it].at(m_qj);
-                 if(abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj))>M_PI){
-                   D_phi=2*M_PI-abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj));
-                 }
-                 if(abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj))<M_PI){
-                   D_phi=child_Phi.at(j)-jet_trk_phi[*it].at(m_qj);
-                 }
-                 tmp_DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-                 tmp_pTfraction=1e-3*abs(jet_trk_pt[*it].at(m_qj)-child_Pt.at(j))/(1e-3*child_Pt.at(j));
-
-                 if((tmp_pTfraction<=tmp_min_pTfraction) && (tmp_DR<=tmp_min_DR)){//NOCUT
-                   tmp_min_pTfraction=tmp_pTfraction;
-                   tmp_min_DR=tmp_DR;
-                   a=m_qj;
-                   b=j;
-                 }
-               }
-             }
-             for(int i=0;i<size_jet;i++){
-               if(bool_matrix[i][m_qc]==1){
-  //                 std::cout<<"col\n";
-                 sc=sc+1;
-
-                 D_eta=child_Eta.at(m_qc)-jet_trk_eta[*it].at(i);
-                 if(abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i))>M_PI){
-                   D_phi=2*M_PI-abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i));
-                 }
-                 if(abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i))<M_PI){
-                   D_phi=child_Phi.at(m_qc)-jet_trk_phi[*it].at(i);
-                 }
-                 tmp_DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-                 tmp_pTfraction=1e-3*abs(jet_trk_pt[*it].at(i)-child_Pt.at(m_qc))/(1e-3*child_Pt.at(m_qc));
-
-                 if((tmp_pTfraction<tmp_min_pTfraction) && (tmp_DR<=tmp_min_DR)){//CUT    tmp_min_DR=0.1
-                   tmp_min_pTfraction=tmp_pTfraction;
-                   tmp_min_DR=tmp_DR;
-                   a=i;
-                   b=m_qc;
-                 }
-               }
-             }
-  /*
-               if(a==-2 && b==-2 && sc>0){
-                 std::cout<<"EXCLUSED CHILDS:\t"<<m_Ntot<<"\t"<<tmp_DpT<<"\t"<<tmp_DR<<"\n";
-  //               den--;
-               }
-  */
-             if(a!=-2 && b!=-2){
-               match++;
-               if(jet_trk_orig[*it].at(a)==0 || jet_trk_orig[*it].at(a)==1){
-                 m_truth_match++;
-               }
-
-               for(unsigned i=0;i<child_idx.size();i++){
-                 if(child_idx.at(i)==b){
-                   child_idx.erase(child_idx.begin()+i);
-                 }
-               }
-
-                 //CINEMATICA RISPETTO AL JET
-               D_eta=child_Eta.at(b)-jet_eta[*it];
-               if(abs(child_Phi.at(b)-jet_phi[*it])>M_PI){
-                 D_phi=2*M_PI-abs(child_Phi.at(b)-jet_phi[*it]);
-               }
-               if(abs(child_Phi.at(b)-jet_phi[*it])<M_PI){
-                 D_phi=child_Phi.at(b)-jet_phi[*it];
-               }
-               DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-               hist_matched_pT_inB->Fill(1e-3*child_Pt.at(b));
-               hist_matched_eta_inB->Fill(child_Eta.at(b));
-               hist_matched_phi_inB->Fill(child_Phi.at(b));
-               hist_matched_Deta_inB->Fill(D_eta);
-               hist_matched_Dphi_inB->Fill(D_phi);
-               hist_matched_Dphi_Deta_inB->Fill(D_phi,D_eta);
-               hist_matched_DR_inB->Fill(DR);
-               hist_matched_pT_DR_inB->Fill(1e-3*child_Pt.at(b),DR);
-               hist_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-               hist_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
-
-               //CINEMATICA RISPETTO ALLA TRACCIA
-               DpT_trk=1e-3*(child_Pt.at(b)-jet_trk_pt[*it].at(a));
-               D_eta_trk=child_Eta.at(b)-jet_trk_eta[*it].at(a);
-               if(abs(child_Phi.at(b)-jet_trk_phi[*it].at(a))>M_PI){
-                 D_phi_trk=2*M_PI-abs(child_Phi.at(b)-jet_trk_phi[*it].at(a));
-               }
-               if(abs(child_Phi.at(b)-jet_trk_phi[*it].at(a))<M_PI){
-                 D_phi_trk=child_Phi.at(b)-jet_trk_phi[*it].at(a);
-               }
-               DR_trk=sqrt(D_eta_trk*D_eta_trk+D_phi_trk*D_phi_trk);
-               hist_matched_pT_child_pTfraction_inB->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
-               hist_matched_DR_trk_inB->Fill(DR_trk);
-               hist_matched_DR_trk_pTfraction->Fill(DR_trk,-1.*DpT_trk/(1e-3*child_Pt.at(b)));
-
-               if(sc==1){
-                 m_sc+=1;
-                 hist_single_matched_pT_inB->Fill(1e-3*child_Pt.at(b));
-                 hist_single_matched_eta_inB->Fill(child_Eta.at(b));
-                 hist_single_matched_phi_inB->Fill(child_Phi.at(b));
-                 hist_single_matched_Deta_inB->Fill(D_eta);
-                 hist_single_matched_Dphi_inB->Fill(D_phi);
-                 hist_single_matched_Dphi_Deta_inB->Fill(D_phi,D_eta);
-                 hist_single_matched_DR_inB->Fill(DR);//RISPETTO AL JET
-                 hist_single_matched_pT_DR_inB->Fill(1e-3*child_Pt.at(b),DR);
-                 hist_single_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-                 hist_single_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
-
-                 hist_single_matched_pT_child_pTfraction_inB->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
-                 hist_single_matched_DR_trk_inB->Fill(DR_trk);
-                 hist_single_matched_DR_trk_pTfraction->Fill(DR_trk,-1.*DpT_trk/(1e-3*child_Pt.at(b)));
-               }
-               if(sc==2){
-                 m_sc2++;
-               }
-               if(sc>=3){
-                 m_sc3++;
-               }
-             }
-
-  //std::cout<<"\n"<<"q="<<q<<"\t(a,b)=("<<a+1<<","<<b+1<<")"<<"\n";
-
-             for(int j=0;j<size_child;j++){
-               bool_matrix[a][j]=0;
-             }
-             for(int i=0;i<size_jet;i++){
-               bool_matrix[i][b]=0;
-             }
-
-  /*
-  std::cout<<"ELIMINATION STARTS:\n";
-             for(int i=0;i<size_jet;i++){
-               std::cout<<"\n";
-               for(int j=0;j<size_child;j++){
-                 std::cout << bool_matrix[i][j]<<"\t";
-               }
-             }
-           std::cout<<"\n";*/
-           }
-
-           m_nomatch+=child_idx.size();
-           int j=0;
-           for(unsigned l=0;l<child_idx.size();l++){
-             j=child_idx.at(l);
-             //CINEMATICA RISPETTO AL JET
-             if(abs(child_Eta.at(j))<2.5 && child_Pt.at(j)>400.){
-               D_eta=child_Eta.at(j)-jet_eta[*it];
-               if(abs(child_Phi.at(j)-jet_phi[*it])>M_PI){
-                 D_phi=2*M_PI-abs(child_Phi.at(j)-jet_phi[*it]);
-               }
-               if(abs(child_Phi.at(j)-jet_phi[*it])<M_PI){
-                 D_phi=child_Phi.at(j)-jet_phi[*it];
-               }
-               DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-               hist_nomatched_pT_inB->Fill(1e-3*child_Pt.at(j));
-               hist_nomatched_eta_inB->Fill(child_Eta.at(j));
-               hist_nomatched_phi_inB->Fill(child_Phi.at(j));
-               hist_nomatched_Deta_inB->Fill(D_eta);
-               hist_nomatched_Dphi_inB->Fill(D_phi);
-               hist_nomatched_Dphi_Deta_inB->Fill(D_phi,D_eta);
-               hist_nomatched_DR_inB->Fill(DR);
-               hist_nomatched_pT_DR_inB->Fill(1e-3*child_Pt.at(j),DR);
-               hist_nomatched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-               hist_nomatched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(j));
-             }
-           }
-
-  //std::cout<<"event:\t"<<m_Ntot<< "\tn of matched tracks:\t"<< match << "\tn of child tracks(denominator):\t" << den << "\tratio:\t" <<(float) match/den<<"\t";
-           m_match+=match;
-           m_den+=den;
-           hist_n_match->Fill(match);
-           hist_efficiency_inB->Fill((float) match/den);
-           match=0;
-
-
-         }
-       }
-     }
-   }
-
-
 
 
 
@@ -948,6 +614,397 @@ Bool_t selector_1::Process(Long64_t entry)
 //           std::cout << jet_sv1_m[*it] << "\n"; //-1000 ?
 //           std::cout << jet_sv1_efc[*it] << "\n";  //-1 ?
 //           std::cout << jet_sv1_n2t[*it] << "\n\n";   //-1 ?
+       }
+     }
+   }
+
+
+   if(selection_alg){
+     if(nBjets>0){
+       for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
+
+  //         int b=(jet_bH_pdgId[*it][i]/100)%10;
+         size_jet=jet_trk_pt[*it].size();
+
+         if(size_jet!=jet_trk_eta[*it].size() || size_jet!=jet_trk_phi[*it].size()){
+           std::cout<<"WARNING\n";
+         }
+         size_child=jet_bH_child_px[*it].size();
+         if(size_child!=jet_bH_child_py[*it].size() || size_child!=jet_bH_child_pz[*it].size() || size_child!=jet_bH_child_E[*it].size()){
+           std::cout<<"WARNING\n";
+         }
+
+  //       if(size_jet!=jet_trk_orig[*it].size()) std::cout<<"W\n";
+
+         if(size_jet!=0 && size_child!=0){
+
+           if(size_jet<=size_child) max_size=size_child;
+           else max_size=size_jet;
+
+           hist_n_trk->Fill(size_jet);
+           hist_n_child->Fill(size_child);
+
+           for(unsigned i=0;i<size_jet;i++){
+             if(abs(jet_trk_eta[*it].at(i))<2.5 && jet_trk_pt[*it].at(i)>400.){
+
+               if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
+                 m_truth_tot++;
+               }
+
+               D_eta=jet_trk_eta[*it][i]-jet_eta[*it];
+               if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])>M_PI){
+                 D_phi=2*M_PI-abs(jet_trk_phi[*it].at(i)-jet_phi[*it]);
+               }
+               if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])<M_PI){
+                 D_phi=jet_trk_phi[*it].at(i)-jet_phi[*it];
+               }
+               DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+               hist_trk_pT_inB->Fill(1e-3*jet_trk_pt[*it].at(i));
+               hist_trk_eta_inB->Fill(jet_trk_eta[*it].at(i));
+               hist_trk_phi_inB->Fill(jet_trk_phi[*it].at(i));
+               hist_trk_Deta_inB->Fill(D_eta);
+               hist_trk_Dphi_inB->Fill(D_phi);
+               hist_trk_Dphi_Deta_inB->Fill(D_phi,D_eta);
+               hist_trk_DR_inB->Fill(DR);
+               hist_trk_pT_DR_inB->Fill(1e-3*jet_trk_pt[*it].at(i),DR);
+               hist_trk_origin_inB->Fill(jet_trk_orig[*it].at(i));
+             }
+           }
+
+           std::vector<double> child_Pt,child_Eta,child_Phi,child_Lxy,child_Lz;
+           std::vector<int> child_idx;
+
+           int bool_matrix[size_jet][size_child];
+           for(unsigned l=0;l<size_jet;l++){
+             for(unsigned k=0;k<size_child;k++){
+                bool_matrix[l][k]=0;
+             }
+           }
+           den=0;
+
+           for(unsigned j=0;j<size_child;j++){
+             TLorentzVector v(
+               jet_bH_child_px[*it].at(j),
+               jet_bH_child_py[*it].at(j),
+               jet_bH_child_pz[*it].at(j),
+               jet_bH_child_E[*it].at(j)
+             );
+             child_Pt.push_back(v.Pt());
+             child_Eta.push_back(v.Eta());
+             child_Phi.push_back(v.Phi());
+             if(abs(child_Eta.at(j))<2.5 && child_Pt.at(j)>400.){//CHILD SELECTION CRITERIA
+               if(jet_bH_child_prod_x[*it].size()!=size_child || jet_bH_child_decay_x[*it].size()!=size_child){
+                 std::cout<<"WARNING\n";
+               }
+
+               den++;
+               child_idx.push_back(j);
+
+               Dx_1=(*PVx)-jet_bH_child_prod_x[*it].at(j);//x_PV - x_SV
+               Dy_1=(*PVx)-jet_bH_child_prod_y[*it].at(j);
+               Dz_1=(*PVx)-jet_bH_child_prod_z[*it].at(j);
+               Dxy_1=sqrt(Dx_1*Dx_1+Dy_1*Dy_1);
+               child_Lxy.push_back(Dxy_1);
+               child_Lz.push_back(Dz_1);
+               hist_child_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+
+               px=jet_bH_child_px[*it].at(j);
+               py=jet_bH_child_py[*it].at(j);
+
+               if(jet_bH_child_decay_x[*it].at(j)==-999){//NO CHILD DECAY
+                 TRandom3 *rand = new TRandom3(0);
+                 rand_n=rand->Gaus(0.59,0.05943);
+//                 std::cout<<rand_n<<"\n";
+                 R0=child_Pt.at(j)/rand_n;//mm
+                 if(jet_bH_child_charge[*it].at(j)>0){
+                   sgn=-1;
+                 }
+                 if(jet_bH_child_charge[*it].at(j)<0){
+                   sgn=+1;
+                 }
+                 x0=jet_bH_child_prod_x[*it].at(j)-sgn*R0*(py/(sqrt(px*px+py*py)));
+                 y0=jet_bH_child_prod_y[*it].at(j)+sgn*R0*(px/(sqrt(px*px+py*py)));
+                 Dx_3=(*PVx)-x0;
+                 Dy_3=(*PVy)-y0;
+                 Dxy_3=sqrt((Dx_3*Dx_3)+(Dy_3*Dy_3));
+
+                 d0=Dxy_3-abs(R0);
+                 //                 std::cout<<d0<<"\n";
+                 hist_child_nodecay_IP->Fill(d0);
+               }
+
+               if(jet_bH_child_decay_x[*it].at(j)!=-999){//CHILD DECAY
+//                 std::cout<<jet_bH_child_decay_x[*it].at(j)<<"\n";
+                 Dx_2=jet_bH_child_decay_x[*it].at(j)-jet_bH_child_prod_x[*it].at(j);//x_DV - x_SV
+                 Dy_2=jet_bH_child_decay_y[*it].at(j)-jet_bH_child_prod_y[*it].at(j);
+                 Dz_2=jet_bH_child_decay_z[*it].at(j)-jet_bH_child_prod_z[*it].at(j);
+//                 Dxy_2=sqrt((Dx_1*Dx_1)+(Dy_1*Dy_1));
+
+                 vx=1e3*c*px/jet_bH_child_E[*it].at(j);
+                 vy=1e3*c*py/jet_bH_child_E[*it].at(j);
+                 v_pa=sqrt(vx*vx+vy*vy);
+                 R0=abs(0.5*v_pa*(Dx_2*Dx_2+Dy_2*Dy_2)/(Dy_2*vx-Dx_2*vy));
+                 x0=jet_bH_child_prod_x[*it].at(j)-R0*vy/v_pa;
+                 y0=jet_bH_child_prod_y[*it].at(j)+R0*vx/v_pa;
+                 Dx_3=(*PVx)-x0;
+                 Dy_3=(*PVy)-y0;
+                 Dxy_3=sqrt((Dx_3*Dx_3)+(Dy_3*Dy_3));
+
+                 d0=Dxy_3-R0;
+//                 std::cout<<std::fixed<<std::setprecision(3)<<"Expected R[m]:  "<<1e-3*child_Pt.at(j)/0.6<<"\t"<<"\tActual R[m]:  "<<1e-3*R0<<"\trelative error[%]:  "<<1e2*((1e-3*child_Pt.at(j)/0.6)-1e-3*R0)/(1e-3*R0)<<"\n";
+                 hist_child_decay_IP->Fill(d0);
+                 hist_pT_vs_R0_ratio_inB->Fill(child_Pt.at(j)/R0);
+//                 std::cout<<jet_bH_child_charge[*it].at(j)<<"\t"<<d0*jet_bH_child_charge[*it].at(j)/abs(d0*jet_bH_child_charge[*it].at(j))<<"\n";
+//                 nx=Dx_1/Dxy;
+//                 ny=Dy_1/Dxy;
+//                 d0=sqrt( (Dx_2-nx*(nx*Dx_2+ny*Dy_2))*(Dx_2-nx*(nx*Dx_2+ny*Dy_2))+(Dy_2-ny*(nx*Dx_2+ny*Dy_2))*(Dy_2-ny*(nx*Dx_2+ny*Dy_2)) );
+//                 hist_child_linearIP->Fill(d0);
+               }
+
+               D_eta=child_Eta[j]-jet_eta[*it];
+               if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
+                 D_phi=2*M_PI-abs(child_Phi[j]-jet_phi[*it]);
+               }
+               if(abs(child_Phi[j]-jet_phi[*it])<M_PI){
+                 D_phi=child_Phi[j]-jet_phi[*it];
+               }
+               DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+               hist_child_pT_inB->Fill(1e-3*child_Pt[j]);
+               hist_child_eta_inB->Fill(child_Eta[j]);
+               hist_child_phi_inB->Fill(child_Phi[j]);
+               hist_child_Deta_inB->Fill(D_eta);
+               hist_child_Dphi_inB->Fill(D_phi);
+               hist_child_Dphi_Deta_inB->Fill(D_phi,D_eta);
+               hist_child_DR_inB->Fill(DR);
+               hist_child_pT_DR_inB->Fill(1e-3*child_Pt[j],DR);
+               hist_child_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
+
+               for(unsigned i=0;i<size_jet;i++){
+                 if((jet_trk_parent_pdgid[*it].at(i)==jet_bH_child_parent_pdg_id[*it].at(j) && jet_trk_pdg_id[*it].at(i)==jet_bH_child_pdg_id[*it].at(j)) && (abs(jet_trk_parent_pdgid[*it].at(i))!=99 && abs(jet_trk_pdg_id[*it].at(i))!=99)){
+//                 if(jet_trk_pdg_id[*it].at(i)==jet_bH_child_pdg_id[*it].at(j)){
+                   bool_matrix[i][j]=1;
+                 }
+               }
+             }
+           }
+           if(child_Pt.size()!=size_child || child_Eta.size()!=size_child || child_Phi.size()!=size_child){
+             std::cout<<"WARNING\n";
+           }
+
+
+
+  /*
+  std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m_Ntot;
+           for(int i=0;i<size_jet;i++){
+             std::cout<<"\n";
+             for(int j=0;j<size_child;j++){
+               std::cout << bool_matrix[i][j]<<"\t";
+             }
+           }
+           std::cout<<"\n";*/
+
+           for(q=0;q<max_size;q++){
+             m_qc=(int) q%size_child;
+             m_qj=(int) q%size_jet;
+             sc=0;
+  /*
+               if(m_qc>=size_child || m_qj>=size_jet){
+                 std::cout<<m_Ntot<<"\t"<<q<<"\t"<<size_jet<<","<<m_qj<<"\t"<<size_child<<","<<m_qc<<"\n";
+               }
+  */
+
+             if(cut){
+               tmp_min_pTfraction=m_pTfraction_cut;//CUT
+               tmp_min_DR=m_DRcut;//CUT
+             }
+             if(!cut){
+               tmp_min_pTfraction=m_pTfraction_nocut;//NOCUT
+               tmp_min_DR=m_DRnocut;//NOCUT
+             }
+
+             a=-2;b=-2;
+
+             for(unsigned j=0;j<size_child;j++){
+               if(bool_matrix[m_qj][j]==1){
+  //                 std::cout<<"row\n";
+                 sc=sc+1;
+
+                 D_eta=child_Eta.at(j)-jet_trk_eta[*it].at(m_qj);
+                 if(abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj))>M_PI){
+                   D_phi=2*M_PI-abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj));
+                 }
+                 if(abs(child_Phi.at(j)-jet_trk_phi[*it].at(m_qj))<M_PI){
+                   D_phi=child_Phi.at(j)-jet_trk_phi[*it].at(m_qj);
+                 }
+                 tmp_DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+                 tmp_pTfraction=1e-3*abs(jet_trk_pt[*it].at(m_qj)-child_Pt.at(j))/(1e-3*child_Pt.at(j));
+
+                 if((tmp_pTfraction<tmp_min_pTfraction) && (tmp_DR<tmp_min_DR)){//NOCUT
+                   tmp_min_pTfraction=tmp_pTfraction;
+                   tmp_min_DR=tmp_DR;
+                   a=m_qj;
+                   b=j;
+                 }
+               }
+             }
+             for(unsigned i=0;i<size_jet;i++){
+               if(bool_matrix[i][m_qc]==1){
+  //                 std::cout<<"col\n";
+                 sc=sc+1;
+
+                 D_eta=child_Eta.at(m_qc)-jet_trk_eta[*it].at(i);
+                 if(abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i))>M_PI){
+                   D_phi=2*M_PI-abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i));
+                 }
+                 if(abs(child_Phi.at(m_qc)-jet_trk_phi[*it].at(i))<M_PI){
+                   D_phi=child_Phi.at(m_qc)-jet_trk_phi[*it].at(i);
+                 }
+                 tmp_DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+                 tmp_pTfraction=1e-3*abs(jet_trk_pt[*it].at(i)-child_Pt.at(m_qc))/(1e-3*child_Pt.at(m_qc));
+
+                 if((tmp_pTfraction<tmp_min_pTfraction) && (tmp_DR<tmp_min_DR)){//CUT    tmp_min_DR=0.1
+                   tmp_min_pTfraction=tmp_pTfraction;
+                   tmp_min_DR=tmp_DR;
+                   a=i;
+                   b=m_qc;
+                 }
+               }
+             }
+  /*
+               if(a==-2 && b==-2 && sc>0){
+                 std::cout<<"EXCLUSED CHILDS:\t"<<m_Ntot<<"\t"<<tmp_DpT<<"\t"<<tmp_DR<<"\n";
+  //               den--;
+               }
+  */
+             if(a!=-2 && b!=-2){
+               match++;
+               if(jet_trk_orig[*it].at(a)==0 || jet_trk_orig[*it].at(a)==1){
+                 m_truth_match++;
+               }
+
+               for(unsigned i=0;i<child_idx.size();i++){
+                 if(child_idx.at(i)==b){
+                   child_idx.erase(child_idx.begin()+i);
+                 }
+               }
+
+                 //CINEMATICA RISPETTO AL JET
+               D_eta=child_Eta.at(b)-jet_eta[*it];
+               if(abs(child_Phi.at(b)-jet_phi[*it])>M_PI){
+                 D_phi=2*M_PI-abs(child_Phi.at(b)-jet_phi[*it]);
+               }
+               if(abs(child_Phi.at(b)-jet_phi[*it])<M_PI){
+                 D_phi=child_Phi.at(b)-jet_phi[*it];
+               }
+               DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+               hist_matched_pT_inB->Fill(1e-3*child_Pt.at(b));
+               hist_matched_eta_inB->Fill(child_Eta.at(b));
+               hist_matched_phi_inB->Fill(child_Phi.at(b));
+               hist_matched_Deta_inB->Fill(D_eta);
+               hist_matched_Dphi_inB->Fill(D_phi);
+               hist_matched_Dphi_Deta_inB->Fill(D_phi,D_eta);
+               hist_matched_DR_inB->Fill(DR);
+               hist_matched_pT_DR_inB->Fill(1e-3*child_Pt.at(b),DR);
+               hist_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
+               hist_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
+               hist_matched_origin_inB->Fill(jet_trk_orig[*it].at(a));
+
+               //CINEMATICA RISPETTO ALLA TRACCIA
+               DpT_trk=1e-3*(child_Pt.at(b)-jet_trk_pt[*it].at(a));
+               D_eta_trk=child_Eta.at(b)-jet_trk_eta[*it].at(a);
+               if(abs(child_Phi.at(b)-jet_trk_phi[*it].at(a))>M_PI){
+                 D_phi_trk=2*M_PI-abs(child_Phi.at(b)-jet_trk_phi[*it].at(a));
+               }
+               if(abs(child_Phi.at(b)-jet_trk_phi[*it].at(a))<M_PI){
+                 D_phi_trk=child_Phi.at(b)-jet_trk_phi[*it].at(a);
+               }
+               DR_trk=sqrt(D_eta_trk*D_eta_trk+D_phi_trk*D_phi_trk);
+               hist_matched_pT_child_pTfraction_inB->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
+               hist_matched_DR_trk_inB->Fill(DR_trk);
+               hist_matched_DR_trk_pTfraction->Fill(DR_trk,-1.*DpT_trk/(1e-3*child_Pt.at(b)));
+
+               if(sc==1){
+                 m_sc+=1;
+                 hist_single_matched_pT_inB->Fill(1e-3*child_Pt.at(b));
+                 hist_single_matched_eta_inB->Fill(child_Eta.at(b));
+                 hist_single_matched_phi_inB->Fill(child_Phi.at(b));
+                 hist_single_matched_Deta_inB->Fill(D_eta);
+                 hist_single_matched_Dphi_inB->Fill(D_phi);
+                 hist_single_matched_Dphi_Deta_inB->Fill(D_phi,D_eta);
+                 hist_single_matched_DR_inB->Fill(DR);//RISPETTO AL JET
+                 hist_single_matched_pT_DR_inB->Fill(1e-3*child_Pt.at(b),DR);
+                 hist_single_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
+                 hist_single_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
+                 hist_single_matched_origin_inB->Fill(jet_trk_orig[*it].at(a));
+
+                 hist_single_matched_pT_child_pTfraction_inB->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
+                 hist_single_matched_DR_trk_inB->Fill(DR_trk);
+                 hist_single_matched_DR_trk_pTfraction->Fill(DR_trk,-1.*DpT_trk/(1e-3*child_Pt.at(b)));
+               }
+               if(sc==2){
+                 m_sc2++;
+               }
+               if(sc>=3){
+                 m_sc3++;
+               }
+             }
+
+  //std::cout<<"\n"<<"q="<<q<<"\t(a,b)=("<<a+1<<","<<b+1<<")"<<"\n";
+
+             for(unsigned j=0;j<size_child;j++){
+               bool_matrix[a][j]=0;
+             }
+             for(unsigned i=0;i<size_jet;i++){
+               bool_matrix[i][b]=0;
+             }
+
+  /*
+  std::cout<<"ELIMINATION STARTS:\n";
+             for(int i=0;i<size_jet;i++){
+               std::cout<<"\n";
+               for(int j=0;j<size_child;j++){
+                 std::cout << bool_matrix[i][j]<<"\t";
+               }
+             }
+           std::cout<<"\n";*/
+           }
+
+           m_nomatch+=child_idx.size();
+           int j=0;
+           for(unsigned l=0;l<child_idx.size();l++){
+             j=child_idx.at(l);
+             //CINEMATICA RISPETTO AL JET
+             if(abs(child_Eta.at(j))<2.5 && child_Pt.at(j)>400.){
+               D_eta=child_Eta.at(j)-jet_eta[*it];
+               if(abs(child_Phi.at(j)-jet_phi[*it])>M_PI){
+                 D_phi=2*M_PI-abs(child_Phi.at(j)-jet_phi[*it]);
+               }
+               if(abs(child_Phi.at(j)-jet_phi[*it])<M_PI){
+                 D_phi=child_Phi.at(j)-jet_phi[*it];
+               }
+               DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+               hist_nomatched_pT_inB->Fill(1e-3*child_Pt.at(j));
+               hist_nomatched_eta_inB->Fill(child_Eta.at(j));
+               hist_nomatched_phi_inB->Fill(child_Phi.at(j));
+               hist_nomatched_Deta_inB->Fill(D_eta);
+               hist_nomatched_Dphi_inB->Fill(D_phi);
+               hist_nomatched_Dphi_Deta_inB->Fill(D_phi,D_eta);
+               hist_nomatched_DR_inB->Fill(DR);
+               hist_nomatched_pT_DR_inB->Fill(1e-3*child_Pt.at(j),DR);
+               hist_nomatched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
+               hist_nomatched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(j));
+             }
+           }
+
+  //std::cout<<"event:\t"<<m_Ntot<< "\tn of matched tracks:\t"<< match << "\tn of child tracks(denominator):\t" << den << "\tratio:\t" <<(float) match/den<<"\t";
+           m_match+=match;
+           m_den+=den;
+           hist_n_match->Fill(match);
+           hist_efficiency_inB->Fill((float) match/den);
+           match=0;
+
+
+         }
        }
      }
    }
@@ -1169,6 +1226,7 @@ void selector_1::Terminate()
       hist_trk_Dphi_Deta_inB->Write();
       hist_trk_DR_inB->Write();
       hist_trk_pT_DR_inB->Write();
+      hist_trk_origin_inB->Write();
 
       hist_child_pT_inB->Write();
       hist_child_eta_inB->Write();
@@ -1180,6 +1238,10 @@ void selector_1::Terminate()
       hist_child_pT_DR_inB->Write();
       hist_child_pT_jet_DR_inB->Write();
       hist_child_Lxyz_inB->Write();
+      hist_child_decay_IP->Write();
+      hist_child_nodecay_IP->Write();
+      hist_pT_vs_R0_ratio_inB->Write();
+//      hist_child_linearIP->Write();
 
       hist_efficiency_inB->Write();
       hist_n_trk->Write();
@@ -1196,6 +1258,7 @@ void selector_1::Terminate()
       hist_matched_pT_DR_inB->Write();
       hist_matched_pT_jet_DR_inB->Write();
       hist_matched_pdgId_inB->Write();
+      hist_matched_origin_inB->Write();
       hist_matched_pT_child_pTfraction_inB->Write();
       hist_matched_DR_trk_inB->Write();
       hist_matched_DR_trk_pTfraction->Write();
@@ -1221,6 +1284,7 @@ void selector_1::Terminate()
       hist_single_matched_pT_DR_inB->Write();
       hist_single_matched_pT_jet_DR_inB->Write();
       hist_single_matched_pdgId_inB->Write();
+      hist_single_matched_origin_inB->Write();
       hist_single_matched_pT_child_pTfraction_inB->Write();
       hist_single_matched_DR_trk_inB->Write();
       hist_single_matched_DR_trk_pTfraction->Write();
@@ -1245,8 +1309,8 @@ void selector_1::Terminate()
 
     if(shrinking_cone){
       std::cout<<"\nSHRINKING CONE\n";
-      float R_bin[bin]{0},dev_R[bin]{0},std_dev_R[bin]{0};
-      float x[bin]{0},y[bin]{0},ex[bin]{0},ey[bin]{0};
+      float R_bin[bin_1]{0},dev_R[bin_1]{0},std_dev_R[bin_1]{0};
+      float x[bin_1]{0},y[bin_1]{0},ex[bin_1]{0},ey[bin_1]{0};
 
       int n=0;
       std::cout <<"\n";
@@ -1256,7 +1320,7 @@ void selector_1::Terminate()
       if(tracksize<=m_track_cut)  sup=tracksize;
       if(tracksize>m_track_cut)  sup=m_track_cut;
 
-      for(int i=0;i<bin;i++){
+      for(int i=0;i<bin_1;i++){
 
         std::fill(tmp.begin(), tmp.end(), 0);
         std::fill(max.begin(), max.end(), 0);
@@ -1265,7 +1329,7 @@ void selector_1::Terminate()
 
 
           for(int l=0;l<sup;l++){
-            for(int k=0;k<bin_v.at(i).size();k++){
+            for(unsigned k=0;k<bin_v.at(i).size();k++){
               if(l==0){
                 tmp[l]=bin_v.at(i).at(k);
                 if(tmp[l]>max[l]) max[l]=tmp[l];
@@ -1289,7 +1353,7 @@ void selector_1::Terminate()
  //          dev_R[i]+=(bin_v.at(i).at(j)-R_bin[i])*(bin_v.at(i).at(j)-R_bin[i]);
  //        }
 
-          for(int j=0;j<max.size();j++){
+          for(unsigned j=0;j<max.size();j++){
             dev_R[i]+=(max.at(j)-R_bin[i])*(max.at(j)-R_bin[i]);
           }
  //      std_dev_R[i]=sqrt(dev_R[i]/(bin_v.at(i).size()-1));
@@ -1339,8 +1403,9 @@ void selector_1::Terminate()
       std::cout<< "single matches:\t\t" << m_sc <<"\tfraction:\t"<<(float) m_sc/m_match << "\n";
       std::cout<< "double matches:\t\t" << m_sc2 <<"\tfraction:\t"<<(float) m_sc2/m_match << "\n";
       std::cout<< "triple+ matches:\t" << m_sc3 <<"\tfraction:\t"<<(float) m_sc3/m_match << "\n";
-      std::cout<< "true average eff.:\t\t" << (float) m_truth_match/m_den <<"\n";
-      std::cout<< "algorithm efficiency:\t\t" << (float) m_truth_match/m_truth_tot <<"\n";
+      std::cout<< "algorithm average eff.:\t\t" << (float) m_truth_match/m_match <<"\n";
+      std::cout<< "relative matching freq.:\t" << (float) m_truth_match/m_truth_tot <<"\n";
+      std::cout<< "rafael efficiency.:\t" << (float) m_truth_match/m_den <<"\n";
     }
 
     std::cout<< "\n";

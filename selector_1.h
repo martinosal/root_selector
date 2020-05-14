@@ -7,7 +7,7 @@
 
 #ifndef selector_1_h
 #define selector_1_h
-#define bin 50
+#define bin_1 50
 #define tracksize 10
 
 #include <TROOT.h>
@@ -17,11 +17,20 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
-
+#include <TH2.h>
+#include <TH2F.h>
+#include <TH1F.h>
+#include <TLorentzVector.h>
+#include <TMultiGraph.h>
+#include <TGraphErrors.h>
+#include <TGraph.h>
+#include <TRandom.h>
+#include <random>
 // Headers needed by this particular selector
+#include <math.h>
+#include <numeric>
 #include <vector>
 #include <iostream>
-#include <vector>
 #include <cmath>
 //#include "matrix.h"
 
@@ -372,23 +381,24 @@ public :
 
 private:
 
-   bool selections=1,discriminants=0,shrinking_cone=0,selection_alg=1,cut=0,retagT=0,lxplus=0,debug=1;
+   bool selections=1,discriminants=0,shrinking_cone=0,selection_alg=1,cut=1,retagT=0,lxplus=0,debug=1;
 
    double m_cut=1.,m_fc=0.08;
    int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_truth_match=0,m_truth_tot=0;
-   int m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0;
-   double D_phi=0.,D_eta=0.,DR=0.,Dx=0.,Dy=0.,Dz=0.,Dxy=0.;
+   int m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
+   double D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Dxy_1=0,x0=0,y0=0,vx=0,vy=0,v_pa=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
    double D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
    int match=0,max_size=0;
    double tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.,m_pTfraction_cut=1.,m_DRcut=0.1,m_pTfraction_nocut=1e6,m_DRnocut=1e6;
-   int size_jet=0,size_child=0,den=0,m_den=0;
+   unsigned size_jet=0,size_child=0;
+   int den=0,m_den=0;
 
-   int m_track_cut=10;
+   unsigned m_track_cut=10;
 
    float pt_max=500., pt_min=0.;
-   float Delta=(pt_max-pt_min)/bin;
+   float Delta=(pt_max-pt_min)/bin_1;
 
-   std::vector< std::vector<float> > bin_v = std::vector< std::vector<float> >(bin);
+   std::vector< std::vector<float> > bin_v = std::vector< std::vector<float> >(bin_1);
 
    TFile *file;
 //   TGraph *g = new TGraph ();
@@ -472,6 +482,7 @@ private:
    TH2F *hist_trk_Dphi_Deta_inB;
    TH1F *hist_trk_DR_inB;
    TH2F *hist_trk_pT_DR_inB;
+   TH1F *hist_trk_origin_inB;
 
    TH1F *hist_child_pT_inB;
    TH1F *hist_child_Deta_inB;
@@ -483,6 +494,10 @@ private:
    TH2F *hist_child_pT_DR_inB;
    TH2F *hist_child_pT_jet_DR_inB;
    TH1F *hist_child_Lxyz_inB;
+   TH1F *hist_child_decay_IP;
+   TH1F *hist_child_nodecay_IP;
+   TH1F *hist_pT_vs_R0_ratio_inB;
+//   TH1F *hist_child_linearIP;
 
    TH1F *hist_efficiency_inB;
    TH1D *hist_n_child;
@@ -499,6 +514,7 @@ private:
    TH2F *hist_matched_pT_DR_inB;
    TH2F *hist_matched_pT_jet_DR_inB;
    TH1F *hist_matched_pdgId_inB;
+   TH1F *hist_matched_origin_inB;
    TH2F *hist_matched_pT_child_pTfraction_inB;
    TH1F *hist_matched_DR_trk_inB;
    TH2F *hist_matched_DR_trk_pTfraction;
@@ -524,6 +540,7 @@ private:
    TH2F *hist_single_matched_pT_DR_inB;
    TH2F *hist_single_matched_pT_jet_DR_inB;
    TH1F *hist_single_matched_pdgId_inB;
+   TH1F *hist_single_matched_origin_inB;
    TH2F *hist_single_matched_pT_child_pTfraction_inB;
    TH1F *hist_single_matched_DR_trk_inB;
    TH2F *hist_single_matched_DR_trk_pTfraction;
