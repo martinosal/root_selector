@@ -399,6 +399,9 @@ private:
    float Delta=(pt_max-pt_min)/bin_1;
 
    std::vector< std::vector<float> > bin_v = std::vector< std::vector<float> >(bin_1);
+   TLorentzVector jet;
+   double t1=0;
+   int t2=0;
 
    TFile *file;
 //   TGraph *g = new TGraph ();
@@ -498,9 +501,10 @@ private:
    TH2F *hist_child_pT_jet_DR_inB;
    TH1F *hist_child_Lxy_inB;
    TH1F *hist_child_Lxyz_inB;
-   TH1F *hist_child_decay_IP;
-   TH1F *hist_child_nodecay_IP;
-   TH1F *hist_child_linear_IP;
+//   TH1F *hist_child_decay_IP;
+//   TH1F *hist_child_nodecay_IP;
+//   TH1F *hist_child_linear_IP;
+   TH1F *hist_child_IP;
    TH1F *hist_pT_vs_R0_ratio_inB;
 //   TH1F *hist_child_linearIP;
 
