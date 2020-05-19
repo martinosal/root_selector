@@ -381,7 +381,7 @@ public :
 
 private:
 
-   bool selections=1,discriminants=0,shrinking_cone=0,selection_alg=1,cut=0,retagT=0,lxplus=0,debug=1;
+   bool selections=1,discriminants=0,shrinking_cone=0,selection_alg=1,cut=1,retagT=0,lxplus=0,debug=1;
 
    double m_cut=1.,m_fc=0.08;
    int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_truth_match=0,m_truth_tot=0;
@@ -435,6 +435,7 @@ private:
    TH1F *hist_phi_inB;
    TH1F *hist_E_inB;
 
+   TH1F *hist_jet_IP2_inB;
 
    TH1F *hist_ip2d_pb;
    TH1F *hist_ip2d_pc;
@@ -483,6 +484,8 @@ private:
    TH1F *hist_trk_DR_inB;
    TH2F *hist_trk_pT_DR_inB;
    TH1F *hist_trk_origin_inB;
+   TH1F *hist_trk_IP2_inB;
+   TH1F *hist_selected_trk_IP2_inB;
 
    TH1F *hist_child_pT_inB;
    TH1F *hist_child_Deta_inB;

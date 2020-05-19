@@ -118,6 +118,8 @@ void selector_1::Begin(TTree * /*tree*/)
 
    if(discriminants){
 
+     hist_jet_IP2_inB = new TH1F("jet_IP2_inB","jet_IP2_inB",300,-15.,15.);
+
      hist_ip2d_pb = new TH1F("ip2d_pb", "pb", 100., -0.1, 1.);
      hist_ip2d_pc = new TH1F("ip2d_pc", "pc", 100., -0.1, 1.);
      hist_ip2d_pu = new TH1F("ip2d_pu", "pu", 100., -0.1, 1.);
@@ -177,6 +179,8 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_trk_DR_inB = new TH1F("trk_DR_400_inB","trk_DR_400_inB",500,-0.1,2.);
      hist_trk_pT_DR_inB = new TH2F("trk_pT_DR_400_inB","trk_pT_DR_400_inB",80,0.,150.,80,0.,0.6);
      hist_trk_origin_inB = new TH1F("trk_origin_inB","trk_origin_inB",7,-2,5);
+     hist_trk_IP2_inB = new TH1F("trk_400_IP2_inB","trk_400_IP2_inB",300,-15.,15.);
+     hist_selected_trk_IP2_inB = new TH1F("trk_selected_400_IP2_inB","trk_selected_400_IP2_inB",300,-15.,15.);
 
      hist_child_pT_inB = new TH1F("child_pT_400_inB", "child_pT_400_inB", 500, 0., 150.);
      hist_child_eta_inB = new TH1F("child_eta_400_inB","child_eta_400_inB",500,-2.6,2.6);
@@ -468,7 +472,10 @@ Bool_t selector_1::Process(Long64_t entry)
    if(discriminants){
      double DL1=0;
      if(nBjets>0){
+
        for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
+         hist_jet_IP2_inB->Fill(jet_ip2[*it]);
+
          if(jet_ip2d_pb[*it]!=-99){
            hist_ip2d_llr_inB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
 //             if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
@@ -651,6 +658,11 @@ Bool_t selector_1::Process(Long64_t entry)
            for(unsigned i=0;i<size_jet;i++){
              if(abs(jet_trk_eta[*it].at(i))<2.5 && jet_trk_pt[*it].at(i)>400.){
 
+               hist_trk_IP2_inB->Fill(jet_trk_d0[*it].at(i));
+               if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
+                 hist_selected_trk_IP2_inB->Fill(jet_trk_d0[*it].at(i));
+               }
+
                if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
                  m_truth_tot++;
                }
@@ -711,7 +723,7 @@ Bool_t selector_1::Process(Long64_t entry)
                Dy_1=(*PVx)-jet_bH_child_prod_y[*it].at(j);
                Dz_1=(*PVx)-jet_bH_child_prod_z[*it].at(j);
                Dxy_1=sqrt(Dx_1*Dx_1+Dy_1*Dy_1);
-               hist_child_Lxy_inB->Fill(sqrt(Dxy_1*Dxy_1));
+               hist_child_Lxy_inB->Fill(Dxy_1);
                hist_child_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
                child_Lxy[j]=Dxy_1;
                child_Lxyz[j]=sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1);
@@ -762,12 +774,14 @@ Bool_t selector_1::Process(Long64_t entry)
 //                 std::cout<<std::fixed<<std::setprecision(3)<<"Expected R[m]:  "<<1e-3*child_Pt.at(j)/0.6<<"\t"<<"\tActual R[m]:  "<<1e-3*R0<<"\trelative error[%]:  "<<1e2*((1e-3*child_Pt.at(j)/0.6)-1e-3*R0)/(1e-3*R0)<<"\n";
                  hist_child_decay_IP->Fill(d0);
                  hist_pT_vs_R0_ratio_inB->Fill(child_Pt.at(j)/R0);
-//                 std::cout<<jet_bH_child_charge[*it].at(j)<<"\t"<<d0*jet_bH_child_charge[*it].at(j)/abs(d0*jet_bH_child_charge[*it].at(j))<<"\n";
+
+//                 ncorr+=jet_bH_child_charge[*it].at(j)*d0/abs(d0);
+//                 std::cout<<jet_bH_child_charge[*it].at(j)<<"\t"<<d0/abs(d0)<<"\n";
                }
 
-               hist_child_linear_IP->Fill((px*(-Dy_1)-py*(-Dx_1))/sqrt(px*px+py*py));
-
                child_IP[j]=d0;
+
+               hist_child_linear_IP->Fill((px*(-Dy_1)-py*(-Dx_1))/sqrt(px*px+py*py));
 
                D_eta=child_Eta[j]-jet_eta[*it];
                if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
@@ -1162,6 +1176,9 @@ void selector_1::Terminate()
 
 
     if(discriminants){
+
+      hist_jet_IP2_inB->Write();
+
       hist_ip2d_pb->Write();
       hist_ip2d_pc->Write();
       hist_ip2d_pu->Write();
@@ -1239,6 +1256,8 @@ void selector_1::Terminate()
       hist_trk_DR_inB->Write();
       hist_trk_pT_DR_inB->Write();
       hist_trk_origin_inB->Write();
+      hist_trk_IP2_inB->Write();
+      hist_selected_trk_IP2_inB->Write();
 
       hist_child_pT_inB->Write();
       hist_child_eta_inB->Write();
@@ -1422,9 +1441,9 @@ void selector_1::Terminate()
       std::cout<< "triple+ matches:\t" << m_sc3 <<"\tfraction:\t"<<(float) m_sc3/m_match << "\n";
       std::cout<< "algorithm average eff.:\t\t" << (float) m_truth_match/m_match <<"\n";
       std::cout<< "relative matching freq.:\t" << (float) m_truth_match/m_truth_tot <<"\n";
-      std::cout<< "rafael efficiency.:\t" << (float) m_truth_match/m_den <<"\n";
+      std::cout<< "efficiency from origin:\t" << (float) m_truth_match/m_den <<"\n";
     }
 
-    std::cout<< "\n";
+    std::cout<<"\n";
 
 }
