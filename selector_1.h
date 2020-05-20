@@ -364,6 +364,7 @@ public :
    selector_1(TTree * /*tree*/ =0) { }
    virtual ~selector_1() { }
    virtual Int_t   Version() const { return 2; }
+   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool);
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -381,27 +382,25 @@ public :
 
 private:
 
-   bool selections=1,discriminants=0,shrinking_cone=0,selection_alg=1,cut=1,retagT=0,lxplus=0,debug=1;
+   bool selections,discriminants,shrinking_cone,selection_alg,cut,retagT,debug,lxplus;
 
-   double m_cut=1.,m_fc=0.08;
-   int m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_truth_match=0,m_truth_tot=0;
-   int m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
-   double D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Dxy_1=0,x0=0,y0=0,vx=0,vy=0,v_pa=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
-   double D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
-   int match=0,max_size=0;
-   double tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.,m_pTfraction_cut=1.,m_DRcut=0.1,m_pTfraction_nocut=1e6,m_DRnocut=1e6;
-   unsigned size_jet=0,size_child=0;
-   int den=0,m_den=0;
+   double m_cut,m_fc;
+   int m_N,m_Ntot,m_b2d,m_b3d,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_truth_match,m_truth_tot;
+   int m_qc,m_qj,q,a,b,sc,sgn;
+   double D_phi,D_eta,DR,px,py,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
+   double D_phi_trk,D_eta_trk,DR_trk,DpT_trk;
+   int match,max_size;
+   double tmp_pTfraction,tmp_DR,tmp_min_pTfraction,tmp_min_DR,m_pTfraction_cut,m_DRcut,m_pTfraction_nocut,m_DRnocut;
+   unsigned size_jet,size_child;
+   int den,m_den;
 
-   unsigned m_track_cut=10;
+   unsigned m_track_cut;
 
-   float pt_max=500., pt_min=0.;
-   float Delta=(pt_max-pt_min)/bin_1;
+   float pt_max, pt_min;
+   float Delta;
 
    std::vector< std::vector<float> > bin_v = std::vector< std::vector<float> >(bin_1);
    TLorentzVector jet;
-   double t1=0;
-   int t2=0;
 
    TFile *file;
 //   TGraph *g = new TGraph ();
@@ -487,8 +486,12 @@ private:
    TH1F *hist_trk_DR_inB;
    TH2F *hist_trk_pT_DR_inB;
    TH1F *hist_trk_origin_inB;
-   TH1F *hist_trk_IP2_inB;
-   TH1F *hist_selected_trk_IP2_inB;
+   TH1F *hist_trk_d0_inB;
+   TH1F *hist_trk_d0_PUinB;
+   TH1F *hist_trk_d0_BinB;
+   TH1F *hist_trk_d0_CinB;
+   TH1F *hist_trk_d0_FRAGinB;
+   TH1F *hist_trk_d0_GEANTinB;
 
    TH1F *hist_child_pT_inB;
    TH1F *hist_child_Deta_inB;
@@ -501,10 +504,10 @@ private:
    TH2F *hist_child_pT_jet_DR_inB;
    TH1F *hist_child_Lxy_inB;
    TH1F *hist_child_Lxyz_inB;
-//   TH1F *hist_child_decay_IP;
-//   TH1F *hist_child_nodecay_IP;
+   TH1F *hist_child_decay_IP;
+   TH1F *hist_child_nodecay_IP;
 //   TH1F *hist_child_linear_IP;
-   TH1F *hist_child_IP;
+   TH1F *hist_child_d0;
    TH1F *hist_pT_vs_R0_ratio_inB;
 //   TH1F *hist_child_linearIP;
 
@@ -527,7 +530,7 @@ private:
    TH2F *hist_matched_pT_child_pTfraction_inB;
    TH1F *hist_matched_DR_trk_inB;
    TH2F *hist_matched_DR_trk_pTfraction;
-   TH1F *hist_matched_IP_inB;
+   TH1F *hist_matched_d0_inB;
    TH1F *hist_matched_Lxy_inB;
    TH1F *hist_matched_Lxyz_inB;
 
@@ -556,6 +559,7 @@ private:
    TH2F *hist_single_matched_pT_child_pTfraction_inB;
    TH1F *hist_single_matched_DR_trk_inB;
    TH2F *hist_single_matched_DR_trk_pTfraction;
+   TH1F *hist_single_matched_d0_inB;
 
 
 

@@ -29,7 +29,18 @@
 #include <TStyle.h>
 
 
-
+void selector_1::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool cut_flag, bool retagT_flag)
+{
+   lxplus=lxplus_flag;
+   debug=debug_flag;
+   selections=selections_flag;
+   discriminants=discriminants_flag;
+   shrinking_cone=shrinking_cone_flag;
+   selection_alg=selection_alg_flag;
+   cut=cut_flag;
+   retagT=retagT_flag;
+   return;
+}
 
 void selector_1::Begin(TTree * /*tree*/)
 {
@@ -37,16 +48,45 @@ void selector_1::Begin(TTree * /*tree*/)
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
 
+   m_cut=1.,m_fc=0.08;
+   m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_truth_match=0,m_truth_tot=0;
+   m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
+   D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Dxy_1=0,x0=0,y0=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
+   D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
+   match=0,max_size=0;
+   tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.,m_pTfraction_cut=1.,m_DRcut=0.1,m_pTfraction_nocut=1e6,m_DRnocut=1e6;
+   size_jet=0,size_child=0;
+   den=0,m_den=0;
+
+   m_track_cut=10;
+
+   pt_max=500., pt_min=0.;
+   Delta=(pt_max-pt_min)/bin_1;
+
    std::cout<<"\n";
 
    if(lxplus && !debug){
-     if(cut){
-       std::cout<<"CUT\n";
-       file = new TFile("output_files/lxplus_output_cut.root","RECREATE");
+     if(retagT){
+       std::cout<<"RETAG TRUE\n";
+       if(cut){
+         std::cout<<"CUT\n";
+         file = new TFile("output_files/lxplus_output_doRetagT_cut.root","RECREATE");
+       }
+       if(!cut){
+         std::cout<<"NO CUT\n";
+         file = new TFile("output_files/lxplus_output_doRetagT_nocut.root","RECREATE");
+       }
      }
-     if(!cut){
-       std::cout<<"NO CUT\n";
-       file = new TFile("output_files/lxplus_output_nocut.root","RECREATE");
+     if(!retagT){
+       std::cout<<"RETAG FALSE\n";
+       if(cut){
+         std::cout<<"CUT\n";
+         file = new TFile("output_files/lxplus_output_doRetagF_cut.root","RECREATE");
+       }
+       if(!cut){
+         std::cout<<"NO CUT\n";
+         file = new TFile("output_files/lxplus_output_doRetagF_nocut.root","RECREATE");
+       }
      }
    }
    if(debug){
@@ -112,7 +152,6 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_phi_inB = new TH1F("phi_inB", "inB", 100, -4.,4.);
      hist_E_inB = new TH1F("E_inB", "inB", 100, 0., 10e5);
 
-
    }
 
 
@@ -151,15 +190,18 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_dl1_inB = new TH1F("DL1_inB","DL1_inB",100,-8.,12.);
      hist_dl1_exC = new TH1F("DL1_exC","DL1_exC",100,-8.,12.);
      hist_dl1_exB = new TH1F("DL1_exB","DL1_exB",100,-8.,12.);
+
    }
 
 
    if(shrinking_cone){
+
      hist_n_tracks = new TH1F("n tracks", "n1==1", 100, 0, 50);
      hist_tracks_DR = new TH2F("n tracks-Delta_R", "n1==1", 100, 0., 1., 100., 0., 100.);
      hist_DR_1 = new TH1F("Delta_R", "n1==1", 100, 0., 10.);
 //   hist_std_dev_DR_1 = new TH1F("Standard Deviation from Delta_R", "n1==1", 100, 0., 1.);
      jet_DR_pT = new TH2F("jets Delta_R-pT","n1==1", 100, 0., 500., 100, 0., 1.);
+
    }
 
 
@@ -179,8 +221,12 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_trk_DR_inB = new TH1F("trk_DR_400_inB","trk_DR_400_inB",500,-0.1,2.);
      hist_trk_pT_DR_inB = new TH2F("trk_pT_DR_400_inB","trk_pT_DR_400_inB",80,0.,150.,80,0.,0.6);
      hist_trk_origin_inB = new TH1F("trk_origin_inB","trk_origin_inB",7,-2,5);
-     hist_trk_IP2_inB = new TH1F("trk_400_IP2_inB","trk_400_IP2_inB",300,-15.,15.);
-     hist_selected_trk_IP2_inB = new TH1F("trk_selected_400_IP2_inB","trk_selected_400_IP2_inB",300,-15.,15.);
+     hist_trk_d0_inB = new TH1F("trk_400_d0_inB","trk_400_d0_inB",300,-15.,15.);
+     hist_trk_d0_PUinB = new TH1F("trk_400_d0_PUinB","trk_400_d0_PUinB",300,-15.,15.);
+     hist_trk_d0_BinB = new TH1F("trk_400_d0_BinB","trk_400_d0_BinB",300,-15.,15.);
+     hist_trk_d0_CinB = new TH1F("trk_400_d0_CinB","trk_400_d0_CinB",300,-15.,15.);
+     hist_trk_d0_FRAGinB = new TH1F("trk_400_d0_FRAGinB","trk_400_d0_FRAGinB",300,-15.,15.);
+     hist_trk_d0_GEANTinB = new TH1F("trk_400_d0_GEANTinB","trk_400_d0_GEANTinB",300,-15.,15.);
 
      hist_child_pT_inB = new TH1F("child_pT_400_inB", "child_pT_400_inB", 500, 0., 150.);
      hist_child_eta_inB = new TH1F("child_eta_400_inB","child_eta_400_inB",500,-2.6,2.6);
@@ -193,10 +239,10 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_child_pT_jet_DR_inB = new TH2F("child_pT_jet_DR_400_inB","child_pT_jet_DR_400_inB",100,0.,500.,100,0.,2.);
      hist_child_Lxy_inB = new TH1F("child_400_Lxy_inB","child_400_Lxy_inB",300,0.,1000.);
      hist_child_Lxyz_inB = new TH1F("child_400_Lxyz_inB","child_400_Lxyz_inB",300,0.,1000.);
-//     hist_child_decay_IP = new TH1F("child_400_decay_IP_inB","child_400_decay_IP_inB",300,-15.,15.);
-//     hist_child_nodecay_IP = new TH1F("child_400_nodecay_IP_inB","child_400_nodecay_IP_inB",300,-15.,15.);
+     hist_child_decay_IP = new TH1F("child_400_decay_IP_inB","child_400_decay_IP_inB",300,-15.,15.);
+     hist_child_nodecay_IP = new TH1F("child_400_nodecay_IP_inB","child_400_nodecay_IP_inB",300,-15.,15.);
 //     hist_child_linear_IP = new TH1F("child_400_linear_IP_inB","child_400_linear_IP_inB",300,-15.,15.);
-     hist_child_IP = new TH1F("child_400_IP_inB","child_400_IP_inB",300,-15.,15.);
+     hist_child_d0 = new TH1F("child_400_d0_inB","child_400_d0_inB",300,-15.,15.);
      hist_pT_vs_R0_ratio_inB = new TH1F("child_pT_vs_R0_ratio_inB","child_pT_vs_R0_ratio_inB",300,-1.2,2.4);
 
      hist_matched_pT_inB = new TH1F("matched_child_pT_400_inB","matched_child_pT_400_inB", 500, 0., 150.);
@@ -213,7 +259,7 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_matched_pT_child_pTfraction_inB = new TH2F("matched_pT_child_pTfraction_400_inB","matched_pT_child_vs_DpT/pT_child_400_inB",500,0.,150.,500,-1.1,10.);
      hist_matched_DR_trk_inB = new TH1F("matched_DR_trk_400_inB","matched_DR_trk_inB_400_inB",500,0.,1.);
      hist_matched_DR_trk_pTfraction = new TH2F("matched_DR_trk_pTfraction_400_inB","matched_DR_trk_pTfraction_400_inB",500,0.,1.,500,-1.,10.);
-     hist_matched_IP_inB = new TH1F("matched_child_400_IP_inB","matched_child_400_IP_inB",300,-15.,15.);
+     hist_matched_d0_inB = new TH1F("matched_child_400_d0_inB","matched_child_400_d0_inB",300,-15.,15.);
      hist_matched_Lxy_inB = new TH1F("matched_child_400_Lxy_inB","matched_child_400_Lxy_inB",300,0.,1000.);
      hist_matched_Lxyz_inB = new TH1F("matched_child_400_Lxyz_inB","matched_child_400_Lxyz_inB",300,0.,1000.);
 
@@ -242,6 +288,8 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_single_matched_pT_child_pTfraction_inB = new TH2F("single_matched_pT_child_pTfraction_400_inB","single_matched_pT_child_vs_DpT/pT_child_400_inB",500,0.,150.,500,-1.1,10.);
      hist_single_matched_DR_trk_inB = new TH1F("single_matched_DR_trk_400_inB","single_matched_DR_trk_400_inB", 500, 0., 1.);
      hist_single_matched_DR_trk_pTfraction = new TH2F("single_matched_DR_trk_pTfraction_400_inB","single_matched_DR_trk_pTfraction_400_inB",500,0.,1.,500,-1.1,10.);
+     hist_single_matched_d0_inB = new TH1F("single_matched_child_400_d0_inB","single_matched_child_400_d0_inB",300,-15.,15.);
+
    }
 
 
@@ -656,18 +704,32 @@ Bool_t selector_1::Process(Long64_t entry)
            hist_n_trk->Fill(size_jet);
            hist_n_child->Fill(size_child);
 
-//           jet.SetPtEtaPhiE(jet_pt[*it],jet_eta[*it],jet_phi[*it],jet_E[*it]);
-//           double jet_v[]={jet.Px(),jet.Py(),jet.Pz()};
+           jet.SetPtEtaPhiE(jet_pt[*it],jet_eta[*it],jet_phi[*it],jet_E[*it]);
+           double jet_v[]={jet.Px(),jet.Py(),jet.Pz()};
 
            for(unsigned i=0;i<size_jet;i++){
              if(abs(jet_trk_eta[*it].at(i))<2.5 && jet_trk_pt[*it].at(i)>400.){
 
-               t1=sin(jet_phi[*it]-jet_trk_phi[*it].at(i))*jet_trk_d0[*it].at(i);
-               t2=t1/abs(t1);
-               hist_trk_IP2_inB->Fill(t2*abs(jet_trk_d0[*it].at(i)));
-               if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
-                 hist_selected_trk_IP2_inB->Fill(t2*abs(jet_trk_d0[*it].at(i)));
+               A=sin(jet_phi[*it]-jet_trk_phi[*it].at(i))*jet_trk_d0[*it].at(i);
+               sgn=A/abs(A);
+               d0=sgn*abs(jet_trk_d0[*it].at(i));
+               hist_trk_d0_inB->Fill(d0);
+               if(jet_trk_orig[*it].at(i)==-1){
+                 hist_trk_d0_PUinB->Fill(d0);
                }
+               if(jet_trk_orig[*it].at(i)==0){
+                 hist_trk_d0_BinB->Fill(d0);
+               }
+               if(jet_trk_orig[*it].at(i)==1){
+                 hist_trk_d0_CinB->Fill(d0);
+               }
+               if(jet_trk_orig[*it].at(i)==2){
+                 hist_trk_d0_FRAGinB->Fill(d0);
+               }
+               if(jet_trk_orig[*it].at(i)==3){
+                 hist_trk_d0_GEANTinB->Fill(d0);
+               }
+
 
                if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
                  m_truth_tot++;
@@ -736,35 +798,31 @@ Bool_t selector_1::Process(Long64_t entry)
                px=jet_bH_child_px[*it].at(j);
                py=jet_bH_child_py[*it].at(j);
 
-//               t1=(jet_bH_child_px[*it].at(j)*Dy_1-jet_bH_child_py[*it].at(j)*Dx_1)/(jet_bH_child_py[*it].at(j)*jet_v[0]-jet_bH_child_px[*it].at(j)*jet_v[1]);
-//               t2=(Dy_1+t1*jet_v[1])/jet_bH_child_py[*it].at(j);
-//               Dz=t2*jet_bH_child_pz[*it].at(j)-t1*jet_v[2];
-//               if(abs(Dz-Dz_1)<1e0) std::cout<<Dz-Dz_1<<"\n";
-
                if(jet_bH_child_decay_x[*it].at(j)==-999){//NO DECAY CHILD
+                 if(jet_bH_child_charge[*it].at(j)>1.){
+                   c=-1;
+                 }
+                 if(jet_bH_child_charge[*it].at(j)<1.){
+                   c=+1;
+                 }
 
-                 TRandom3 *rand = new TRandom3(0);
-                 rand_n=rand->Gaus(0.59,0.05943);
-//                 std::cout<<rand_n<<"\n";
+//                 TRandom3 *rand = new TRandom3(0);
+//                 rand_n=rand->Gaus(0.59,0.05943);
+                 rand_n=0.6;
                  R0=abs(child_Pt.at(j)/rand_n);//mm
-                 if(jet_bH_child_charge[*it].at(j)>0){
-                   sgn=-1;
-                 }
-                 if(jet_bH_child_charge[*it].at(j)<0){
-                   sgn=+1;
-                 }
-                 x0=jet_bH_child_prod_x[*it].at(j)-R0*(py/(sqrt(px*px+py*py)));
-                 y0=jet_bH_child_prod_y[*it].at(j)+R0*(px/(sqrt(px*px+py*py)));
-                 Dx_3=(*PVx)-x0;
-                 Dy_3=(*PVy)-y0;
+                 x0=jet_bH_child_prod_x[*it].at(j)-c*R0*(py/(sqrt(px*px+py*py)));
+                 y0=jet_bH_child_prod_y[*it].at(j)+c*R0*(px/(sqrt(px*px+py*py)));
+                 Dx_3=x0-(*PVx);
+                 Dy_3=y0-(*PVy);
                  Dxy_3=sqrt((Dx_3*Dx_3)+(Dy_3*Dy_3));
 
-                 d0=Dxy_3-R0;
-                 t1=sin(jet_phi[*it]-child_Phi.at(j))*d0;
-                 t2=t1/abs(t1);
+                 gamma=1.-abs(R0)/(Dxy_3);
+                 A=(Dx_3*gamma*py-Dy_3*gamma*px)*(jet_v[0]*py-jet_v[1]*px);
+                 sgn=A/abs(A);
 
-//                 hist_child_nodecay_IP->Fill(d0);
-//                 hist_child_IP->Fill(t2*abs(d0));
+                 d0=sgn*abs(Dxy_3-abs(R0));
+
+                 hist_child_nodecay_IP->Fill(d0);
 
                }
 
@@ -775,35 +833,38 @@ Bool_t selector_1::Process(Long64_t entry)
                  Dz_2=jet_bH_child_decay_z[*it].at(j)-jet_bH_child_prod_z[*it].at(j);
 //                 Dxy_2=sqrt((Dx_1*Dx_1)+(Dy_1*Dy_1));
 
-                 vx=1e3*c*px/jet_bH_child_E[*it].at(j);
-                 vy=1e3*c*py/jet_bH_child_E[*it].at(j);
-                 v_pa=sqrt(vx*vx+vy*vy);
-                 R0=0.5*v_pa*(Dx_2*Dx_2+Dy_2*Dy_2)/(Dy_2*vx-Dx_2*vy);
-                 x0=jet_bH_child_prod_x[*it].at(j)-abs(R0)*vy/v_pa;
-                 y0=jet_bH_child_prod_y[*it].at(j)+abs(R0)*vx/v_pa;
-                 Dx_3=(*PVx)-x0;
-                 Dy_3=(*PVy)-y0;
+//                 vx=1e3*c*px/jet_bH_child_E[*it].at(j);
+//                 vy=1e3*c*py/jet_bH_child_E[*it].at(j);
+                 R0=0.5*sqrt(px*px+py*py)*(Dx_2*Dx_2+Dy_2*Dy_2)/(Dy_2*px-Dx_2*py);
+                 x0=jet_bH_child_prod_x[*it].at(j)-R0*py/sqrt(px*px+py*py);
+                 y0=jet_bH_child_prod_y[*it].at(j)+R0*px/sqrt(px*px+py*py);
+                 Dx_3=x0-(*PVx);
+                 Dy_3=y0-(*PVy);
                  Dxy_3=sqrt((Dx_3*Dx_3)+(Dy_3*Dy_3));
 
-                 d0=Dxy_3-abs(R0);
-                 t1=sin(jet_phi[*it]-child_Phi.at(j))*d0;
-                 t2=t1/abs(t1);
-//                 std::cout<<std::fixed<<std::setprecision(3)<<"Expected R[m]:  "<<1e-3*child_Pt.at(j)/0.6<<"\t"<<"\tActual R[m]:  "<<1e-3*R0<<"\trelative error[%]:  "<<1e2*((1e-3*child_Pt.at(j)/0.6)-1e-3*R0)/(1e-3*R0)<<"\n";
-//                 hist_child_decay_IP->Fill(d0);
-//                 hist_child_IP->Fill(t2*abs(d0));
-                 hist_pT_vs_R0_ratio_inB->Fill(child_Pt.at(j)/R0);
+
+                 gamma=1.-abs(R0)/(Dxy_3);
+                 A=(Dx_3*gamma*py-Dy_3*gamma*px)*(jet_v[0]*py-jet_v[1]*px);
+                 sgn=A/abs(A);
+
+                 d0=sgn*abs(Dxy_3-abs(R0));
+
+                 hist_child_decay_IP->Fill(d0);
+
+                 hist_pT_vs_R0_ratio_inB->Fill(child_Pt.at(j)/abs(R0));
 
 //                 ncorr+=jet_bH_child_charge[*it].at(j)*d0/abs(d0);
 //                 std::cout<<jet_bH_child_charge[*it].at(j)*R0/abs(jet_bH_child_charge[*it].at(j)*R0)<<"\n";
 //                 std::cout<<jet_bH_child_charge[*it].at(j)<<"\t"<<d0/abs(d0)<<"\n";
                }
 
-               d0=(px*(-Dy_1)-py*(-Dx_1))/sqrt(px*px+py*py);
-               t1=sin(jet_phi[*it]-child_Phi.at(j))*d0;
-               t2=t1/abs(t1);
+//               d0=(px*(-Dy_1)-py*(-Dx_1))/sqrt(px*px+py*py);//LINEAR D0
+//               t1=sin(jet_phi[*it]-child_Phi.at(j))*d0;
+//               t2=t1/abs(t1);
 //               hist_child_linear_IP->Fill(t2*abs(d0));
-               hist_child_IP->Fill(t2*abs(d0));
-               child_IP[j]=t2*abs(d0);
+
+               hist_child_d0->Fill(d0);
+               child_IP[j]=d0;
 
                D_eta=child_Eta[j]-jet_eta[*it];
                if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
@@ -953,7 +1014,7 @@ Bool_t selector_1::Process(Long64_t entry)
                hist_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
                hist_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
                hist_matched_origin_inB->Fill(jet_trk_orig[*it].at(a));
-               hist_matched_IP_inB->Fill(child_IP[b]);
+               hist_matched_d0_inB->Fill(child_IP[b]);
                hist_matched_Lxy_inB->Fill(child_Lxy[b]);
                hist_matched_Lxyz_inB->Fill(child_Lxyz[b]);
 
@@ -988,6 +1049,8 @@ Bool_t selector_1::Process(Long64_t entry)
                  hist_single_matched_pT_child_pTfraction_inB->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
                  hist_single_matched_DR_trk_inB->Fill(DR_trk);
                  hist_single_matched_DR_trk_pTfraction->Fill(DR_trk,-1.*DpT_trk/(1e-3*child_Pt.at(b)));
+
+                 hist_single_matched_d0_inB->Fill(child_IP[b]);
                }
                if(sc==2){
                  m_sc2++;
@@ -1278,8 +1341,12 @@ void selector_1::Terminate()
       hist_trk_DR_inB->Write();
       hist_trk_pT_DR_inB->Write();
       hist_trk_origin_inB->Write();
-      hist_trk_IP2_inB->Write();
-      hist_selected_trk_IP2_inB->Write();
+      hist_trk_d0_inB->Write();
+      hist_trk_d0_PUinB->Write();
+      hist_trk_d0_BinB->Write();
+      hist_trk_d0_CinB->Write();
+      hist_trk_d0_FRAGinB->Write();
+      hist_trk_d0_GEANTinB->Write();
 
       hist_child_pT_inB->Write();
       hist_child_eta_inB->Write();
@@ -1292,12 +1359,11 @@ void selector_1::Terminate()
       hist_child_pT_jet_DR_inB->Write();
       hist_child_Lxy_inB->Write();
       hist_child_Lxyz_inB->Write();
-//      hist_child_decay_IP->Write();
-//      hist_child_nodecay_IP->Write();
+      hist_child_decay_IP->Write();
+      hist_child_nodecay_IP->Write();
 //      hist_child_linear_IP->Write();
-      hist_child_IP->Write();
+      hist_child_d0->Write();
       hist_pT_vs_R0_ratio_inB->Write();
-//      hist_child_linearIP->Write();
 
       hist_efficiency_inB->Write();
       hist_n_trk->Write();
@@ -1318,9 +1384,9 @@ void selector_1::Terminate()
       hist_matched_pT_child_pTfraction_inB->Write();
       hist_matched_DR_trk_inB->Write();
       hist_matched_DR_trk_pTfraction->Write();
-      hist_matched_IP_inB->Write();
       hist_matched_Lxy_inB->Write();
       hist_matched_Lxyz_inB->Write();
+      hist_matched_d0_inB->Write();
 
       hist_nomatched_pT_inB->Write();
       hist_nomatched_eta_inB->Write();
@@ -1347,6 +1413,7 @@ void selector_1::Terminate()
       hist_single_matched_pT_child_pTfraction_inB->Write();
       hist_single_matched_DR_trk_inB->Write();
       hist_single_matched_DR_trk_pTfraction->Write();
+      hist_single_matched_d0_inB->Write();
     }
 
 
