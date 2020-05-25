@@ -1,4 +1,4 @@
-#define selector_1_cxx
+#define AOD_selector_cxx
 // The class definition in selector.h has been generated automatically
 // by the ROOT utility TTree::MakeSelector(). This class is derived
 // from the ROOT class TSelector. For more information on the TSelector
@@ -25,11 +25,11 @@
 //
 
 
-#include "selector_1.h"
+#include "AOD_selector.h"
 #include <TStyle.h>
 
 
-void selector_1::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool cut_flag, bool retagT_flag)
+void AOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool cut_flag, bool retagT_flag)
 {
    lxplus=lxplus_flag;
    debug=debug_flag;
@@ -42,14 +42,14 @@ void selector_1::setFlags(bool lxplus_flag, bool debug_flag, bool selections_fla
    return;
 }
 
-void selector_1::Begin(TTree * /*tree*/)
+void AOD_selector::Begin(TTree * /*tree*/)
 {
    // The Begin() function is called at the start of the query.
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
 
    m_cut=1.,m_fc=0.08;
-   m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_truth_match=0,m_truth_tot=0;
+   m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_truth_match=0,m_trk_BC=0;
    m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
    D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Dxy_1=0,x0=0,y0=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
    D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
@@ -70,22 +70,22 @@ void selector_1::Begin(TTree * /*tree*/)
        std::cout<<"RETAG TRUE\n";
        if(cut){
          std::cout<<"CUT\n";
-         file = new TFile("output_files/lxplus_output_doRetagT_cut.root","RECREATE");
+         file = new TFile("../output_files/lxplus_output_doRetagT_cut.root","RECREATE");
        }
        if(!cut){
          std::cout<<"NO CUT\n";
-         file = new TFile("output_files/lxplus_output_doRetagT_nocut.root","RECREATE");
+         file = new TFile("../output_files/lxplus_output_doRetagT_nocut.root","RECREATE");
        }
      }
      if(!retagT){
        std::cout<<"RETAG FALSE\n";
        if(cut){
          std::cout<<"CUT\n";
-         file = new TFile("output_files/lxplus_output_doRetagF_cut.root","RECREATE");
+         file = new TFile("../output_files/lxplus_output_doRetagF_cut.root","RECREATE");
        }
        if(!cut){
          std::cout<<"NO CUT\n";
-         file = new TFile("output_files/lxplus_output_doRetagF_nocut.root","RECREATE");
+         file = new TFile("../output_files/lxplus_output_doRetagF_nocut.root","RECREATE");
        }
      }
    }
@@ -98,22 +98,22 @@ void selector_1::Begin(TTree * /*tree*/)
        std::cout<<"RETAG TRUE\n";
        if(cut){
          std::cout<<"CUT\n";
-         file = new TFile("output_files/output_13022127_000030_doRetagT_cut.root","RECREATE");
+         file = new TFile("../output_files/output_13022127_000030_doRetagT_cut.root","RECREATE");
        }
        if(!cut){
          std::cout<<"NO CUT\n";
-         file = new TFile("output_files/output_13022127_000030_doRetagT_nocut.root","RECREATE");
+         file = new TFile("../output_files/output_13022127_000030_doRetagT_nocut.root","RECREATE");
        }
      }
      if(!retagT){
        std::cout<<"RETAG FALSE\n";
        if(cut){
          std::cout<<"CUT\n";
-         file = new TFile("output_files/output_13022127_000030_doRetagF_cut.root","RECREATE");
+         file = new TFile("../output_files/output_13022127_000030_doRetagF_cut.root","RECREATE");
        }
        if(!cut){
          std::cout<<"NO CUT\n";
-         file = new TFile("output_files/output_13022127_000030_doRetagF_nocut.root","RECREATE");
+         file = new TFile("../output_files/output_13022127_000030_doRetagF_nocut.root","RECREATE");
        }
      }
    }
@@ -243,6 +243,7 @@ void selector_1::Begin(TTree * /*tree*/)
      hist_child_nodecay_IP = new TH1F("child_400_nodecay_IP_inB","child_400_nodecay_IP_inB",300,-15.,15.);
 //     hist_child_linear_IP = new TH1F("child_400_linear_IP_inB","child_400_linear_IP_inB",300,-15.,15.);
      hist_child_d0 = new TH1F("child_400_d0_inB","child_400_d0_inB",300,-15.,15.);
+     hist_child_d0_pT = new TH2F("child_400_d0_pT_inB","child_400_pT_d0_inB",300,-15.,15.,300,0.,150.);
      hist_pT_vs_R0_ratio_inB = new TH1F("child_pT_vs_R0_ratio_inB","child_pT_vs_R0_ratio_inB",300,-1.2,2.4);
 
      hist_matched_pT_inB = new TH1F("matched_child_pT_400_inB","matched_child_pT_400_inB", 500, 0., 150.);
@@ -296,7 +297,7 @@ void selector_1::Begin(TTree * /*tree*/)
    TString option = GetOption();
 }
 
-void selector_1::SlaveBegin(TTree * /*tree*/)
+void AOD_selector::SlaveBegin(TTree * /*tree*/)
 {
    // The SlaveBegin() function is called after the Begin() function.
    // When running with PROOF SlaveBegin() is called on each slave server.
@@ -305,7 +306,7 @@ void selector_1::SlaveBegin(TTree * /*tree*/)
    TString option = GetOption();
 }
 
-Bool_t selector_1::Process(Long64_t entry)
+Bool_t AOD_selector::Process(Long64_t entry)
 {
    // The Process() function is called for each entry in the tree (or possibly
    // keyed object in the case of PROOF) to be processed. The entry argument
@@ -719,20 +720,17 @@ Bool_t selector_1::Process(Long64_t entry)
                }
                if(jet_trk_orig[*it].at(i)==0){
                  hist_trk_d0_BinB->Fill(d0);
+                 m_trk_BC++;
                }
                if(jet_trk_orig[*it].at(i)==1){
                  hist_trk_d0_CinB->Fill(d0);
+                 m_trk_BC++;
                }
                if(jet_trk_orig[*it].at(i)==2){
                  hist_trk_d0_FRAGinB->Fill(d0);
                }
                if(jet_trk_orig[*it].at(i)==3){
                  hist_trk_d0_GEANTinB->Fill(d0);
-               }
-
-
-               if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
-                 m_truth_tot++;
                }
 
                D_eta=jet_trk_eta[*it][i]-jet_eta[*it];
@@ -864,6 +862,7 @@ Bool_t selector_1::Process(Long64_t entry)
 //               hist_child_linear_IP->Fill(t2*abs(d0));
 
                hist_child_d0->Fill(d0);
+               hist_child_d0_pT->Fill(d0,1e-3*sqrt(px*px+py*py));
                child_IP[j]=d0;
 
                D_eta=child_Eta[j]-jet_eta[*it];
@@ -1206,7 +1205,7 @@ Bool_t selector_1::Process(Long64_t entry)
    return kTRUE;
 }
 
-void selector_1::SlaveTerminate()
+void AOD_selector::SlaveTerminate()
 {
    // The SlaveTerminate() function is called after all entries or objects
    // have been processed. When running with PROOF SlaveTerminate() is called
@@ -1214,7 +1213,7 @@ void selector_1::SlaveTerminate()
 
 }
 
-void selector_1::Terminate()
+void AOD_selector::Terminate()
 {
    // The Terminate() function is the last function to be called during
    // a query. It always runs on the client, it can be used to present
@@ -1363,6 +1362,7 @@ void selector_1::Terminate()
       hist_child_nodecay_IP->Write();
 //      hist_child_linear_IP->Write();
       hist_child_d0->Write();
+      hist_child_d0_pT->Write();
       hist_pT_vs_R0_ratio_inB->Write();
 
       hist_efficiency_inB->Write();
@@ -1530,8 +1530,8 @@ void selector_1::Terminate()
       std::cout<< "double matches:\t\t" << m_sc2 <<"\tfraction:\t"<<(float) m_sc2/m_match << "\n";
       std::cout<< "triple+ matches:\t" << m_sc3 <<"\tfraction:\t"<<(float) m_sc3/m_match << "\n";
       std::cout<< "algorithm average eff.:\t\t" << (float) m_truth_match/m_match <<"\n";
-      std::cout<< "relative matching freq.:\t" << (float) m_truth_match/m_truth_tot <<"\n";
-      std::cout<< "efficiency from origin:\t" << (float) m_truth_match/m_den <<"\n";
+      std::cout<< "relative matching freq.:\t" << (float) m_truth_match/m_trk_BC <<"\n";
+      std::cout<< "efficiency from origin:\t" << (float) m_trk_BC/m_den <<"\n";
     }
 
     std::cout<<"\n";

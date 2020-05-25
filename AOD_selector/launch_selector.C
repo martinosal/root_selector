@@ -11,7 +11,7 @@ void launch_selector()
   bool discriminants=false;
   bool shrinking_cone=false;
   bool selection_alg=true;
-  bool cut=false;
+  bool cut=true;
   bool retagT=false;
 
   TChain *f = new TChain("bTag_AntiKt4EMTopoJets");
@@ -19,12 +19,12 @@ void launch_selector()
   if(laptop)  {laptop_files(f);}
   if(lxplus)  {lxplus_files(f);}
 
-  selector_1 a;
+  AOD_selector a;
 
   a.setFlags(lxplus,debug,selections,discriminants,shrinking_cone,selection_alg,cut,retagT);
 
   f->Process(&a);
 
-//  f->Process("selector_1.C");
-//  f->Process("selector_1.C","",100,1); //for developing
+//  f->Process("AOD_selector.C");
+//  f->Process("AOD_selector.C","",100,1); //for developing
 }

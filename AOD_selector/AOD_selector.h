@@ -5,8 +5,8 @@
 // found on file: flav_Akt4EMTo_13022127_taggers.root
 //////////////////////////////////////////////////////////
 
-#ifndef selector_1_h
-#define selector_1_h
+#ifndef AOD_selector_h
+#define AOD_selector_h
 #define bin_1 50
 #define tracksize 10
 
@@ -36,7 +36,7 @@
 
 //#include </usr/include/eigen3/Eigen/Dense>
 
-class selector_1 : public TSelector {
+class AOD_selector : public TSelector {
 public :
    TTreeReader     fReader;  //!the tree reader
    TTree          *fChain = 0;   //!pointer to the analyzed TTree or TChain
@@ -254,6 +254,7 @@ public :
    TTreeReaderArray<vector<float>> jet_bH_child_decay_x = {fReader, "jet_bH_child_decay_x"};//<-BHadronBranches.cxx/REGULAR
    TTreeReaderArray<vector<float>> jet_bH_child_decay_y = {fReader, "jet_bH_child_decay_y"};//<-BHadronBranches.cxx/REGULAR
    TTreeReaderArray<vector<float>> jet_bH_child_decay_z = {fReader, "jet_bH_child_decay_z"};//<-BHadronBranches.cxx/REGULAR
+//   TTreeReaderArray<vector<float>> jet_bH_child_d0 = {fReader, "jet_bH_child_d0"};
    TTreeReaderArray<vector<float>> jet_cH_prod_x = {fReader, "jet_cH_prod_x"};//<-BHadronBranches.cxx/REGULAR
    TTreeReaderArray<vector<float>> jet_cH_prod_y = {fReader, "jet_cH_prod_y"};//<-BHadronBranches.cxx/REGULAR
    TTreeReaderArray<vector<float>> jet_cH_prod_z = {fReader, "jet_cH_prod_z"};//<-BHadronBranches.cxx/REGULAR
@@ -361,8 +362,8 @@ public :
    TTreeReaderArray<vector<float>> jet_trk_ip3d_llr = {fReader, "jet_trk_ip3d_llr"};//<-TrackBranches.cxx
 
 
-   selector_1(TTree * /*tree*/ =0) { }
-   virtual ~selector_1() { }
+   AOD_selector(TTree * /*tree*/ =0) { }
+   virtual ~AOD_selector() { }
    virtual Int_t   Version() const { return 2; }
    virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool);
    virtual void    Begin(TTree *tree);
@@ -378,14 +379,14 @@ public :
    virtual void    SlaveTerminate();
    virtual void    Terminate();
 
-   ClassDef(selector_1,0);
+   ClassDef(AOD_selector,0);
 
 private:
 
    bool selections,discriminants,shrinking_cone,selection_alg,cut,retagT,debug,lxplus;
 
    double m_cut,m_fc;
-   int m_N,m_Ntot,m_b2d,m_b3d,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_truth_match,m_truth_tot;
+   int m_N,m_Ntot,m_b2d,m_b3d,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_truth_match,m_trk_BC;
    int m_qc,m_qj,q,a,b,sc,sgn;
    double D_phi,D_eta,DR,px,py,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
    double D_phi_trk,D_eta_trk,DR_trk,DpT_trk;
@@ -508,6 +509,7 @@ private:
    TH1F *hist_child_nodecay_IP;
 //   TH1F *hist_child_linear_IP;
    TH1F *hist_child_d0;
+   TH2F *hist_child_d0_pT;
    TH1F *hist_pT_vs_R0_ratio_inB;
 //   TH1F *hist_child_linearIP;
 
@@ -567,8 +569,8 @@ private:
 
 #endif
 
-#ifdef selector_1_cxx
-void selector_1::Init(TTree *tree)
+#ifdef AOD_selector_cxx
+void AOD_selector::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the reader is initialized.
@@ -580,7 +582,7 @@ void selector_1::Init(TTree *tree)
    fReader.SetTree(tree);
 }
 
-Bool_t selector_1::Notify()
+Bool_t AOD_selector::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -592,4 +594,4 @@ Bool_t selector_1::Notify()
 }
 
 
-#endif // #ifdef selector_1_cxx
+#endif // #ifdef AOD_selector_cxx
