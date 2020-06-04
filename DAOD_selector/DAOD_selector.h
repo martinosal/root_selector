@@ -130,6 +130,7 @@ public :
    TTreeReaderArray<vector<float>> jet_bH_child_decay_y = {fReader, "jet_bH_child_decay_y"};
    TTreeReaderArray<vector<float>> jet_bH_child_decay_z = {fReader, "jet_bH_child_decay_z"};
    TTreeReaderArray<vector<float>> jet_bH_child_d0 = {fReader, "jet_bH_child_d0"};
+//   TTreeReaderArray<vector<float>> jet_bH_child_z0 = {fReader, "jet_bH_child_z0"};
    TTreeReaderArray<vector<float>> jet_cH_prod_x = {fReader, "jet_cH_prod_x"};
    TTreeReaderArray<vector<float>> jet_cH_prod_y = {fReader, "jet_cH_prod_y"};
    TTreeReaderArray<vector<float>> jet_cH_prod_z = {fReader, "jet_cH_prod_z"};
@@ -240,7 +241,7 @@ public :
    DAOD_selector(TTree * /*tree*/ =0) { }
    virtual ~DAOD_selector() { }
    virtual Int_t   Version() const { return 2; }
-   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool);
+   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -258,10 +259,10 @@ public :
 
    private:
 
-     bool selections,discriminants,shrinking_cone,selection_alg,cut,retagT,debug,lxplus;
+     bool selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retagT,debug,lxplus;
 
      double m_cut,m_fc;
-     int m_N,m_Ntot,m_b2d,m_b3d,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_truth_match,m_trk_BC;
+     int m_N,m_Ntot,m_b2d,m_b3d,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_match_overlap,m_trk_400,m_trk_B,m_trk_C,m_trk_PU_400,m_trk_FRAG_400,m_trk_GEANT_400;
      int m_qc,m_qj,q,a,b,sc,sgn;
      double D_phi,D_eta,DR,px,py,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
      double D_phi_trk,D_eta_trk,DR_trk,DpT_trk;
@@ -359,6 +360,21 @@ public :
      TH1D *hist_n_child;
      TH1D *hist_n_trk;
      TH1D *hist_n_match;
+
+     TH1F *hist_matched_origin_pT_inB;
+     TH1F *hist_matched_origin_eta_inB;
+     TH1F *hist_matched_origin_phi_inB;
+     TH1F *hist_matched_origin_Deta_inB;
+     TH1F *hist_matched_origin_Dphi_inB;
+     TH2F *hist_matched_origin_Dphi_Deta_inB;
+     TH1F *hist_matched_origin_DR_inB;
+     TH2F *hist_matched_origin_pT_DR_inB;
+     TH2F *hist_matched_origin_pT_jet_DR_inB;
+     TH1F *hist_matched_origin_pdgId_inB;
+     TH1F *hist_matched_origin_origin_inB;
+     TH1F *hist_matched_origin_d0_inB;
+//     TH1F *hist_matched_origin_Lxy_inB;
+//     TH1F *hist_matched_origin_Lxyz_inB;
 
      TH1F *hist_matched_pT_inB;
      TH1F *hist_matched_eta_inB;
