@@ -17,6 +17,7 @@ void launch_selector()
   bool retagT=false;
 
   const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+//  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
 
   std::cout<<"\nJet Collection: " << jetcollection << "\n";
 

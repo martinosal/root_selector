@@ -328,6 +328,7 @@ public :
      TH2F *hist_trk_Dphi_Deta_inB;
      TH1F *hist_trk_DR_inB;
      TH2F *hist_trk_pT_DR_inB;
+     TH2F *hist_trk_pT_jet_DR_inB;     
      TH1F *hist_trk_origin_inB;
      TH1F *hist_trk_d0_inB;
      TH1F *hist_trk_d0_PUinB;
