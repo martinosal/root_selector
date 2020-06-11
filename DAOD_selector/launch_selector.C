@@ -8,7 +8,7 @@ void launch_selector()
   bool lxplus=false;
   bool debug=true;
   bool selections=true;
-  bool discriminants=false;
+  bool discriminants=true;
   bool shrinking_cone=false;
   bool selection_alg=true;
   bool origin_selection=true;
@@ -16,8 +16,9 @@ void launch_selector()
   bool cut=false;
   bool retagT=false;
 
-  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
-//  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
+//  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
+//  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
 
   std::cout<<"\nJet Collection: " << jetcollection << "\n";
 

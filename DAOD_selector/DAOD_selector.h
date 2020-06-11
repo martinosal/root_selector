@@ -9,7 +9,7 @@
 #define DAOD_selector_h
 
 #define bin_1 50
-#define tracksize 10
+#define tracksize 11
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -78,6 +78,110 @@ public :
    TTreeReaderArray<float> jet_dRminToB = {fReader, "jet_dRminToB"};
    TTreeReaderArray<float> jet_dRminToC = {fReader, "jet_dRminToC"};
    TTreeReaderArray<float> jet_dRminToT = {fReader, "jet_dRminToT"};
+   TTreeReaderArray<double> jet_dl1_pb = {fReader, "jet_dl1_pb"};//<-TaggerScoreBranches.cxx
+   TTreeReaderArray<double> jet_dl1_pc = {fReader, "jet_dl1_pc"};//<-TaggerScoreBranches.cxx
+   TTreeReaderArray<double> jet_dl1_pu = {fReader, "jet_dl1_pu"};//<-TaggerScoreBranches.cxx
+   TTreeReaderArray<double> jet_mv2c10 = {fReader, "jet_mv2c10"};//<-TaggerScoreBranches.cxx
+   TTreeReaderArray<double> jet_mv2c10mu = {fReader, "jet_mv2c10mu"};//<-TaggerScoreBranches.cxx
+   TTreeReaderArray<double> jet_mv2c10rnn = {fReader, "jet_mv2c10rnn"};//<-TaggerScoreBranches.cxx
+   TTreeReaderArray<double> jet_mv2c100 = {fReader, "jet_mv2c100"};//<-TaggerScoreBranches.cxx
+   TTreeReaderArray<double> jet_mv2cl100 = {fReader, "jet_mv2cl100"};//<-TaggerScoreBranches.cxx
+   TTreeReaderArray<float> jet_ip2d_pb = {fReader, "jet_ip2d_pb"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2d_pc = {fReader, "jet_ip2d_pc"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2d_pu = {fReader, "jet_ip2d_pu"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2d_llr = {fReader, "jet_ip2d_llr"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3d_pb = {fReader, "jet_ip3d_pb"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3d_pc = {fReader, "jet_ip3d_pc"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3d_pu = {fReader, "jet_ip3d_pu"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3d_llr = {fReader, "jet_ip3d_llr"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2 = {fReader, "jet_ip2"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2_c = {fReader, "jet_ip2_c"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2_cu = {fReader, "jet_ip2_cu"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2_nan = {fReader, "jet_ip2_nan"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2_c_nan = {fReader, "jet_ip2_c_nan"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip2_cu_nan = {fReader, "jet_ip2_cu_nan"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3 = {fReader, "jet_ip3"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3_c = {fReader, "jet_ip3_c"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3_cu = {fReader, "jet_ip3_cu"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3_nan = {fReader, "jet_ip3_nan"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3_c_nan = {fReader, "jet_ip3_c_nan"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_ip3_cu_nan = {fReader, "jet_ip3_cu_nan"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_rnnip_pb = {fReader, "jet_rnnip_pb"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_rnnip_pc = {fReader, "jet_rnnip_pc"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_rnnip_pu = {fReader, "jet_rnnip_pu"};//<-ImpactParameterBranches.cxx
+   TTreeReaderArray<float> jet_rnnip_ptau = {fReader, "jet_rnnip_ptau"};//<-ImpactParameterBranches.cxx
+   TTreeReaderValue<Float_t> PV_jf_x = {fReader, "PV_jf_x"};//<-JetFitterBranches.cxx
+   TTreeReaderValue<Float_t> PV_jf_y = {fReader, "PV_jf_y"};//<-JetFitterBranches.cxx
+   TTreeReaderValue<Float_t> PV_jf_z = {fReader, "PV_jf_z"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<int>> jet_trk_jf_Vertex = {fReader, "jet_trk_jf_Vertex"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_pb = {fReader, "jet_jf_pb"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_pc = {fReader, "jet_jf_pc"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_pu = {fReader, "jet_jf_pu"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_llr = {fReader, "jet_jf_llr"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_m = {fReader, "jet_jf_m"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_mUncorr = {fReader, "jet_jf_mUncorr"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_efc = {fReader, "jet_jf_efc"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_deta = {fReader, "jet_jf_deta"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_dphi = {fReader, "jet_jf_dphi"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_dR = {fReader, "jet_jf_dR"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_dRFlightDir = {fReader, "jet_jf_dRFlightDir"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_ntrkAtVx = {fReader, "jet_jf_ntrkAtVx"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_nvtx = {fReader, "jet_jf_nvtx"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_sig3d = {fReader, "jet_jf_sig3d"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_nvtx1t = {fReader, "jet_jf_nvtx1t"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_n2t = {fReader, "jet_jf_n2t"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_VTXsize = {fReader, "jet_jf_VTXsize"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_chi2 = {fReader, "jet_jf_vtx_chi2"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_ndf = {fReader, "jet_jf_vtx_ndf"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<int>> jet_jf_vtx_ntrk = {fReader, "jet_jf_vtx_ntrk"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_L3D = {fReader, "jet_jf_vtx_L3D"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_sig3D = {fReader, "jet_jf_vtx_sig3D"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_phi = {fReader, "jet_jf_phi"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_theta = {fReader, "jet_jf_theta"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_sigTrans = {fReader, "jet_jf_vtx_sigTrans"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_x = {fReader, "jet_jf_vtx_x"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_x_err = {fReader, "jet_jf_vtx_x_err"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_y = {fReader, "jet_jf_vtx_y"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_y_err = {fReader, "jet_jf_vtx_y_err"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_z = {fReader, "jet_jf_vtx_z"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<vector<float>> jet_jf_vtx_z_err = {fReader, "jet_jf_vtx_z_err"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_theta_err = {fReader, "jet_jf_theta_err"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> jet_jf_phi_err = {fReader, "jet_jf_phi_err"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> nTrk_vtx1 = {fReader, "nTrk_vtx1"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> mass_first_vtx = {fReader, "mass_first_vtx"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> e_first_vtx = {fReader, "e_first_vtx"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> e_frac_vtx1 = {fReader, "e_frac_vtx1"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> closestVtx_L3D = {fReader, "closestVtx_L3D"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> JF_Lxy1 = {fReader, "JF_Lxy1"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> vtx1_MaxTrkRapidity = {fReader, "vtx1_MaxTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> vtx1_AvgTrkRapidity = {fReader, "vtx1_AvgTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> vtx1_MinTrkRapidity = {fReader, "vtx1_MinTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> nTrk_vtx2 = {fReader, "nTrk_vtx2"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> mass_second_vtx = {fReader, "mass_second_vtx"};//<-JetFitterBranches.cxx//SV mass?
+   TTreeReaderArray<float> e_second_vtx = {fReader, "e_second_vtx"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> e_frac_vtx2 = {fReader, "e_frac_vtx2"};//<-JetFitterBranches.cxx//SV energy fraction?
+   TTreeReaderArray<float> second_closestVtx_L3D = {fReader, "second_closestVtx_L3D"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> JF_Lxy2 = {fReader, "JF_Lxy2"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> vtx2_MaxTrkRapidity = {fReader, "vtx2_MaxTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> vtx2_AvgTrkRapidity = {fReader, "vtx2_AvgTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> vtx2_MinTrkRapidity = {fReader, "vtx2_MinTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> MaxTrkRapidity = {fReader, "MaxTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> MinTrkRapidity = {fReader, "MinTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<float> AvgTrkRapidity = {fReader, "AvgTrkRapidity"};//<-JetFitterBranches.cxx
+   TTreeReaderArray<int> jet_sv1_Nvtx = {fReader, "jet_sv1_Nvtx"};//<-SVBranches.cxx
+   TTreeReaderArray<float> jet_sv1_ntrkv = {fReader, "jet_sv1_ntrkv"};//<-SVBranches.cxx
+   TTreeReaderArray<float> jet_sv1_n2t = {fReader, "jet_sv1_n2t"};//<-SVBranches.cxx//number of two-track vertices
+   TTreeReaderArray<float> jet_sv1_m = {fReader, "jet_sv1_m"};//<-SVBranches.cxx//SV mass
+   TTreeReaderArray<float> jet_sv1_efc = {fReader, "jet_sv1_efc"};//<-SVBranches.cxx//SV energy fraction
+   TTreeReaderArray<float> jet_sv1_sig3d = {fReader, "jet_sv1_sig3d"};//<-SVBranches.cxx
+   TTreeReaderArray<float> sv1_llr = {fReader, "sv1_llr"};//<-SVBranches.cxx
+   TTreeReaderArray<float> jet_sv1_normdist = {fReader, "jet_sv1_normdist"};//<-SVBranches.cxx
+   TTreeReaderArray<float> jet_sv1_deltaR = {fReader, "jet_sv1_deltaR"};//<-SVBranches.cxx
+   TTreeReaderArray<float> jet_sv1_Lxy = {fReader, "jet_sv1_Lxy"};//<-SVBranches.cxx
+   TTreeReaderArray<float> jet_sv1_L3d = {fReader, "jet_sv1_L3d"};//<-SVBranches.cxx
+   TTreeReaderArray<vector<float>> jet_sv1_vtx_x = {fReader, "jet_sv1_vtx_x"};//<-SVBranches.cxx
+   TTreeReaderArray<vector<float>> jet_sv1_vtx_y = {fReader, "jet_sv1_vtx_y"};//<-SVBranches.cxx
+   TTreeReaderArray<vector<float>> jet_sv1_vtx_z = {fReader, "jet_sv1_vtx_z"};//<-SVBranches.cxx
    TTreeReaderArray<int> jet_nBHadr = {fReader, "jet_nBHadr"};
    TTreeReaderArray<int> jet_nCHadr = {fReader, "jet_nCHadr"};
    TTreeReaderArray<vector<int>> jet_bH_pdgId = {fReader, "jet_bH_pdgId"};
@@ -130,7 +234,7 @@ public :
    TTreeReaderArray<vector<float>> jet_bH_child_decay_y = {fReader, "jet_bH_child_decay_y"};
    TTreeReaderArray<vector<float>> jet_bH_child_decay_z = {fReader, "jet_bH_child_decay_z"};
    TTreeReaderArray<vector<float>> jet_bH_child_d0 = {fReader, "jet_bH_child_d0"};
-//   TTreeReaderArray<vector<float>> jet_bH_child_z0 = {fReader, "jet_bH_child_z0"};
+   TTreeReaderArray<vector<float>> jet_bH_child_z0 = {fReader, "jet_bH_child_z0"};
    TTreeReaderArray<vector<float>> jet_cH_prod_x = {fReader, "jet_cH_prod_x"};
    TTreeReaderArray<vector<float>> jet_cH_prod_y = {fReader, "jet_cH_prod_y"};
    TTreeReaderArray<vector<float>> jet_cH_prod_z = {fReader, "jet_cH_prod_z"};
@@ -260,9 +364,9 @@ public :
    private:
 
      bool selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retagT,debug,lxplus;
-
+     double pT_cut;
      double m_cut,m_fc;
-     int m_N,m_Ntot,m_b2d,m_b3d,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_match_overlap,m_trk_400,m_trk_B,m_trk_C,m_trk_PU_400,m_trk_FRAG_400,m_trk_GEANT_400;
+     int m_N,m_Ntot,m_b2d,m_b3d,m_bdl1,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_match_overlap,m_match_notoverlap,m_trk_pT_cut,m_trk_B,m_trk_C,m_trk_PU_pT_cut,m_trk_FRAG_pT_cut,m_trk_GEANT_pT_cut;
      int m_qc,m_qj,q,a,b,sc,sgn;
      double D_phi,D_eta,DR,px,py,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
      double D_phi_trk,D_eta_trk,DR_trk,DpT_trk;
@@ -320,6 +424,37 @@ public :
   //   TH1F *hist_std_dev_DR_1;
 
 
+     TH1F *hist_jet_IP2_inB;
+
+     TH1F *hist_ip2d_pb;
+     TH1F *hist_ip2d_pc;
+     TH1F *hist_ip2d_pu;
+     TH1F *hist_ip2d_llr;
+     TH1F *hist_ip3d_pb;
+     TH1F *hist_ip3d_pc;
+     TH1F *hist_ip3d_pu;
+     TH1F *hist_ip3d_llr;
+     TH1F *hist_dl1_pb;
+     TH1F *hist_dl1_pc;
+     TH1F *hist_dl1_pu;
+
+     TH1F *hist_ip2d_llr_l;
+     TH1F *hist_ip3d_llr_l;
+     TH1F *hist_ip2d_llr_inB;
+     TH1F *hist_ip3d_llr_inB;
+     TH1F *hist_ip2d_llr_inC;
+     TH1F *hist_ip3d_llr_inC;
+     TH1F *hist_ip2d_llr_exB;
+     TH1F *hist_ip3d_llr_exB;
+     TH1F *hist_ip2d_llr_exC;
+     TH1F *hist_ip3d_llr_exC;
+
+     TH1F *hist_dl1_l;
+     TH1F *hist_dl1_inC;
+     TH1F *hist_dl1_inB;
+     TH1F *hist_dl1_exC;
+     TH1F *hist_dl1_exB;
+
      TH1F *hist_trk_pT_inB;
      TH1F *hist_trk_Deta_inB;
      TH1F *hist_trk_eta_inB;
@@ -328,7 +463,8 @@ public :
      TH2F *hist_trk_Dphi_Deta_inB;
      TH1F *hist_trk_DR_inB;
      TH2F *hist_trk_pT_DR_inB;
-     TH2F *hist_trk_pT_jet_DR_inB;     
+     TH2F *hist_trk_pT_jet_DR_inB;
+     TH1F *hist_trk_pdgId_inB;
      TH1F *hist_trk_origin_inB;
      TH1F *hist_trk_d0_inB;
      TH1F *hist_trk_d0_PUinB;
@@ -346,6 +482,34 @@ public :
      TH1F *hist_child_DR_inB;
      TH2F *hist_child_pT_DR_inB;
      TH2F *hist_child_pT_jet_DR_inB;
+     TH1F *hist_child_pdgID_inB;
+
+     TH1F *hist_child_pi;
+     TH1F *hist_child_pi_Lxy_inB;
+     TH1F *hist_child_pi_Lxyz_inB;
+     TH1F *hist_child_pi_d0_truth_inB;
+     TH1F *hist_child_pi_z0_truth_inB;
+     TH1F *hist_child_K;
+     TH1F *hist_child_K_Lxy_inB;
+     TH1F *hist_child_K_Lxyz_inB;
+     TH1F *hist_child_K_d0_truth_inB;
+     TH1F *hist_child_K_z0_truth_inB;
+     TH1F *hist_child_mu;
+     TH1F *hist_child_mu_Lxy_inB;
+     TH1F *hist_child_mu_Lxyz_inB;
+     TH1F *hist_child_mu_d0_truth_inB;
+     TH1F *hist_child_mu_z0_truth_inB;
+     TH1F *hist_child_p;
+     TH1F *hist_child_p_Lxy_inB;
+     TH1F *hist_child_p_Lxyz_inB;
+     TH1F *hist_child_p_d0_truth_inB;
+     TH1F *hist_child_p_z0_truth_inB;
+     TH1F *hist_child_e;
+     TH1F *hist_child_e_Lxy_inB;
+     TH1F *hist_child_e_Lxyz_inB;
+     TH1F *hist_child_e_d0_truth_inB;
+     TH1F *hist_child_e_z0_truth_inB;
+
      TH1F *hist_child_Lxy_inB;
      TH1F *hist_child_Lxyz_inB;
      TH1F *hist_child_decay_IP;
@@ -387,6 +551,33 @@ public :
      TH2F *hist_matched_pT_DR_inB;
      TH2F *hist_matched_pT_jet_DR_inB;
      TH1F *hist_matched_pdgId_inB;
+
+     TH1F *hist_matched_child_pi;
+     TH1F *hist_matched_child_pi_Lxy_inB;
+     TH1F *hist_matched_child_pi_Lxyz_inB;
+     TH1F *hist_matched_child_pi_d0_truth_inB;
+     TH1F *hist_matched_child_pi_z0_truth_inB;
+     TH1F *hist_matched_child_K;
+     TH1F *hist_matched_child_K_Lxy_inB;
+     TH1F *hist_matched_child_K_Lxyz_inB;
+     TH1F *hist_matched_child_K_d0_truth_inB;
+     TH1F *hist_matched_child_K_z0_truth_inB;
+     TH1F *hist_matched_child_mu;
+     TH1F *hist_matched_child_mu_Lxy_inB;
+     TH1F *hist_matched_child_mu_Lxyz_inB;
+     TH1F *hist_matched_child_mu_d0_truth_inB;
+     TH1F *hist_matched_child_mu_z0_truth_inB;
+     TH1F *hist_matched_child_p;
+     TH1F *hist_matched_child_p_Lxy_inB;
+     TH1F *hist_matched_child_p_Lxyz_inB;
+     TH1F *hist_matched_child_p_d0_truth_inB;
+     TH1F *hist_matched_child_p_z0_truth_inB;
+     TH1F *hist_matched_child_e;
+     TH1F *hist_matched_child_e_Lxy_inB;
+     TH1F *hist_matched_child_e_Lxyz_inB;
+     TH1F *hist_matched_child_e_d0_truth_inB;
+     TH1F *hist_matched_child_e_z0_truth_inB;
+
      TH1F *hist_matched_origin_inB;
      TH2F *hist_matched_pT_child_pTfraction_inB;
      TH1F *hist_matched_DR_trk_inB;
