@@ -29,7 +29,7 @@
 #include <TStyle.h>
 
 
-void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retagT_flag)
+void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retagT_flag, float m_pT_cut, float m_eta_cut)
 {
    lxplus=lxplus_flag;
    debug=debug_flag;
@@ -41,6 +41,8 @@ void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_
    geometric_selection=geometric_selection_flag;
    cut=cut_flag;
    retagT=retagT_flag;
+   pT_cut=m_pT_cut;
+   eta_cut=m_eta_cut;
    return;
 }
 
@@ -49,16 +51,16 @@ void DAOD_selector::Begin(TTree * /*tree*/)
    // The Begin() function is called at the start of the query.
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
-   pT_cut=400.;
    m_cut=1.,m_fc=0.08;
    m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_bdl1=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_match_overlap=0,m_match_notoverlap=0,m_trk_pT_cut=0,m_trk_PU_pT_cut=0,m_trk_FRAG_pT_cut=0,m_trk_GEANT_pT_cut=0,m_trk_B=0,m_trk_C=0;
    m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
-   D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Dxy_1=0,x0=0,y0=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
+   D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxyz=0,Dxy_1=0,x0=0,y0=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
    D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
    match=0,max_size=0;
    tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.,m_pTfraction_cut=1.,m_DRcut=0.1,m_pTfraction_nocut=1e6,m_DRnocut=1e6;
    size_jet=0,size_child=0;
    den=0,m_den=0;
+   m1=0,m2=0,m1_ex=0,m2_ex=0,mm1_ex=0,mm2_ex=0,m1_ov=0,m2_ov=0,mm=0;
 
    m_track_cut=10;
 
@@ -693,14 +695,15 @@ Bool_t DAOD_selector::Process(Long64_t entry)
      if(nBjets>0){
        for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
 
+         std::vector<int> matching_trk,matching_child,origin_trk;
   //         int b=(jet_bH_pdgId[*it][i]/100)%10;
          size_jet=jet_trk_pt[*it].size();
 
-         if(size_jet!=jet_trk_eta[*it].size() || size_jet!=jet_trk_phi[*it].size()){
+         if(size_jet!=jet_trk_eta[*it].size() || size_jet!=jet_trk_phi[*it].size() || size_jet!=jet_trk_pdg_id[*it].size()){
            std::cout<<"WARNING\n";
          }
          size_child=jet_bH_child_px[*it].size();
-         if(size_child!=jet_bH_child_py[*it].size() || size_child!=jet_bH_child_pz[*it].size() || size_child!=jet_bH_child_E[*it].size()){
+         if(size_child!=jet_bH_child_py[*it].size() || size_child!=jet_bH_child_pz[*it].size() || size_child!=jet_bH_child_E[*it].size() || size_child!=jet_bH_child_pdg_id[*it].size()){
            std::cout<<"WARNING\n";
          }
 
@@ -718,7 +721,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
            double jet_v[]={jet.Px(),jet.Py(),jet.Pz()};
 
            for(unsigned i=0;i<size_jet;i++){
-             if(abs(jet_trk_eta[*it].at(i))<2.5 && jet_trk_pt[*it].at(i)>pT_cut){
+             if(abs(jet_trk_eta[*it].at(i))<eta_cut && jet_trk_pt[*it].at(i)>pT_cut){
 
                m_trk_pT_cut++;
 
@@ -769,6 +772,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
                if(origin_selection){
                  if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
+                   origin_trk.push_back(i);
 
                    hist_matched_origin_pT_inB->Fill(1e-3*jet_trk_pt[*it].at(i));
                    hist_matched_origin_eta_inB->Fill(jet_trk_eta[*it].at(i));
@@ -796,6 +800,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
            std::vector<int> child_idx;
 
            double child_IP[size_child],child_Lxy[size_child],child_Lxyz[size_child];
+           den=0;//n of child_400 per jet
 
            for(unsigned j=0;j<size_child;j++){
              TLorentzVector v(
@@ -808,10 +813,11 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              child_Eta.push_back(v.Eta());
              child_Phi.push_back(v.Phi());
 
-             if(abs(child_Eta.at(j))<2.5 && child_Pt.at(j)>pT_cut){//CHILD SELECTION CRITERIA
+             if(abs(child_Eta.at(j))<eta_cut && child_Pt.at(j)>pT_cut){//CHILD SELECTION CRITERIA
                if(jet_bH_child_prod_x[*it].size()!=size_child || jet_bH_child_decay_x[*it].size()!=size_child){
                  std::cout<<"WARNING\n";
                }
+               den++;
 
                child_idx.push_back(j);
 
@@ -825,6 +831,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                child_Lxyz[j]=sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1);
                px=jet_bH_child_px[*it].at(j);
                py=jet_bH_child_py[*it].at(j);
+               pz=jet_bH_child_pz[*it].at(j);
 
                if(jet_bH_child_decay_x[*it].at(j)==-999){//NO DECAY CHILD
                  if(jet_bH_child_charge[*it].at(j)>1.){
@@ -833,6 +840,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(jet_bH_child_charge[*it].at(j)<1.){
                    c=+1;
                  }
+
+                 Lxyz=800;
 
 //                 TRandom3 *rand = new TRandom3(0);
 //                 rand_n=rand->Gaus(0.59,0.05943);
@@ -852,13 +861,16 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 //                 hist_child_nodecay_IP->Fill(d0);
 
-               }
+
+               }//NO DECAY CHILD
 
                if(jet_bH_child_decay_x[*it].at(j)!=-999){//DECAY CHILD
 //                 std::cout<<jet_bH_child_decay_x[*it].at(j)<<"\n";
                  Dx_2=jet_bH_child_decay_x[*it].at(j)-jet_bH_child_prod_x[*it].at(j);//x_DV - x_SV
                  Dy_2=jet_bH_child_decay_y[*it].at(j)-jet_bH_child_prod_y[*it].at(j);
                  Dz_2=jet_bH_child_decay_z[*it].at(j)-jet_bH_child_prod_z[*it].at(j);
+
+                 Lxyz=sqrt(1.-(px*px+py*py+pz*pz)/(jet_bH_child_E[*it].at(j)*jet_bH_child_E[*it].at(j)))*sqrt(Dx_2*Dx_2+Dy_2*Dy_2+Dz_2*Dz_2);
 //                 Dxy_2=sqrt((Dx_1*Dx_1)+(Dy_1*Dy_1));
 
 //                 vx=1e3*c*px/jet_bH_child_E[*it].at(j);
@@ -884,7 +896,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 //                 ncorr+=jet_bH_child_charge[*it].at(j)*d0/abs(d0);
 //                 std::cout<<jet_bH_child_charge[*it].at(j)*R0/abs(jet_bH_child_charge[*it].at(j)*R0)<<"\n";
 //                 std::cout<<jet_bH_child_charge[*it].at(j)<<"\t"<<d0/abs(d0)<<"\n";
-               }
+               }//DECAY CHILD
 
 //               d0=(px*(-Dy_1)-py*(-Dx_1))/sqrt(px*px+py*py);//LINEAR D0
 //               t1=sin(jet_phi[*it]-child_Phi.at(j))*d0;
@@ -921,36 +933,36 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
                if(abs(jet_bH_child_pdg_id[*it].at(j))==211){
                  hist_child_pi->Fill(1e-3*child_Pt[j]);
-                 hist_child_pi_Lxy_inB->Fill(Dxy_1);
-                 hist_child_pi_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                 hist_child_pi_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_pi_Lxyz_inB->Fill(Lxyz);//CHECK
                  hist_child_pi_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_pi_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==321){
                  hist_child_K->Fill(1e-3*child_Pt[j]);
-                 hist_child_K_Lxy_inB->Fill(Dxy_1);
-                 hist_child_K_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                 hist_child_K_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_K_Lxyz_inB->Fill(Lxyz);
                  hist_child_K_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_K_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==13){
                  hist_child_mu->Fill(1e-3*child_Pt[j]);
-                 hist_child_mu_Lxy_inB->Fill(Dxy_1);
-                 hist_child_mu_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                 hist_child_mu_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_mu_Lxyz_inB->Fill(Lxyz);
                  hist_child_mu_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_mu_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==2212){
                  hist_child_p->Fill(1e-3*child_Pt[j]);
-                 hist_child_p_Lxy_inB->Fill(Dxy_1);
-                 hist_child_p_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                 hist_child_p_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_p_Lxyz_inB->Fill(Lxyz);
                  hist_child_p_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_p_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==11){
                  hist_child_e->Fill(1e-3*child_Pt[j]);
-                 hist_child_e_Lxy_inB->Fill(Dxy_1);
-                 hist_child_e_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                 hist_child_e_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_e_Lxyz_inB->Fill(Lxyz);
                  hist_child_e_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_e_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
@@ -971,40 +983,50 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                   bool_matrix[l][k]=0;
                }
              }
-             den=0;//n of child_400 per jet
+
              for(unsigned j=0;j<size_child;j++){
-               if(abs(child_Eta.at(j))<2.5 && child_Pt.at(j)>pT_cut){
+               if(abs(child_Eta.at(j))<eta_cut && child_Pt.at(j)>pT_cut){
                  if(jet_bH_child_charge[*it].at(j)==0){
                    std::cout<<"CHARGE 0\n";
                  }
-                 den++;
                  for(unsigned i=0;i<size_jet;i++){
-                   if((jet_trk_parent_pdgid[*it].at(i)==jet_bH_child_parent_pdg_id[*it].at(j) && jet_trk_pdg_id[*it].at(i)==jet_bH_child_pdg_id[*it].at(j)) && (abs(jet_trk_parent_pdgid[*it].at(i))!=99 && abs(jet_trk_pdg_id[*it].at(i))!=99)){
-//                     if(jet_trk_pdg_id[*it].at(i)==jet_bH_child_pdg_id[*it].at(j)){
-                     bool_matrix[i][j]=1;
+                   if(abs(jet_trk_eta[*it].at(i))<eta_cut && jet_trk_pt[*it].at(i)>pT_cut){
+                     if( (jet_trk_parent_pdgid[*it].at(i)-jet_bH_child_parent_pdg_id[*it].at(j))==0 && abs(jet_trk_parent_pdgid[*it].at(i))!=999 ){
+                       if( (jet_trk_pdg_id[*it].at(i)-jet_bH_child_pdg_id[*it].at(j))==0 && abs(jet_trk_pdg_id[*it].at(i))!=999 ){
+  //                       std::cout<<"("<<i<<","<<j<<") ";
+                         bool_matrix[i][j] = (int) 1;
+                       }
+                     }
                    }
                  }
                }
              }
-    /*
-    std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m_Ntot;
+
+
+
+/*
+    std::cout<<"\nCORRESPONDENCE MATRIX\t"<<size_jet<<"x"<<size_child<<"\tevent:"<<m_Ntot<<"\n";
+             std::cout<<"\t";
+             for(int j=0;j<size_child;j++)
+                std::cout<<jet_bH_child_pdg_id[*it].at(j)<<"|"<<jet_bH_child_parent_pdg_id[*it].at(j)<<" ";
              for(int i=0;i<size_jet;i++){
-               std::cout<<"\n";
+               std::cout<<"\n"<<jet_trk_pdg_id[*it].at(i)<<"|"<<jet_trk_parent_pdgid[*it].at(i)<<"   \t";
                for(int j=0;j<size_child;j++){
                  std::cout << bool_matrix[i][j]<<"\t";
                }
              }
-             std::cout<<"\n";*/
 
+             std::cout<<"\n";
+*/
              for(q=0;q<max_size;q++){
                m_qc=(int) q%size_child;
                m_qj=(int) q%size_jet;
                sc=0;
-    /*
+/*
                  if(m_qc>=size_child || m_qj>=size_jet){
                    std::cout<<m_Ntot<<"\t"<<q<<"\t"<<size_jet<<","<<m_qj<<"\t"<<size_child<<","<<m_qc<<"\n";
                  }
-    */
+*/
 
                if(cut){
                  tmp_min_pTfraction=m_pTfraction_cut;//CUT
@@ -1063,14 +1085,20 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    }
                  }
                }
+
     /*
                  if(a==-2 && b==-2 && sc>0){
                    std::cout<<"EXCLUSED CHILDS:\t"<<m_Ntot<<"\t"<<tmp_DpT<<"\t"<<tmp_DR<<"\n";
     //               den--;
                  }
     */
+
                if(a!=-2 && b!=-2){
                  match++;
+                 matching_trk.push_back(a);
+                 matching_child.push_back(b);
+//                 std::cout<<"matchings: "<<a<<","<<b<<"\t";
+
                  if(jet_trk_orig[*it].at(a)==0 || jet_trk_orig[*it].at(a)==1){
                    m_match_overlap++;
                  }
@@ -1082,6 +1110,21 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    if(child_idx.at(i)==b){
                      child_idx.erase(child_idx.begin()+i);
                    }
+                 }
+
+                 px=jet_bH_child_px[*it].at(b);
+                 py=jet_bH_child_py[*it].at(b);
+                 pz=jet_bH_child_pz[*it].at(b);
+
+                 if(jet_bH_child_decay_x[*it].at(b)!=-999){//DECAY CHILD
+  //                 std::cout<<jet_bH_child_decay_x[*it].at(b)<<"\n";
+                   Dx_2=jet_bH_child_decay_x[*it].at(b)-jet_bH_child_prod_x[*it].at(b);//x_DV - x_SV
+                   Dy_2=jet_bH_child_decay_y[*it].at(b)-jet_bH_child_prod_y[*it].at(b);
+                   Dz_2=jet_bH_child_decay_z[*it].at(b)-jet_bH_child_prod_z[*it].at(b);
+                   Lxyz=sqrt(1.-(px*px+py*py+pz*pz)/(jet_bH_child_E[*it].at(b)*jet_bH_child_E[*it].at(b)))*sqrt(Dx_2*Dx_2+Dy_2*Dy_2+Dz_2*Dz_2);
+                 }
+                 if(jet_bH_child_decay_x[*it].at(b)==-999){//NO DECAY CHILD
+                   Lxyz=800;
                  }
 
                    //CINEMATICA RISPETTO AL JET
@@ -1108,35 +1151,35 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==211){
                    hist_matched_child_pi->Fill(1e-3*child_Pt.at(b));
                    hist_matched_child_pi_Lxy_inB->Fill(Dxy_1);
-                   hist_matched_child_pi_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                   hist_matched_child_pi_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_pi_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_pi_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==321){
                    hist_matched_child_K->Fill(1e-3*child_Pt.at(b));
                    hist_matched_child_K_Lxy_inB->Fill(Dxy_1);
-                   hist_matched_child_K_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                   hist_matched_child_K_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_K_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_K_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==13){
                    hist_matched_child_mu->Fill(1e-3*child_Pt.at(b));
                    hist_matched_child_mu_Lxy_inB->Fill(Dxy_1);
-                   hist_matched_child_mu_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                   hist_matched_child_mu_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_mu_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_mu_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==2212){
                    hist_matched_child_p->Fill(1e-3*child_Pt.at(b));
                    hist_matched_child_p_Lxy_inB->Fill(Dxy_1);
-                   hist_matched_child_p_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                   hist_matched_child_p_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_p_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_p_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==11){
                    hist_matched_child_e->Fill(1e-3*child_Pt.at(b));
                    hist_matched_child_e_Lxy_inB->Fill(Dxy_1);
-                   hist_matched_child_e_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
+                   hist_matched_child_e_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_e_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_e_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
@@ -1190,16 +1233,18 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  }
                }
 
-    //std::cout<<"\n"<<"q="<<q<<"\t(a,b)=("<<a+1<<","<<b+1<<")"<<"\n";
+//  std::cout<<"\n"<<"q="<<q<<"\t(a,b)=("<<a+1<<","<<b+1<<")"<<"\t"<<sc<<"\n";
 
-               for(unsigned j=0;j<size_child;j++){
-                 bool_matrix[a][j]=0;
-               }
-               for(unsigned i=0;i<size_jet;i++){
-                 bool_matrix[i][b]=0;
+               if(sc>0){
+                 for(unsigned j=0;j<size_child;j++){
+                   bool_matrix[a][j]=0;
+                 }
+                 for(unsigned i=0;i<size_jet;i++){
+                   bool_matrix[i][b]=0;
+                 }
                }
 
-    /*
+/*
     std::cout<<"ELIMINATION STARTS:\n";
                for(int i=0;i<size_jet;i++){
                  std::cout<<"\n";
@@ -1207,7 +1252,9 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    std::cout << bool_matrix[i][j]<<"\t";
                  }
                }
-             std::cout<<"\n";*/
+             std::cout<<"\n";
+*/
+
              }
 
              m_nomatch+=child_idx.size();
@@ -1216,7 +1263,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              for(unsigned l=0;l<child_idx.size();l++){
                j=child_idx.at(l);
                //CINEMATICA RISPETTO AL JET
-               if(abs(child_Eta.at(j))<2.5 && child_Pt.at(j)>pT_cut){
+               if(abs(child_Eta.at(j))<eta_cut && child_Pt.at(j)>pT_cut){
                  D_eta=child_Eta.at(j)-jet_eta[*it];
                  if(abs(child_Phi.at(j)-jet_phi[*it])>M_PI){
                    D_phi=2*M_PI-abs(child_Phi.at(j)-jet_phi[*it]);
@@ -1248,9 +1295,54 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
            }
 
-
          }
+
+         //GEOMETRIC AND ORIGIN SELECTION DONE
+//         std::cout<<"\n";
+         for(unsigned i=0;i<origin_trk.size();i++){//TRK - CUT
+               m1_ov=0;
+               for(unsigned a=0;a<matching_trk.size();a++){
+                 if(origin_trk.at(i)==matching_trk.at(a)){
+                   m1++;
+                   m1_ov++;
+                 }
+               }
+               if(m1_ov==0){//ORIGIN - NOT-GEOMETRY
+                 m1_ex++;
+
+//                 std::cout<<"ORIGIN - NOT-GEOMETRY: track: "<<jet_trk_pdg_id[*it].at(origin_trk.at(i))<<"|"<<jet_trk_parent_pdgid[*it].at(origin_trk.at(i))<<"   \t"<<origin_trk.at(i)<<"   \tpT: "<<jet_trk_pt[*it].at(origin_trk.at(i))<<"   eta: "<<jet_trk_eta[*it].at(origin_trk.at(i))<<"   \tEvent: "<<m_Ntot<<"\n";
+/*
+                 for(unsigned k=0;k<jet_bH_child_pdg_id[*it].size();k++){
+                   std::cout<<jet_bH_child_pdg_id[*it].at(k)<<"\t"<<jet_bH_child_parent_pdg_id[*it].at(k)<<"\t"<<k<<"\n";
+                 }
+*/
+               }
+         }
+         for(unsigned a=0;a<matching_trk.size();a++){//CHILD CUT
+               m2_ov=0;
+               for(unsigned i=0;i<origin_trk.size();i++){
+                 if(origin_trk.at(i)==matching_trk.at(a)){
+                   m2++;
+                   m2_ov++;
+                 }
+               }
+               if(m2_ov==0){//GEOMETRY - NOT-ORIGIN
+                 m2_ex++;
+//                 std::cout<<"GEOMETRY - NOT-ORIGIN: track: "<<jet_trk_pdg_id[*it].at(matching_trk.at(a))<<"|"<<jet_trk_parent_pdgid[*it].at(matching_trk.at(a))<<"   \t"<<matching_trk.at(a)<<"   \tpT: "<<jet_trk_pt[*it].at(matching_trk.at(a))<<"   eta: "<<jet_trk_eta[*it].at(matching_trk.at(a))<<"   \tEvent: "<<m_Ntot<<"\n";
+//                 matching_ex.push_back(a);
+               }
+         }
+         if(m1!=m2){
+           std::cout<<"W"<<"\n";
+         }
+         mm+=m1;
+         mm1_ex+=m1_ex;
+         mm2_ex+=m2_ex;
+         m1=0;m2=0;m1_ex=0;m2_ex=0;m1_ov=0;m2_ov=0;
+
+
        }
+
      }
    }
 
@@ -1589,7 +1681,7 @@ void DAOD_selector::Terminate()
         hist_matched_child_e_Lxy_inB->Write();
         hist_matched_child_e_Lxyz_inB->Write();
         hist_matched_child_e_d0_truth_inB->Write();
-        hist_matched_child_e_z0_truth_inB->Write(); 
+        hist_matched_child_e_z0_truth_inB->Write();
 
         hist_matched_origin_inB->Write();
         hist_matched_pT_child_pTfraction_inB->Write();
@@ -1734,7 +1826,7 @@ void DAOD_selector::Terminate()
     }
 
     if(selection_alg){
-        std::cout<<"\nSELECTION\npT CUT: "<<pT_cut<<" GeV\n";
+        std::cout<<"\nSELECTION\npT CUT: "<<pT_cut<<" GeV\n"<<"eta_cut: "<<eta_cut<<"\n";
       if(origin_selection){
         std::cout<<"\nORIGIN SELECTION\n";
         std::cout<< std::fixed << std::setprecision(3) << "\n";
@@ -1742,8 +1834,8 @@ void DAOD_selector::Terminate()
         std::cout<< "number of tracks PU:\t" << m_trk_PU_pT_cut << "\t(" << (float) 100*m_trk_PU_pT_cut/m_trk_pT_cut << " %)\n";
         std::cout<< "number of tracks FRAG:\t" << m_trk_FRAG_pT_cut << "\t(" << (float) 100*m_trk_FRAG_pT_cut/m_trk_pT_cut << " %)\n";
         std::cout<< "number of tracks GEANT:\t" << m_trk_GEANT_pT_cut << "\t(" << (float) 100*m_trk_GEANT_pT_cut/m_trk_pT_cut << " %)\n";
-        std::cout<< "\nmatches:\t\t"<< m_trk_B+m_trk_C <<"\n";
-        std::cout<< "no matches:\t\t"<< m_den-(m_trk_B+m_trk_C) <<"\n";
+        std::cout<< "\nmatches:\t\t"<< m_trk_B+m_trk_C <<"\t("<<mm+mm1_ex<<")"<<"\n";
+//        std::cout<< "no matches:\t\t"<< m_den-(m_trk_B+m_trk_C) <<"\n";
         std::cout<< "\naverage efficiency:\t" << (float) (m_trk_B+m_trk_C)/m_den << "\n";
       }
 
@@ -1752,7 +1844,7 @@ void DAOD_selector::Terminate()
         if(!cut && selection_alg) std::cout<<"\nGEOMETRICAL SELECTION ALGORITHM - NO CUT\n";
         std::cout<< std::fixed << std::setprecision(3) << "\n";
         std::cout<< "number of childs:\t" << m_den << "\n";
-        std::cout<< "matches:\t\t"<< m_match <<"\n";
+        std::cout<< "matches:\t\t"<< m_match <<"\t("<<mm+mm2_ex<<")"<<"\n";
         std::cout<< "no matches:\t\t"<< m_nomatch <<"\n";
         std::cout<< "single matches:\t\t" << m_sc << "\t(" <<(float) 100*m_sc/m_match << " %)\n";
         std::cout<< "double matches:\t\t" << m_sc2 << "\t(" <<(float) 100*m_sc2/m_match << " %)\n";
@@ -1762,9 +1854,11 @@ void DAOD_selector::Terminate()
 
       if(origin_selection || geometric_selection){
         std::cout<<"\nORIGIN/GEOMETRIC OVERLAP\n";
-        std::cout<< "\norigin-geometric overlap:\t" << m_match_overlap <<"\n";
+        std::cout<< "\norigin-geometric overlap:\t" << m_match_overlap <<"\t("<<mm<<")"<<"\n";
         std::cout<< "overlap/origin_matches:\t\t" << (float) m_match_overlap/(m_trk_B+m_trk_C) <<"\n";
         std::cout<< "overlap/geometric_matches:\t" << (float) m_match_overlap/m_match <<"\n";
+        std::cout<<"origin - not-geometry: "<<mm1_ex<<"\n";
+        std::cout<<"geometry - not-origin: "<<mm2_ex<<"\n";
       }
     }
 

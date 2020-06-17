@@ -1,10 +1,12 @@
 {
-TCanvas c1("c", "canvas", 900, 500);
+  gStyle->SetOptStat(0);
+TCanvas c1("c", "canvas", 1200, 600);
+//c1.SetLogy();
 c1.Divide(2,1);
 c1.cd(1);
-TH1F *h1 = new TH1F("h","pT fraction",100,0.01,10.);
-h1=(TH1F*)matched_pTfraction_inB->Clone();
-//h1->SetTitle("pT fraction");
+TH1D *h1 = matched_pT_child_pTfraction_inB->ProjectionY();
+//h1=(TH1F*)matched_pT_child_pTfraction_inB->Clone();
+h1->SetTitle("pT fraction");
 h1->GetXaxis()->SetTitle("DpT/pT");
 //h1->GetYaxis()->SetTitle("efficiency");
 h1->GetXaxis()->SetRangeUser(0.01, 10);

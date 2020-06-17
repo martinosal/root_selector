@@ -345,7 +345,7 @@ public :
    DAOD_selector(TTree * /*tree*/ =0) { }
    virtual ~DAOD_selector() { }
    virtual Int_t   Version() const { return 2; }
-   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
+   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, float, float);
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -364,13 +364,13 @@ public :
    private:
 
      bool selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retagT,debug,lxplus;
-     double pT_cut;
+     float pT_cut,eta_cut;
      double m_cut,m_fc;
      int m_N,m_Ntot,m_b2d,m_b3d,m_bdl1,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_match_overlap,m_match_notoverlap,m_trk_pT_cut,m_trk_B,m_trk_C,m_trk_PU_pT_cut,m_trk_FRAG_pT_cut,m_trk_GEANT_pT_cut;
      int m_qc,m_qj,q,a,b,sc,sgn;
-     double D_phi,D_eta,DR,px,py,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
+     double D_phi,D_eta,DR,px,py,pz,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Lxyz,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
      double D_phi_trk,D_eta_trk,DR_trk,DpT_trk;
-     int match,max_size;
+     int match,mm,m1,m2,m1_ex,m2_ex,mm1_ex,mm2_ex,m1_ov,m2_ov,max_size;
      double tmp_pTfraction,tmp_DR,tmp_min_pTfraction,tmp_min_DR,m_pTfraction_cut,m_DRcut,m_pTfraction_nocut,m_DRnocut;
      unsigned size_jet,size_child;
      int den,m_den;
