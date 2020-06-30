@@ -29,7 +29,7 @@
 #include <TStyle.h>
 
 
-void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retagT_flag, float m_pT_cut, float m_eta_cut)
+void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retagT_flag)
 {
    lxplus=lxplus_flag;
    debug=debug_flag;
@@ -41,8 +41,20 @@ void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_
    geometric_selection=geometric_selection_flag;
    cut=cut_flag;
    retagT=retagT_flag;
-   pT_cut=m_pT_cut;
-   eta_cut=m_eta_cut;
+   return;
+}
+
+void DAOD_selector::setCuts(float m_jet_pT_infcut, float m_jet_pT_supcut, float m_jet_eta_cut, float m_jet_JVT_cut, float m_DR_bcH_cut, float m_pT_bcH_cut, float m_trk_pT_cut, float m_trk_eta_cut, float m_trk_d0_cut)
+{
+   jet_pT_infcut=m_jet_pT_infcut;
+   jet_pT_supcut=m_jet_pT_supcut;
+   jet_eta_cut=m_jet_eta_cut;
+   jet_JVT_cut=m_jet_JVT_cut;
+   DR_bcH_cut=m_DR_bcH_cut;
+   pT_bcH_cut=m_pT_bcH_cut;
+   trk_pT_cut=m_trk_pT_cut;
+   trk_eta_cut=m_trk_eta_cut;
+   trk_d0_cut=m_trk_d0_cut;
    return;
 }
 
@@ -52,20 +64,25 @@ void DAOD_selector::Begin(TTree * /*tree*/)
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
    m_cut=1.,m_fc=0.08;
-   m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_bdl1=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_match_overlap=0,m_match_notoverlap=0,m_trk_pT_cut=0,m_trk_PU_pT_cut=0,m_trk_FRAG_pT_cut=0,m_trk_GEANT_pT_cut=0,m_trk_B=0,m_trk_C=0;
+   m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_bdl1=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_match_overlap=0,m_match_notoverlap=0,n_trk_pT_cut=0,n_trk_PU_pT_cut=0,n_trk_FRAG_pT_cut=0,n_trk_GEANT_pT_cut=0,n_trk_B=0,n_trk_C=0;
    m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
-   D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxyz=0,Dxy_1=0,x0=0,y0=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
+   D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxy=0,Lxyz=0,Dxy_1=0,x0=0,y0=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
    D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
    match=0,max_size=0;
    tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.,m_pTfraction_cut=1.,m_DRcut=0.1,m_pTfraction_nocut=1e6,m_DRnocut=1e6;
    size_jet=0,size_child=0;
    den=0,m_den=0;
    m1=0,m2=0,m1_ex=0,m2_ex=0,mm1_ex=0,mm2_ex=0,m1_ov=0,m2_ov=0,mm=0;
+   m_GeomNOr_PU=0,m_GeomNOr_F=0,m_GeomNOr_G=0;
+   DeltaR_bH=0.,pt_bH=0.,DeltaR_cH=0.,pt_cH=0.;
+   nEx_B=0,nEx_C=0,m_nBcheck=0,m_nCcheck=0;
 
    m_track_cut=10;
 
    pt_max=500., pt_min=0.;
    Delta=(pt_max-pt_min)/bin_1;
+
+   JF_ntrk=0,SV1_ntrk=0,SV0_ntrk=0,IP2D_ntrk=0,IP3D_ntrk=0;
 
    std::cout<<"\n";
 
@@ -209,8 +226,106 @@ void DAOD_selector::Begin(TTree * /*tree*/)
      hist_trk_pT_DR_inB = new TH2F("trk_pT_DR_inB","trk_pT_DR_inB",300,0.,150.,200,0.,2.);
      hist_trk_pT_jet_DR_inB = new TH2F("trk_pT_jet_DR_inB","trk_pT_jet_DR_inB",1000,0.,500.,200,0.,2.);
      hist_trk_pdgId_inB = new TH1F("trk_pdgID_inB","trk_pdgID_inB",200000,-100000,100000);
-     hist_trk_origin_inB = new TH1F("trk_origin_inB","trk_origin_inB",7,-2,5);
+     hist_trk_origin_inB = new TH1F("trk_origin_inB","trk_origin_inB",5,-1,4);
+
      hist_trk_d0_inB = new TH1F("trk_d0_inB","trk_d0_inB",300,-15.,15.);
+     hist_trk_z0sinth_inB = new TH1F("trk_z0sinth_inB","trk_z0sinth_inB",300,-15.,15.);
+     hist_trk_d0sig_inB = new TH1F("trk_d0sig_inB","trk_d0sig_inB",300,-15.,15.);
+     hist_trk_z0sinthsig_inB = new TH1F("trk_z0sinthsig_inB","trk_z0sinthsig_inB",300,-15.,15.);
+     hist_trk_d0sig_origin_inB = new TH2F("trk_d0sig_origin_inB","trk_d0sig_origin_inB",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_inB = new TH2F("trk_z0sinthsig_origin_inB","trk_z0sinthsig_origin_inB",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_inB = new TH2F("trk_logpTfrac_origin_inB","trk_logpTfrac_origin_inB",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_inB = new TH2F("trk_logDR_origin_inB","trk_logDR_origin_inB",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_inB = new TH2F("trk_IBLhits_origin_inB","trk_IBLhits_origin_inB",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_inB = new TH2F("trk_NextToIBLhits_origin_inB","trk_NextToIBLhits_origin_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_inB = new TH2F("trk_sharedIBLhits_origin_inB","trk_sharedIBLhits_origin_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_inB = new TH2F("trk_splitIBLhits_origin_inB","trk_splitIBLhits_origin_inB",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_inB = new TH2F("trk_nPixhits_origin_inB","trk_nPixhits_origin_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_inB = new TH2F("trk_sharedPixhits_origin_inB","trk_sharedPixhits_origin_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_inB = new TH2F("trk_splitPixhits_origin_inB","trk_splitPixhits_origin_inB",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_inB = new TH2F("trk_nSCThits_origin_inB","trk_nSCThits_origin_inB",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_inB = new TH2F("trk_sharedSCThits_origin_inB","trk_sharedSCThits_origin_inB",24,0.,24.,5,-1,4);
+
+     hist_trk_d0sig_JF_inB = new TH1F("trk_d0sig_JF_inB","trk_d0sig_JF_inB",300,-15.,15.);
+     hist_trk_z0sinthsig_JF_inB = new TH1F("trk_z0sinthsig_JF_inB","trk_z0sinthsig_JF_inB",300,-15.,15.);
+     hist_trk_d0sig_origin_JF_inB = new TH2F("trk_d0sig_origin_JF_inB","trk_d0sig_origin_JF_inB",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_JF_inB = new TH2F("trk_z0sinthsig_origin_JF_inB","trk_z0sinthsig_origin_JF_inB",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_JF_inB = new TH2F("trk_logpTfrac_origin_JF_inB","trk_logpTfrac_origin_JF_inB",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_JF_inB = new TH2F("trk_logDR_origin_JF_inB","trk_logDR_origin_JF_inB",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_JF_inB = new TH2F("trk_IBLhits_origin_JF_inB","trk_IBLhits_origin_JF_inB",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_JF_inB = new TH2F("trk_NextToIBLhits_origin_JF_inB","trk_NextToIBLhits_origin_JF_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_JF_inB = new TH2F("trk_sharedIBLhits_origin_JF_inB","trk_sharedIBLhits_origin_JF_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_JF_inB = new TH2F("trk_splitIBLhits_origin_JF_inB","trk_splitIBLhits_origin_JF_inB",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_JF_inB = new TH2F("trk_nPixhits_origin_JF_inB","trk_nPixhits_origin_JF_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_JF_inB = new TH2F("trk_sharedPixhits_origin_JF_inB","trk_sharedPixhits_origin_JF_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_JF_inB = new TH2F("trk_splitPixhits_origin_JF_inB","trk_splitPixhits_origin_JF_inB",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_JF_inB = new TH2F("trk_nSCThits_origin_JF_inB","trk_nSCThits_origin_JF_inB",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_JF_inB = new TH2F("trk_sharedSCThits_origin_JF_inB","trk_sharedSCThits_origin_JF_inB",24,0.,24.,5,-1,4);
+
+     hist_trk_d0sig_SV1_inB = new TH1F("trk_d0sig_SV1_inB","trk_d0sig_SV1_inB",300,-15.,15.);
+     hist_trk_z0sinthsig_SV1_inB = new TH1F("trk_z0sinthsig_SV1_inB","trk_z0sinthsig_SV1_inB",300,-15.,15.);
+     hist_trk_d0sig_origin_SV1_inB = new TH2F("trk_d0sig_origin_SV1_inB","trk_d0sig_origin_SV1_inB",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_SV1_inB = new TH2F("trk_z0sinthsig_origin_SV1_inB","trk_z0sinthsig_origin_SV1_inB",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_SV1_inB = new TH2F("trk_logpTfrac_origin_SV1_inB","trk_logpTfrac_origin_SV1_inB",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_SV1_inB = new TH2F("trk_logDR_origin_SV1_inB","trk_logDR_origin_SV1_inB",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_SV1_inB = new TH2F("trk_IBLhits_origin_SV1_inB","trk_IBLhits_origin_SV1_inB",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_SV1_inB = new TH2F("trk_NextToIBLhits_origin_SV1_inB","trk_NextToIBLhits_origin_SV1_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_SV1_inB = new TH2F("trk_sharedIBLhits_origin_SV1_inB","trk_sharedIBLhits_origin_SV1_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_SV1_inB = new TH2F("trk_splitIBLhits_origin_SV1_inB","trk_splitIBLhits_origin_SV1_inB",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_SV1_inB = new TH2F("trk_nPixhits_origin_SV1_inB","trk_nPixhits_origin_SV1_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_SV1_inB = new TH2F("trk_sharedPixhits_origin_SV1_inB","trk_sharedPixhits_origin_SV1_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_SV1_inB = new TH2F("trk_splitPixhits_origin_SV1_inB","trk_splitPixhits_origin_SV1_inB",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_SV1_inB = new TH2F("trk_nSCThits_origin_SV1_inB","trk_nSCThits_origin_SV1_inB",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_SV1_inB = new TH2F("trk_sharedSCThits_origin_SV1_inB","trk_sharedSCThits_origin_SV1_inB",24,0.,24.,5,-1,4);
+
+     hist_trk_d0sig_SV0_inB = new TH1F("trk_d0sig_SV0_inB","trk_d0sig_SV0_inB",300,-15.,15.);
+     hist_trk_z0sinthsig_SV0_inB = new TH1F("trk_z0sinthsig_SV0_inB","trk_z0sinthsig_SV0_inB",300,-15.,15.);
+     hist_trk_d0sig_origin_SV0_inB = new TH2F("trk_d0sig_origin_SV0_inB","trk_d0sig_origin_SV0_inB",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_SV0_inB = new TH2F("trk_z0sinthsig_origin_SV0_inB","trk_z0sinthsig_origin_SV0_inB",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_SV0_inB = new TH2F("trk_logpTfrac_origin_SV0_inB","trk_logpTfrac_origin_SV0_inB",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_SV0_inB = new TH2F("trk_logDR_origin_SV0_inB","trk_logDR_origin_SV0_inB",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_SV0_inB = new TH2F("trk_IBLhits_origin_SV0_inB","trk_IBLhits_origin_SV0_inB",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_SV0_inB = new TH2F("trk_NextToIBLhits_origin_SV0_inB","trk_NextToIBLhits_origin_SV0_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_SV0_inB = new TH2F("trk_sharedIBLhits_origin_SV0_inB","trk_sharedIBLhits_origin_SV0_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_SV0_inB = new TH2F("trk_splitIBLhits_origin_SV0_inB","trk_splitIBLhits_origin_SV0_inB",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_SV0_inB = new TH2F("trk_nPixhits_origin_SV0_inB","trk_nPixhits_origin_SV0_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_SV0_inB = new TH2F("trk_sharedPixhits_origin_SV0_inB","trk_sharedPixhits_origin_SV0_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_SV0_inB = new TH2F("trk_splitPixhits_origin_SV0_inB","trk_splitPixhits_origin_SV0_inB",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_SV0_inB = new TH2F("trk_nSCThits_origin_SV0_inB","trk_nSCThits_origin_SV0_inB",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_SV0_inB = new TH2F("trk_sharedSCThits_origin_SV0_inB","trk_sharedSCThits_origin_SV0_inB",24,0.,24.,5,-1,4);
+
+     hist_trk_d0sig_IP3D_inB = new TH1F("trk_d0sig_IP3D_inB","trk_d0sig_IP3D_inB",300,-15.,15.);
+     hist_trk_z0sinthsig_IP3D_inB = new TH1F("trk_z0sinthsig_IP3D_inB","trk_z0sinthsig_IP3D_inB",300,-15.,15.);
+     hist_trk_d0sig_origin_IP3D_inB = new TH2F("trk_d0sig_origin_IP3D_inB","trk_d0sig_origin_IP3D_inB",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_IP3D_inB = new TH2F("trk_z0sinthsig_origin_IP3D_inB","trk_z0sinthsig_origin_IP3D_inB",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_IP3D_inB = new TH2F("trk_logpTfrac_origin_IP3D_inB","trk_logpTfrac_origin_IP3D_inB",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_IP3D_inB = new TH2F("trk_logDR_origin_IP3D_inB","trk_logDR_origin_IP3D_inB",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_IP3D_inB = new TH2F("trk_IBLhits_origin_IP3D_inB","trk_IBLhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_IP3D_inB = new TH2F("trk_NextToIBLhits_origin_IP3D_inB","trk_NextToIBLhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_IP3D_inB = new TH2F("trk_sharedIBLhits_origin_IP3D_inB","trk_sharedIBLhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_IP3D_inB = new TH2F("trk_splitIBLhits_origin_IP3D_inB","trk_splitIBLhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_IP3D_inB = new TH2F("trk_nPixhits_origin_IP3D_inB","trk_nPixhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_IP3D_inB = new TH2F("trk_sharedPixhits_origin_IP3D_inB","trk_sharedPixhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_IP3D_inB = new TH2F("trk_splitPixhits_origin_IP3D_inB","trk_splitPixhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_IP3D_inB = new TH2F("trk_nSCThits_origin_IP3D_inB","trk_nSCThits_origin_IP3D_inB",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_IP3D_inB = new TH2F("trk_sharedSCThits_origin_IP3D_inB","trk_sharedSCThits_origin_IP3D_inB",24,0.,24.,5,-1,4);
+
+     hist_trk_d0sig_IP2D_inB = new TH1F("trk_d0sig_IP2D_inB","trk_d0sig_IP2D_inB",300,-15.,15.);
+     hist_trk_z0sinthsig_IP2D_inB = new TH1F("trk_z0sinthsig_IP2D_inB","trk_z0sinthsig_IP2D_inB",300,-15.,15.);
+     hist_trk_d0sig_origin_IP2D_inB = new TH2F("trk_d0sig_origin_IP2D_inB","trk_d0sig_origin_IP2D_inB",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_IP2D_inB = new TH2F("trk_z0sinthsig_origin_IP2D_inB","trk_z0sinthsig_origin_IP2D_inB",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_IP2D_inB = new TH2F("trk_logpTfrac_origin_IP2D_inB","trk_logpTfrac_origin_IP2D_inB",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_IP2D_inB = new TH2F("trk_logDR_origin_IP2D_inB","trk_logDR_origin_IP2D_inB",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_IP2D_inB = new TH2F("trk_IBLhits_origin_IP2D_inB","trk_IBLhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_IP2D_inB = new TH2F("trk_NextToIBLhits_origin_IP2D_inB","trk_NextToIBLhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_IP2D_inB = new TH2F("trk_sharedIBLhits_origin_IP2D_inB","trk_sharedIBLhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_IP2D_inB = new TH2F("trk_splitIBLhits_origin_IP2D_inB","trk_splitIBLhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_IP2D_inB = new TH2F("trk_nPixhits_origin_IP2D_inB","trk_nPixhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_IP2D_inB = new TH2F("trk_sharedPixhits_origin_IP2D_inB","trk_sharedPixhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_IP2D_inB = new TH2F("trk_splitPixhits_origin_IP2D_inB","trk_splitPixhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_IP2D_inB = new TH2F("trk_nSCThits_origin_IP2D_inB","trk_nSCThits_origin_IP2D_inB",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_IP2D_inB = new TH2F("trk_sharedSCThits_origin_IP2D_inB","trk_sharedSCThits_origin_IP2D_inB",24,0.,24.,5,-1,4);
+
      hist_trk_d0_PUinB = new TH1F("trk_d0_PUinB","trk_d0_PUinB",300,-15.,15.);
      hist_trk_d0_BinB = new TH1F("trk_d0_BinB","trk_d0_BinB",300,-15.,15.);
      hist_trk_d0_CinB = new TH1F("trk_d0_CinB","trk_d0_CinB",300,-15.,15.);
@@ -228,6 +343,8 @@ void DAOD_selector::Begin(TTree * /*tree*/)
      hist_child_pT_jet_DR_inB = new TH2F("child_pT_jet_DR_inB","child_pT_jet_DR_inB",1000,0.,500.,200,0.,2.);
      hist_child_pdgID_inB = new TH1F("child_pdgID_inB","child_pdgID_inB",200000,-100000,100000);
 
+     hist_child_pi_notD = new TH1F("child_pi_pT_notD_inB", "child_pi_pT_notD_inB", 300, 0., 150.);
+     hist_child_K_notD = new TH1F("child_K_pT_notD_inB", "child_K_pT_notD_inB", 300, 0., 150.);
      hist_child_pi = new TH1F("child_pi_pT_inB", "child_pi_pT_inB", 300, 0., 150.);
      hist_child_pi_Lxy_inB = new TH1F("child_pi_Lxy_inB","child_pi_Lxy_inB",1000,0.,1000.);
      hist_child_pi_Lxyz_inB = new TH1F("child_pi_Lxyz_inB","child_pi_Lxyz_inB",1000,0.,1000.);
@@ -262,6 +379,7 @@ void DAOD_selector::Begin(TTree * /*tree*/)
      hist_child_d0_truth = new TH1F("child_d0_truth_inB","child_d0_truth_inB",300,-15.,15.);
      hist_child_d0 = new TH1F("child_d0_inB","child_d0_inB",300,-15.,15.);
      hist_child_d0_pT = new TH2F("child_d0_pT_inB","child_pT_d0_inB",300,-15.,15.,300,0.,150.);
+     hist_child_z0sinth_inB = new TH1F("child_z0sinth_inB","child_z0sinth_inB",300,-150.,150.);
      hist_pT_vs_R0_ratio_inB = new TH1F("child_pT_vs_R0_ratio_inB","child_pT_vs_R0_ratio_inB",300,-1.2,2.4);
 
      if(origin_selection){
@@ -295,6 +413,8 @@ void DAOD_selector::Begin(TTree * /*tree*/)
        hist_matched_pT_jet_DR_inB = new TH2F("matched_child_pT_jet_DR_inB","matched_child_pT_jet_DR_inB",1000,0.,500.,200,0.,2.);
        hist_matched_pdgId_inB = new TH1F("matched_child_pdgId_inB","matched_child_pdgId_inB",200000,-100000,100000);
 
+       hist_matched_child_pi_notD = new TH1F("matched_child_pi_pT_notD_inB", "matched_child_pi_pT_notD_inB", 300, 0., 150.);
+       hist_matched_child_K_notD = new TH1F("matched_child_K_pT_notD_inB", "matched_child_K_pT_notD_inB", 300, 0., 150.);
        hist_matched_child_pi = new TH1F("matched_child_pi_pT_inB", "matched_child_pi_pT_inB", 300, 0., 150.);
        hist_matched_child_pi_Lxy_inB = new TH1F("matched_child_pi_Lxy_inB","matched_child_pi_Lxy_inB",1000,0.,1000.);
        hist_matched_child_pi_Lxyz_inB = new TH1F("matched_child_pi_Lxyz_inB","matched_child_pi_Lxyz_inB",1000,0.,1000.);
@@ -396,9 +516,9 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 //   all TTreeReaderArray<int> and TTreeReaderArray<float> have the same dim, namely dim=*njets, the nuber of jets in each event.
 
-   int nB=0,nBjets=0;
+   int nB=0,nBjets=0,nBcheck=0;
    int n1=0,n2=0,n3=0; //<- the file has max=3 b-tagged particles in a single jet
-   std::vector<int> isB,is1B,is2B,is3B;
+   std::vector<int> isB,isBcheck,is1B,is2B,is3B;
 
    int nl=0;
    std::vector<int> isl;
@@ -412,13 +532,12 @@ Bool_t DAOD_selector::Process(Long64_t entry)
      }
    }
 
-   for(unsigned i=0;i<jet_nBHadr.GetSize();i++) {
+   for(int i=0;i<*njets;i++) {
 
      nB+=jet_nBHadr[i];
      if(jet_nBHadr[i]>0){
        isB.push_back(i);
        nBjets++;  m_nbjets++;
-       if(jet_nCHadr[i]>0)  m_bc_overlap++;
      }
      if(jet_nBHadr[i]==1)  {is1B.push_back(i); n1++;}
      if(jet_nBHadr[i]==2)  {is2B.push_back(i); n2++;}
@@ -426,15 +545,49 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
    }
 
+   if(nBjets>0){
+     for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
+       if(jet_aliveAfterOR[*it]>0 && jet_aliveAfterORmu[*it]>0 && jet_isBadMedium[*it]==0 && jet_pt[*it]<jet_pT_supcut && jet_pt[*it]>jet_pT_infcut && abs(jet_eta[*it])<jet_eta_cut){
+         if(jet_JVT[*it]>jet_JVT_cut && jet_pt[*it]<60*1e3 && abs(jet_eta[*it])<2.4){
+           for(unsigned i=0;i<jet_bH_pt[*it].size();i++){
+             D_eta=jet_bH_eta[*it].at(i)-jet_eta[*it];
+             if(abs(jet_bH_phi[*it].at(i)-jet_phi[*it])>M_PI){
+               D_phi=2*M_PI-abs(jet_bH_phi[*it].at(i)-jet_phi[*it]);
+             }
+             if(abs(jet_bH_phi[*it].at(i)-jet_phi[*it])<M_PI){
+               D_phi=jet_bH_phi[*it].at(i)-jet_phi[*it];
+             }
+
+             DeltaR_bH=sqrt(D_eta*D_eta+D_phi*D_phi);
+             pt_bH=jet_bH_pt[*it].at(i);
+
+             if(jet_bH_pt[*it].at(i)>pt_bH && sqrt(D_eta*D_eta+D_phi*D_phi)<DeltaR_bH){
+               pt_bH=jet_bH_pt[*it].at(i);
+               DeltaR_bH=sqrt(D_eta*D_eta+D_phi*D_phi);
+             }
+           }
+
+           if(DeltaR_bH<DR_bcH_cut && pt_bH>pT_bcH_cut){
+             isBcheck.push_back(*it);
+             nBcheck++;
+           }
+         }
+       }
+       else nEx_B++;
+     }
+   }
+   m_nBcheck+=nBcheck;
+
+
    if(nB==0)  {m_noB++;}
 
    if (n1+2*n2+3*n3!=nB) {
         std::cout << "Warning: n1+n2+n3!=nB\t" << n1<<"\t"<<n2<<"\t"<<n3<<"\t"<<nB<<"\n";
     }
 
-   int nC=0,nCjets=0;
+   int nC=0,nCjets=0,nCcheck=0;
    int nC1=0,nC2=0,nC3=0; //<- the file has max=3 b-tagged particles in a single jet
-   std::vector<int> isC,is1C,is2C,is3C;
+   std::vector<int> isC,isCcheck,is1C,is2C,is3C;
 
    for(unsigned i=0;i<jet_nCHadr.GetSize();i++) {
 
@@ -448,8 +601,50 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    }
 
 
+   if(nCjets>0){
+     for(std::vector<int>::iterator it = isC.begin(); it != isC.end(); ++it){
+       if(jet_aliveAfterOR[*it]>0 && jet_aliveAfterORmu[*it]>0 && jet_isBadMedium[*it]==0 && jet_pt[*it]<jet_pT_supcut && jet_pt[*it]>jet_pT_infcut && abs(jet_eta[*it])<jet_eta_cut){
+         if(jet_JVT[*it]>jet_JVT_cut && jet_pt[*it]<60*1e3 && abs(jet_eta[*it])<2.4){
+           for(unsigned i=0;i<jet_cH_pt[*it].size();i++){
+             D_eta=jet_cH_eta[*it].at(i)-jet_eta[*it];
+             if(abs(jet_cH_phi[*it].at(i)-jet_phi[*it])>M_PI){
+               D_phi=2*M_PI-abs(jet_cH_phi[*it].at(i)-jet_phi[*it]);
+             }
+             if(abs(jet_cH_phi[*it].at(i)-jet_phi[*it])<M_PI){
+               D_phi=jet_cH_phi[*it].at(i)-jet_phi[*it];
+             }
+
+             DeltaR_cH=sqrt(D_eta*D_eta+D_phi*D_phi);
+             pt_cH=jet_cH_pt[*it].at(i);
+
+             if(jet_cH_pt[*it].at(i)>pt_cH && sqrt(D_eta*D_eta+D_phi*D_phi)<DeltaR_cH){
+               pt_cH=jet_cH_pt[*it].at(i);
+               DeltaR_cH=sqrt(D_eta*D_eta+D_phi*D_phi);
+             }
+           }
+
+           if(DeltaR_bH<DR_bcH_cut && pt_bH>pT_bcH_cut){
+             isCcheck.push_back(*it);
+             nCcheck++;
+           }
+         }
+       }
+       else nEx_C++;// RIVEDI
+     }
+   }
+   m_nCcheck+=nCcheck;
+
    if(selections){
 
+     if(nBcheck>0){
+       for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
+         if(nCcheck>0) m_bc_overlap++;// WRONG !!
+         hist_pt_inB->Fill(jet_pt[*it]*0.001);
+         hist_eta_inB->Fill(jet_eta[*it]);
+         hist_phi_inB->Fill(jet_phi[*it]);
+         hist_E_inB->Fill(jet_E[*it]);
+       }
+     }
 
      if(n1==1 && n2==0 && n3==0){
        int i=is1B.at(0);
@@ -470,7 +665,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
          hist_E_2->Fill(jet_E[*it]);
        }
      }
-
+/*
      //select by: n1==0 && n2==1 && n3==0
      if(n1==0 && n2==1 && n3==0){
        for(std::vector<int>::iterator it = is2B.begin(); it != is2B.end(); ++it){
@@ -509,22 +704,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
          hist_E_4->Fill(jet_E[*it]);
        }
      }
-
-
-
-
-     if(nBjets>0){
-       for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
-
-         hist_pt_inB->Fill(jet_pt[*it]*0.001);
-         hist_eta_inB->Fill(jet_eta[*it]);
-         hist_phi_inB->Fill(jet_phi[*it]);
-         hist_E_inB->Fill(jet_E[*it]);
-       }
-     }
-
-
-
+*/
    }
 
 
@@ -586,9 +766,9 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 //DISCRIMINANTS
    if(discriminants){
      double DL1=0;
-     if(nBjets>0){
+     if(nBcheck>0){
 
-       for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
+       for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
          m_N++;
   //        hist_jet_IP2_inB->Fill(jet_ip2[*it]);
 
@@ -636,8 +816,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 
   //inclusive plots
-     if(nCjets>0){
-       for(std::vector<int>::iterator it = isC.begin(); it != isC.end(); ++it){
+     if(nCcheck>0){
+       for(std::vector<int>::iterator it = isCcheck.begin(); it != isCcheck.end(); ++it){
          if(jet_ip2d_pb[*it]!=-99){
            hist_ip2d_llr_inC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
   //          if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
@@ -653,8 +833,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
        }
      }
   //exclusive C plots
-     if(nCjets>0 && nBjets==0){
-       for(std::vector<int>::iterator it = isC.begin(); it != isC.end(); ++it){
+     if(nCcheck>0 && nBcheck==0){
+       for(std::vector<int>::iterator it = isCcheck.begin(); it != isCcheck.end(); ++it){
          if(jet_ip2d_pb[*it]!=-99){
            hist_ip2d_llr_exC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
   //          if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
@@ -670,9 +850,9 @@ Bool_t DAOD_selector::Process(Long64_t entry)
        }
      }
   //exclusive B plots
-     if(nBjets>0 && nCjets==0){
+     if(nBcheck>0 && nCcheck==0){
   //         std::cout<<"\nevent #: "<<m_Ntot<<"\n";
-       for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
+       for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
 
          if(jet_ip2d_pb[*it]!=-99){
            hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
@@ -688,12 +868,13 @@ Bool_t DAOD_selector::Process(Long64_t entry)
          }
        }
      }
+
    }
 
 
    if(selection_alg){
-     if(nBjets>0){
-       for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
+     if(nBcheck>0){//nBcheck nBjets
+       for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){//isBcheck isB
 
          std::vector<int> matching_trk,matching_child,origin_trk;
   //         int b=(jet_bH_pdgId[*it][i]/100)%10;
@@ -721,34 +902,9 @@ Bool_t DAOD_selector::Process(Long64_t entry)
            double jet_v[]={jet.Px(),jet.Py(),jet.Pz()};
 
            for(unsigned i=0;i<size_jet;i++){
-             if(abs(jet_trk_eta[*it].at(i))<eta_cut && jet_trk_pt[*it].at(i)>pT_cut){
+             if(abs(jet_trk_eta[*it].at(i))<trk_eta_cut && jet_trk_pt[*it].at(i)>trk_pT_cut && abs(jet_trk_d0[*it].at(i))<trk_d0_cut ){// && abs(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)))<1.5
 
-               m_trk_pT_cut++;
-
-               A=sin(jet_phi[*it]-jet_trk_phi[*it].at(i))*jet_trk_d0[*it].at(i);
-               sgn=A/abs(A);
-               d0=sgn*abs(jet_trk_d0[*it].at(i));
-               hist_trk_d0_inB->Fill(d0);
-               if(jet_trk_orig[*it].at(i)==-1){
-                 hist_trk_d0_PUinB->Fill(d0);
-                 m_trk_PU_pT_cut++;
-               }
-               if(jet_trk_orig[*it].at(i)==0){
-                 hist_trk_d0_BinB->Fill(d0);
-                 m_trk_B++;
-               }
-               if(jet_trk_orig[*it].at(i)==1){
-                 hist_trk_d0_CinB->Fill(d0);
-                 m_trk_C++;
-               }
-               if(jet_trk_orig[*it].at(i)==2){
-                 hist_trk_d0_FRAGinB->Fill(d0);
-                 m_trk_FRAG_pT_cut++;
-               }
-               if(jet_trk_orig[*it].at(i)==3){
-                 hist_trk_d0_GEANTinB->Fill(d0);
-                 m_trk_GEANT_pT_cut++;
-               }
+               n_trk_pT_cut++;
 
                D_eta=jet_trk_eta[*it][i]-jet_eta[*it];
                if(abs(jet_trk_phi[*it].at(i)-jet_phi[*it])>M_PI){
@@ -769,6 +925,170 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                hist_trk_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
                hist_trk_pdgId_inB->Fill(jet_trk_pdg_id[*it].at(i));
                hist_trk_origin_inB->Fill(jet_trk_orig[*it].at(i));
+
+               A=sin(jet_phi[*it]-jet_trk_phi[*it].at(i))*jet_trk_d0[*it].at(i);
+               sgn=A/abs(A);
+               d0=sgn*abs(jet_trk_d0[*it].at(i));
+               hist_trk_d0_inB->Fill(d0);
+               hist_trk_z0sinth_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)));
+               hist_trk_d0sig_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
+               hist_trk_z0sinthsig_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
+               hist_trk_d0sig_origin_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_z0sinthsig_origin_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)),jet_trk_orig[*it].at(i));
+               hist_trk_logpTfrac_origin_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+               hist_trk_logDR_origin_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
+               hist_trk_IBLhits_origin_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_NextToIBLhits_origin_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_sharedIBLhits_origin_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_splitIBLhits_origin_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+               hist_trk_nPixhits_origin_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_sharedPixhits_origin_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_splitPixhits_origin_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_nSCThits_origin_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_sharedSCThits_origin_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+
+//               std::cout<<jet_trk_algo[*it].at(i)<<"\n";
+               std::vector<int> bin_alg(5);
+               int x=jet_trk_algo[*it].at(i);
+
+               int idx=0,p=0;
+               while(idx<5){
+                 p=x%2;
+                 bin_alg.at(idx)=p;
+                 if(idx==4) {
+                   JF_ntrk=JF_ntrk+p;
+                   if(p==1){
+                     hist_trk_d0sig_JF_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_JF_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
+                     hist_trk_d0sig_origin_JF_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_JF_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_JF_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_JF_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_JF_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_JF_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_JF_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_JF_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_JF_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_JF_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_JF_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_JF_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_JF_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                   }
+                 }
+                 if(idx==3) {
+                   SV1_ntrk=SV1_ntrk+p;
+                   if(p==1){
+                     hist_trk_d0sig_SV1_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_SV1_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
+                     hist_trk_d0sig_origin_SV1_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_SV1_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_SV1_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_SV1_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_SV1_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_SV1_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_SV1_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_SV1_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_SV1_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_SV1_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_SV1_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_SV1_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_SV1_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                   }
+                 }
+                 if(idx==2) {
+                   SV0_ntrk=SV0_ntrk+p;
+                   if(p==1){
+                     hist_trk_d0sig_SV0_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_SV0_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
+                     hist_trk_d0sig_origin_SV0_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_SV0_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_SV0_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_SV0_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_SV0_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_SV0_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_SV0_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_SV0_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_SV0_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_SV0_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_SV0_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_SV0_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_SV0_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                   }
+                 }
+                 if(idx==1) {
+                   IP3D_ntrk=IP3D_ntrk+p;
+                   if(p==1){
+                     hist_trk_d0sig_IP3D_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_IP3D_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
+                     hist_trk_d0sig_origin_IP3D_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_IP3D_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_IP3D_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_IP3D_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_IP3D_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_IP3D_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_IP3D_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_IP3D_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_IP3D_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_IP3D_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_IP3D_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_IP3D_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_IP3D_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                   }
+                 }
+                 if(idx==0) {
+                   IP2D_ntrk=IP2D_ntrk+p;
+                   if(p==1){
+                     hist_trk_d0sig_IP2D_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_IP2D_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
+                     hist_trk_d0sig_origin_IP2D_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_IP2D_inB->Fill(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_IP2D_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_IP2D_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_IP2D_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_IP2D_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_IP2D_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_IP2D_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_IP2D_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_IP2D_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_IP2D_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_IP2D_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_IP2D_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                   }
+                 }
+                 x=x/2;
+                 idx++;
+               }
+/*
+               std::cout<<"\n"<<jet_trk_algo[*it].at(i)<<"\t(";
+               for(int z=bin_alg.size()-1;z>=0;z--){
+                 if(z>0)
+                   std::cout<<bin_alg.at(z)<<",";
+                 if(z==0)
+                   std::cout<<bin_alg.at(z);
+               }
+               std::cout<<")";
+*/
+
+               if(jet_trk_orig[*it].at(i)==-1){
+                 hist_trk_d0_PUinB->Fill(d0);
+                 n_trk_PU_pT_cut++;
+               }
+               if(jet_trk_orig[*it].at(i)==0){
+                 hist_trk_d0_BinB->Fill(d0);
+                 n_trk_B++;
+               }
+               if(jet_trk_orig[*it].at(i)==1){
+                 hist_trk_d0_CinB->Fill(d0);
+                 n_trk_C++;
+               }
+               if(jet_trk_orig[*it].at(i)==2){
+                 hist_trk_d0_FRAGinB->Fill(d0);
+                 n_trk_FRAG_pT_cut++;
+               }
+               if(jet_trk_orig[*it].at(i)==3){
+                 hist_trk_d0_GEANTinB->Fill(d0);
+                 n_trk_GEANT_pT_cut++;
+               }
 
                if(origin_selection){
                  if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
@@ -813,7 +1133,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              child_Eta.push_back(v.Eta());
              child_Phi.push_back(v.Phi());
 
-             if(abs(child_Eta.at(j))<eta_cut && child_Pt.at(j)>pT_cut){//CHILD SELECTION CRITERIA
+//             float z0sinth=(jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j));
+
+
+             if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut && abs(jet_bH_child_d0[*it].at(j))<trk_d0_cut ){//CHILD SELECTION CRITERIA && abs(z0sinth)<1.5
                if(jet_bH_child_prod_x[*it].size()!=size_child || jet_bH_child_decay_x[*it].size()!=size_child){
                  std::cout<<"WARNING\n";
                }
@@ -821,14 +1144,6 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
                child_idx.push_back(j);
 
-               Dx_1=(*PVx)-jet_bH_child_prod_x[*it].at(j);//x_PV - x_SV
-               Dy_1=(*PVx)-jet_bH_child_prod_y[*it].at(j);
-               Dz_1=(*PVx)-jet_bH_child_prod_z[*it].at(j);
-               Dxy_1=sqrt(Dx_1*Dx_1+Dy_1*Dy_1);
-               hist_child_Lxy_inB->Fill(Dxy_1);
-               hist_child_Lxyz_inB->Fill(sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1));
-               child_Lxy[j]=Dxy_1;
-               child_Lxyz[j]=sqrt(Dxy_1*Dxy_1+Dz_1*Dz_1);
                px=jet_bH_child_px[*it].at(j);
                py=jet_bH_child_py[*it].at(j);
                pz=jet_bH_child_pz[*it].at(j);
@@ -841,11 +1156,23 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    c=+1;
                  }
 
+                 Lxy=800;
                  Lxyz=800;
 
-//                 TRandom3 *rand = new TRandom3(0);
-//                 rand_n=rand->Gaus(0.59,0.05943);
-                 rand_n=0.6;
+                 hist_child_Lxy_inB->Fill(Lxy);
+                 hist_child_Lxyz_inB->Fill(Lxyz);
+                 child_Lxy[j]=Lxy;
+                 child_Lxyz[j]=Lxyz;
+
+                 if(abs(jet_bH_child_pdg_id[*it].at(j))==211){
+                   hist_child_pi_notD->Fill(1e-3*child_Pt[j]);
+                 }
+                 if(abs(jet_bH_child_pdg_id[*it].at(j))==321){
+                   hist_child_K_notD->Fill(1e-3*child_Pt[j]);
+                 }
+/*
+                 TRandom3 *rand = new TRandom3(0);
+                 rand_n=rand->Gaus(0.59,0.05943);
                  R0=abs(child_Pt.at(j)/rand_n);//mm
                  x0=jet_bH_child_prod_x[*it].at(j)-c*R0*(py/(sqrt(px*px+py*py)));
                  y0=jet_bH_child_prod_y[*it].at(j)+c*R0*(px/(sqrt(px*px+py*py)));
@@ -858,23 +1185,30 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  sgn=A/abs(A);
 
                  d0=sgn*abs(Dxy_3-abs(R0));
-
+*/
 //                 hist_child_nodecay_IP->Fill(d0);
 
 
                }//NO DECAY CHILD
 
-               if(jet_bH_child_decay_x[*it].at(j)!=-999){//DECAY CHILD
+               if(jet_bH_child_decay_x[*it].at(j)!=-999 && jet_bH_child_prod_x[*it].at(j)!=-99){//DECAY CHILD
 //                 std::cout<<jet_bH_child_decay_x[*it].at(j)<<"\n";
                  Dx_2=jet_bH_child_decay_x[*it].at(j)-jet_bH_child_prod_x[*it].at(j);//x_DV - x_SV
                  Dy_2=jet_bH_child_decay_y[*it].at(j)-jet_bH_child_prod_y[*it].at(j);
                  Dz_2=jet_bH_child_decay_z[*it].at(j)-jet_bH_child_prod_z[*it].at(j);
 
-                 Lxyz=sqrt(1.-(px*px+py*py+pz*pz)/(jet_bH_child_E[*it].at(j)*jet_bH_child_E[*it].at(j)))*sqrt(Dx_2*Dx_2+Dy_2*Dy_2+Dz_2*Dz_2);
+                 Lxy=sqrt( jet_bH_child_E[*it].at(j)*jet_bH_child_E[*it].at(j)/(px*px+py*py)-(px*px+py*py+pz*pz)/(px*px+py*py) )*sqrt( Dx_2*Dx_2+Dy_2*Dy_2 );
+                 Lxyz=sqrt( jet_bH_child_E[*it].at(j)*jet_bH_child_E[*it].at(j)/(px*px+py*py+pz*pz)-1. )*sqrt( Dx_2*Dx_2+Dy_2*Dy_2+Dz_2*Dz_2 );
+
+                 hist_child_Lxy_inB->Fill(Lxy);
+                 hist_child_Lxyz_inB->Fill(Lxyz);
+                 child_Lxy[j]=Lxy;
+                 child_Lxyz[j]=Lxyz;
 //                 Dxy_2=sqrt((Dx_1*Dx_1)+(Dy_1*Dy_1));
 
 //                 vx=1e3*c*px/jet_bH_child_E[*it].at(j);
 //                 vy=1e3*c*py/jet_bH_child_E[*it].at(j);
+/*
                  R0=0.5*sqrt(px*px+py*py)*(Dx_2*Dx_2+Dy_2*Dy_2)/(Dy_2*px-Dx_2*py);
                  x0=jet_bH_child_prod_x[*it].at(j)-R0*py/sqrt(px*px+py*py);
                  y0=jet_bH_child_prod_y[*it].at(j)+R0*px/sqrt(px*px+py*py);
@@ -888,7 +1222,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  sgn=A/abs(A);
 
                  d0=sgn*abs(Dxy_3-abs(R0));
-
+*/
 //                 hist_child_decay_IP->Fill(d0);
 
                  hist_pT_vs_R0_ratio_inB->Fill(child_Pt.at(j)/abs(R0));
@@ -898,11 +1232,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 //                 std::cout<<jet_bH_child_charge[*it].at(j)<<"\t"<<d0/abs(d0)<<"\n";
                }//DECAY CHILD
 
-//               d0=(px*(-Dy_1)-py*(-Dx_1))/sqrt(px*px+py*py);//LINEAR D0
-//               t1=sin(jet_phi[*it]-child_Phi.at(j))*d0;
-//               t2=t1/abs(t1);
-//               hist_child_linear_IP->Fill(t2*abs(d0));
-
+               d0=jet_bH_child_d0[*it].at(j);
                hist_child_d0->Fill(d0);
                hist_child_d0_pT->Fill(d0,1e-3*sqrt(px*px+py*py));
                child_IP[j]=d0;
@@ -911,6 +1241,9 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                sgn=A/abs(A);
 
                hist_child_d0_truth->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+               if(jet_bH_child_theta[*it].at(j)==-99)
+               std::cout<<"W\n";
+               hist_child_z0sinth_inB->Fill((jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j)));//*sqrt(px*px+py*py)/sqrt(px*px+py*py+pz*pz)
 
                D_eta=child_Eta[j]-jet_eta[*it];
                if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
@@ -933,35 +1266,35 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
                if(abs(jet_bH_child_pdg_id[*it].at(j))==211){
                  hist_child_pi->Fill(1e-3*child_Pt[j]);
-                 hist_child_pi_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_pi_Lxy_inB->Fill(Lxy);
                  hist_child_pi_Lxyz_inB->Fill(Lxyz);//CHECK
                  hist_child_pi_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_pi_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==321){
                  hist_child_K->Fill(1e-3*child_Pt[j]);
-                 hist_child_K_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_K_Lxy_inB->Fill(Lxy);
                  hist_child_K_Lxyz_inB->Fill(Lxyz);
                  hist_child_K_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_K_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==13){
                  hist_child_mu->Fill(1e-3*child_Pt[j]);
-                 hist_child_mu_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_mu_Lxy_inB->Fill(Lxy);
                  hist_child_mu_Lxyz_inB->Fill(Lxyz);
                  hist_child_mu_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_mu_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==2212){
                  hist_child_p->Fill(1e-3*child_Pt[j]);
-                 hist_child_p_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_p_Lxy_inB->Fill(Lxy);
                  hist_child_p_Lxyz_inB->Fill(Lxyz);
                  hist_child_p_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_p_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==11){
                  hist_child_e->Fill(1e-3*child_Pt[j]);
-                 hist_child_e_Lxy_inB->Fill(sqrt(Dx_2*Dx_2+Dy_2*Dy_2));
+                 hist_child_e_Lxy_inB->Fill(Lxy);
                  hist_child_e_Lxyz_inB->Fill(Lxyz);
                  hist_child_e_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                  hist_child_e_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
@@ -985,12 +1318,13 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              }
 
              for(unsigned j=0;j<size_child;j++){
-               if(abs(child_Eta.at(j))<eta_cut && child_Pt.at(j)>pT_cut){
+//               float sintheta=child_Pt.at(j)/sqrt(child_Pt.at(j)*child_Pt.at(j)+jet_bH_child_pz[*it].at(j)*jet_bH_child_pz[*it].at(j));
+               if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut && abs(jet_bH_child_d0[*it].at(j))<trk_d0_cut){// && abs(jet_bH_child_z0[*it].at(j)*sintheta)<1.5
                  if(jet_bH_child_charge[*it].at(j)==0){
                    std::cout<<"CHARGE 0\n";
                  }
                  for(unsigned i=0;i<size_jet;i++){
-                   if(abs(jet_trk_eta[*it].at(i))<eta_cut && jet_trk_pt[*it].at(i)>pT_cut){
+                   if(abs(jet_trk_eta[*it].at(i))<trk_eta_cut && jet_trk_pt[*it].at(i)>trk_pT_cut && abs(jet_trk_d0[*it].at(i))<trk_d0_cut){// && abs(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)))<1.5
                      if( (jet_trk_parent_pdgid[*it].at(i)-jet_bH_child_parent_pdg_id[*it].at(j))==0 && abs(jet_trk_parent_pdgid[*it].at(i))!=999 ){
                        if( (jet_trk_pdg_id[*it].at(i)-jet_bH_child_pdg_id[*it].at(j))==0 && abs(jet_trk_pdg_id[*it].at(i))!=999 ){
   //                       std::cout<<"("<<i<<","<<j<<") ";
@@ -1116,14 +1450,16 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  py=jet_bH_child_py[*it].at(b);
                  pz=jet_bH_child_pz[*it].at(b);
 
-                 if(jet_bH_child_decay_x[*it].at(b)!=-999){//DECAY CHILD
+                 if(jet_bH_child_decay_x[*it].at(b)!=-999 && jet_bH_child_prod_x[*it].at(b)!=-99){//DECAY CHILD
   //                 std::cout<<jet_bH_child_decay_x[*it].at(b)<<"\n";
                    Dx_2=jet_bH_child_decay_x[*it].at(b)-jet_bH_child_prod_x[*it].at(b);//x_DV - x_SV
                    Dy_2=jet_bH_child_decay_y[*it].at(b)-jet_bH_child_prod_y[*it].at(b);
                    Dz_2=jet_bH_child_decay_z[*it].at(b)-jet_bH_child_prod_z[*it].at(b);
-                   Lxyz=sqrt(1.-(px*px+py*py+pz*pz)/(jet_bH_child_E[*it].at(b)*jet_bH_child_E[*it].at(b)))*sqrt(Dx_2*Dx_2+Dy_2*Dy_2+Dz_2*Dz_2);
+                   Lxy=sqrt( jet_bH_child_E[*it].at(b)*jet_bH_child_E[*it].at(b)/(px*px+py*py)-(px*px+py*py+pz*pz)/(px*px+py*py) )*sqrt( Dx_2*Dx_2+Dy_2*Dy_2 );
+                   Lxyz=sqrt( jet_bH_child_E[*it].at(b)*jet_bH_child_E[*it].at(b)/(px*px+py*py+pz*pz)-1. )*sqrt( Dx_2*Dx_2+Dy_2*Dy_2+Dz_2*Dz_2 );
                  }
                  if(jet_bH_child_decay_x[*it].at(b)==-999){//NO DECAY CHILD
+                   Lxy=800;
                    Lxyz=800;
                  }
 
@@ -1147,38 +1483,46 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  hist_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
                  hist_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
 
+                 if(jet_bH_child_decay_x[*it].at(b)==-999){//NO DECAY MATCHED CHILD
+                   if(abs(jet_bH_child_pdg_id[*it].at(b))==211){
+                     hist_matched_child_pi_notD->Fill(1e-3*child_Pt[b]);
+                   }
+                   if(abs(jet_bH_child_pdg_id[*it].at(b))==321){
+                     hist_matched_child_K_notD->Fill(1e-3*child_Pt[b]);
+                   }
+                 }
 
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==211){
                    hist_matched_child_pi->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_pi_Lxy_inB->Fill(Dxy_1);
+                   hist_matched_child_pi_Lxy_inB->Fill(Lxy);
                    hist_matched_child_pi_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_pi_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_pi_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==321){
                    hist_matched_child_K->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_K_Lxy_inB->Fill(Dxy_1);
+                   hist_matched_child_K_Lxy_inB->Fill(Lxy);
                    hist_matched_child_K_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_K_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_K_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==13){
                    hist_matched_child_mu->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_mu_Lxy_inB->Fill(Dxy_1);
+                   hist_matched_child_mu_Lxy_inB->Fill(Lxy);
                    hist_matched_child_mu_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_mu_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_mu_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==2212){
                    hist_matched_child_p->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_p_Lxy_inB->Fill(Dxy_1);
+                   hist_matched_child_p_Lxy_inB->Fill(Lxy);
                    hist_matched_child_p_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_p_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_p_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==11){
                    hist_matched_child_e->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_e_Lxy_inB->Fill(Dxy_1);
+                   hist_matched_child_e_Lxy_inB->Fill(Lxy);
                    hist_matched_child_e_Lxyz_inB->Fill(Lxyz);
                    hist_matched_child_e_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
                    hist_matched_child_e_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
@@ -1263,7 +1607,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              for(unsigned l=0;l<child_idx.size();l++){
                j=child_idx.at(l);
                //CINEMATICA RISPETTO AL JET
-               if(abs(child_Eta.at(j))<eta_cut && child_Pt.at(j)>pT_cut){
+               if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut){
                  D_eta=child_Eta.at(j)-jet_eta[*it];
                  if(abs(child_Phi.at(j)-jet_phi[*it])>M_PI){
                    D_phi=2*M_PI-abs(child_Phi.at(j)-jet_phi[*it]);
@@ -1328,6 +1672,17 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                }
                if(m2_ov==0){//GEOMETRY - NOT-ORIGIN
                  m2_ex++;
+                 if(jet_trk_orig[*it].at(matching_trk.at(a))==-1){
+                   m_GeomNOr_PU++;
+                 }
+                 if(jet_trk_orig[*it].at(matching_trk.at(a))==2){
+                   m_GeomNOr_F++;
+                 }
+                 if(jet_trk_orig[*it].at(matching_trk.at(a))==3){
+                   m_GeomNOr_G++;
+                 }
+
+
 //                 std::cout<<"GEOMETRY - NOT-ORIGIN: track: "<<jet_trk_pdg_id[*it].at(matching_trk.at(a))<<"|"<<jet_trk_parent_pdgid[*it].at(matching_trk.at(a))<<"   \t"<<matching_trk.at(a)<<"   \tpT: "<<jet_trk_pt[*it].at(matching_trk.at(a))<<"   eta: "<<jet_trk_eta[*it].at(matching_trk.at(a))<<"   \tEvent: "<<m_Ntot<<"\n";
 //                 matching_ex.push_back(a);
                }
@@ -1566,7 +1921,105 @@ void DAOD_selector::Terminate()
       hist_trk_pT_jet_DR_inB->Write();
       hist_trk_pdgId_inB->Write();
       hist_trk_origin_inB->Write();
+
       hist_trk_d0_inB->Write();
+      hist_trk_z0sinth_inB->Write();
+      hist_trk_d0sig_inB->Write();
+      hist_trk_z0sinthsig_inB->Write();
+      hist_trk_d0sig_origin_inB->Write();
+      hist_trk_z0sinthsig_origin_inB->Write();
+      hist_trk_logpTfrac_origin_inB->Write();
+      hist_trk_logDR_origin_inB->Write();
+      hist_trk_IBLhits_origin_inB->Write();
+      hist_trk_NextToIBLhits_origin_inB->Write();
+      hist_trk_sharedIBLhits_origin_inB->Write();
+      hist_trk_splitIBLhits_origin_inB->Write();
+      hist_trk_nPixhits_origin_inB->Write();
+      hist_trk_sharedPixhits_origin_inB->Write();
+      hist_trk_splitPixhits_origin_inB->Write();
+      hist_trk_nSCThits_origin_inB->Write();
+      hist_trk_sharedSCThits_origin_inB->Write();
+
+      hist_trk_d0sig_JF_inB->Write();
+      hist_trk_z0sinthsig_JF_inB->Write();
+      hist_trk_d0sig_origin_JF_inB->Write();
+      hist_trk_z0sinthsig_origin_JF_inB->Write();
+      hist_trk_logpTfrac_origin_JF_inB->Write();
+      hist_trk_logDR_origin_JF_inB->Write();
+      hist_trk_IBLhits_origin_JF_inB->Write();
+      hist_trk_NextToIBLhits_origin_JF_inB->Write();
+      hist_trk_sharedIBLhits_origin_JF_inB->Write();
+      hist_trk_splitIBLhits_origin_JF_inB->Write();
+      hist_trk_nPixhits_origin_JF_inB->Write();
+      hist_trk_sharedPixhits_origin_JF_inB->Write();
+      hist_trk_splitPixhits_origin_JF_inB->Write();
+      hist_trk_nSCThits_origin_JF_inB->Write();
+      hist_trk_sharedSCThits_origin_JF_inB->Write();
+
+      hist_trk_d0sig_SV1_inB->Write();
+      hist_trk_z0sinthsig_SV1_inB->Write();
+      hist_trk_d0sig_origin_SV1_inB->Write();
+      hist_trk_z0sinthsig_origin_SV1_inB->Write();
+      hist_trk_logpTfrac_origin_SV1_inB->Write();
+      hist_trk_logDR_origin_SV1_inB->Write();
+      hist_trk_IBLhits_origin_SV1_inB->Write();
+      hist_trk_NextToIBLhits_origin_SV1_inB->Write();
+      hist_trk_sharedIBLhits_origin_SV1_inB->Write();
+      hist_trk_splitIBLhits_origin_SV1_inB->Write();
+      hist_trk_nPixhits_origin_SV1_inB->Write();
+      hist_trk_sharedPixhits_origin_SV1_inB->Write();
+      hist_trk_splitPixhits_origin_SV1_inB->Write();
+      hist_trk_nSCThits_origin_SV1_inB->Write();
+      hist_trk_sharedSCThits_origin_SV1_inB->Write();
+
+      hist_trk_d0sig_SV0_inB->Write();
+      hist_trk_z0sinthsig_SV0_inB->Write();
+      hist_trk_d0sig_origin_SV0_inB->Write();
+      hist_trk_z0sinthsig_origin_SV0_inB->Write();
+      hist_trk_logpTfrac_origin_SV0_inB->Write();
+      hist_trk_logDR_origin_SV0_inB->Write();
+      hist_trk_IBLhits_origin_SV0_inB->Write();
+      hist_trk_NextToIBLhits_origin_SV0_inB->Write();
+      hist_trk_sharedIBLhits_origin_SV0_inB->Write();
+      hist_trk_splitIBLhits_origin_SV0_inB->Write();
+      hist_trk_nPixhits_origin_SV0_inB->Write();
+      hist_trk_sharedPixhits_origin_SV0_inB->Write();
+      hist_trk_splitPixhits_origin_SV0_inB->Write();
+      hist_trk_nSCThits_origin_SV0_inB->Write();
+      hist_trk_sharedSCThits_origin_SV0_inB->Write();
+
+      hist_trk_d0sig_IP3D_inB->Write();
+      hist_trk_z0sinthsig_IP3D_inB->Write();
+      hist_trk_d0sig_origin_IP3D_inB->Write();
+      hist_trk_z0sinthsig_origin_IP3D_inB->Write();
+      hist_trk_logpTfrac_origin_IP3D_inB->Write();
+      hist_trk_logDR_origin_IP3D_inB->Write();
+      hist_trk_IBLhits_origin_IP3D_inB->Write();
+      hist_trk_NextToIBLhits_origin_IP3D_inB->Write();
+      hist_trk_sharedIBLhits_origin_IP3D_inB->Write();
+      hist_trk_splitIBLhits_origin_IP3D_inB->Write();
+      hist_trk_nPixhits_origin_IP3D_inB->Write();
+      hist_trk_sharedPixhits_origin_IP3D_inB->Write();
+      hist_trk_splitPixhits_origin_IP3D_inB->Write();
+      hist_trk_nSCThits_origin_IP3D_inB->Write();
+      hist_trk_sharedSCThits_origin_IP3D_inB->Write();
+
+      hist_trk_d0sig_IP2D_inB->Write();
+      hist_trk_z0sinthsig_IP2D_inB->Write();
+      hist_trk_d0sig_origin_IP2D_inB->Write();
+      hist_trk_z0sinthsig_origin_IP2D_inB->Write();
+      hist_trk_logpTfrac_origin_IP2D_inB->Write();
+      hist_trk_logDR_origin_IP2D_inB->Write();
+      hist_trk_IBLhits_origin_IP2D_inB->Write();
+      hist_trk_NextToIBLhits_origin_IP2D_inB->Write();
+      hist_trk_sharedIBLhits_origin_IP2D_inB->Write();
+      hist_trk_splitIBLhits_origin_IP2D_inB->Write();
+      hist_trk_nPixhits_origin_IP2D_inB->Write();
+      hist_trk_sharedPixhits_origin_IP2D_inB->Write();
+      hist_trk_splitPixhits_origin_IP2D_inB->Write();
+      hist_trk_nSCThits_origin_IP2D_inB->Write();
+      hist_trk_sharedSCThits_origin_IP2D_inB->Write();
+
       hist_trk_d0_PUinB->Write();
       hist_trk_d0_BinB->Write();
       hist_trk_d0_CinB->Write();
@@ -1584,6 +2037,8 @@ void DAOD_selector::Terminate()
       hist_child_pT_jet_DR_inB->Write();
       hist_child_pdgID_inB->Write();
 
+      hist_child_pi_notD->Write();
+      hist_child_K_notD->Write();
       hist_child_pi->Write();
       hist_child_pi_Lxy_inB->Write();
       hist_child_pi_Lxyz_inB->Write();
@@ -1618,6 +2073,7 @@ void DAOD_selector::Terminate()
       hist_child_d0_truth->Write();
       hist_child_d0->Write();
       hist_child_d0_pT->Write();
+      hist_child_z0sinth_inB->Write();
       hist_pT_vs_R0_ratio_inB->Write();
 
       if(origin_selection){
@@ -1657,6 +2113,8 @@ void DAOD_selector::Terminate()
         hist_matched_pT_jet_DR_inB->Write();
         hist_matched_pdgId_inB->Write();
 
+        hist_matched_child_pi_notD->Write();
+        hist_matched_child_K_notD->Write();
         hist_matched_child_pi->Write();
         hist_matched_child_pi_Lxy_inB->Write();
         hist_matched_child_pi_Lxyz_inB->Write();
@@ -1730,7 +2188,6 @@ void DAOD_selector::Terminate()
       std::cout<< "fraction of events with one single b:\t" << (double) m_b/m_Ntot << "\n";
       std::cout<< "fraction of events with two single b:\t" << (double) m_bb/m_Ntot << "\n";
       std::cout<< "fraction of events without b:\t\t" << (double) m_noB/m_Ntot << "\n";
-      std::cout<< "total b-c overlap:\t\t\t" << (double) m_bc_overlap/m_nbjets << "\n";
     }
 
     if(discriminants && selections){
@@ -1826,24 +2283,29 @@ void DAOD_selector::Terminate()
     }
 
     if(selection_alg){
-        std::cout<<"\nSELECTION\npT CUT: "<<pT_cut<<" GeV\n"<<"eta_cut: "<<eta_cut<<"\n";
+      std::cout<<"\nB-C JET CUTS\n"<<1e-3*jet_pT_infcut<<" < Jet pT [GeV] < "<<1e-3*jet_pT_supcut<<"\nJet JVT > "<<jet_JVT_cut<<" (for jet pT in [20, 60] GeV, |eta| < 2.4)\nJet |eta| < "<<jet_eta_cut<<"OverlapRemoval (e+-/mu+-), NOT isBad\n";
+      std::cout<<"\nB-C HADRONS CUTS\n"<<"b-c Hadr pT > "<<1e-3*pT_bcH_cut<<" GeV\n"<<"b-c Hadr DR < "<<DR_bcH_cut<<"\n";
+//      std::cout<<"\nExcluded b-jets: "<<nEx_B<<"  ("<<(float) 100*nEx_B/m_nbjets<<"%)\nExcluded c-jets: "<<nEx_C<<"  ("<<(float) 100*nEx_C/m_nbjets<<"%)\n";
+      std::cout<< "total b-c overlap:\t" << (float) 100*m_bc_overlap/m_nbjets << " %\n";
+      std::cout<<"\nTRACK CUTS\ntrk pT > "<<1e-3*trk_pT_cut<<" GeV\n"<<"trk |eta| < "<<trk_eta_cut<<"\n"<<"trk |d0| < "<<trk_d0_cut<<" mm"<<"\n";
+      std::cout<<"\n(JF_ntrk, SV1_ntrk, SV0_ntrk, IP2D_ntrk, IP3D_ntrk)\n"<<JF_ntrk<<", \t"<<SV1_ntrk<<", \t"<<SV0_ntrk<<", \t"<<IP2D_ntrk<<", \t"<<IP3D_ntrk<<"\n";
       if(origin_selection){
         std::cout<<"\nORIGIN SELECTION\n";
         std::cout<< std::fixed << std::setprecision(3) << "\n";
-        std::cout<< "number of tracks BC:\t" << m_trk_B+m_trk_C << "\t(" << (float) 100*(m_trk_B+m_trk_C)/m_trk_pT_cut << " %)\n";
-        std::cout<< "number of tracks PU:\t" << m_trk_PU_pT_cut << "\t(" << (float) 100*m_trk_PU_pT_cut/m_trk_pT_cut << " %)\n";
-        std::cout<< "number of tracks FRAG:\t" << m_trk_FRAG_pT_cut << "\t(" << (float) 100*m_trk_FRAG_pT_cut/m_trk_pT_cut << " %)\n";
-        std::cout<< "number of tracks GEANT:\t" << m_trk_GEANT_pT_cut << "\t(" << (float) 100*m_trk_GEANT_pT_cut/m_trk_pT_cut << " %)\n";
-        std::cout<< "\nmatches:\t\t"<< m_trk_B+m_trk_C <<"\t("<<mm+mm1_ex<<")"<<"\n";
-//        std::cout<< "no matches:\t\t"<< m_den-(m_trk_B+m_trk_C) <<"\n";
-        std::cout<< "\naverage efficiency:\t" << (float) (m_trk_B+m_trk_C)/m_den << "\n";
+        std::cout<< "number of tracks BC:\t" << n_trk_B+n_trk_C << "\t(" << (float) 100*(n_trk_B+n_trk_C)/n_trk_pT_cut << " %)\n";
+        std::cout<< "number of tracks PU:\t" << n_trk_PU_pT_cut << "\t(" << (float) 100*n_trk_PU_pT_cut/n_trk_pT_cut << " %)\n";
+        std::cout<< "number of tracks FRAG:\t" << n_trk_FRAG_pT_cut << "\t(" << (float) 100*n_trk_FRAG_pT_cut/n_trk_pT_cut << " %)\n";
+        std::cout<< "number of tracks GEANT:\t" << n_trk_GEANT_pT_cut << "\t(" << (float) 100*n_trk_GEANT_pT_cut/n_trk_pT_cut << " %)\n";
+        std::cout<< "\nmatches:\t\t"<< n_trk_B+n_trk_C <<"\t("<<mm+mm1_ex<<")"<<"\n";
+//        std::cout<< "no matches:\t\t"<< m_den-(n_trk_B+n_trk_C) <<"\n";
+        std::cout<< "\naverage efficiency:\t" << (float) (n_trk_B+n_trk_C)/m_den << "\n";
       }
 
       if(geometric_selection){
         if(cut && selection_alg)  std::cout<<"\nGEOMETRICAL SELECTION ALGORITHM - CUT\n";
         if(!cut && selection_alg) std::cout<<"\nGEOMETRICAL SELECTION ALGORITHM - NO CUT\n";
         std::cout<< std::fixed << std::setprecision(3) << "\n";
-        std::cout<< "number of childs:\t" << m_den << "\n";
+        std::cout<< "number of children:\t" << m_den << "\n";
         std::cout<< "matches:\t\t"<< m_match <<"\t("<<mm+mm2_ex<<")"<<"\n";
         std::cout<< "no matches:\t\t"<< m_nomatch <<"\n";
         std::cout<< "single matches:\t\t" << m_sc << "\t(" <<(float) 100*m_sc/m_match << " %)\n";
@@ -1855,10 +2317,13 @@ void DAOD_selector::Terminate()
       if(origin_selection || geometric_selection){
         std::cout<<"\nORIGIN/GEOMETRIC OVERLAP\n";
         std::cout<< "\norigin-geometric overlap:\t" << m_match_overlap <<"\t("<<mm<<")"<<"\n";
-        std::cout<< "overlap/origin_matches:\t\t" << (float) m_match_overlap/(m_trk_B+m_trk_C) <<"\n";
+        std::cout<< "overlap/origin_matches:\t\t" << (float) m_match_overlap/(n_trk_B+n_trk_C) <<"\n";
         std::cout<< "overlap/geometric_matches:\t" << (float) m_match_overlap/m_match <<"\n";
         std::cout<<"origin - not-geometry: "<<mm1_ex<<"\n";
         std::cout<<"geometry - not-origin: "<<mm2_ex<<"\n";
+        std::cout<<"geometry - not-origin from PU: "<<m_GeomNOr_PU<<"\t("<<(float) 100*m_GeomNOr_PU/mm2_ex<<" %)"<<"\n";
+        std::cout<<"geometry - not-origin from Frag: "<<m_GeomNOr_F<<"\t("<<(float) 100*m_GeomNOr_F/mm2_ex<<" %)"<<"\n";
+        std::cout<<"geometry - not-origin from Geant: "<<m_GeomNOr_G<<"\t("<<(float) 100*m_GeomNOr_G/mm2_ex<<" %)"<<"\n";
       }
     }
 

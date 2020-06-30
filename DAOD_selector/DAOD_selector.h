@@ -227,6 +227,7 @@ public :
    TTreeReaderArray<vector<float>> jet_bH_child_py = {fReader, "jet_bH_child_py"};
    TTreeReaderArray<vector<float>> jet_bH_child_pz = {fReader, "jet_bH_child_pz"};
    TTreeReaderArray<vector<float>> jet_bH_child_E = {fReader, "jet_bH_child_E"};
+   TTreeReaderArray<vector<float>> jet_bH_child_theta = {fReader, "jet_bH_child_theta"};
    TTreeReaderArray<vector<float>> jet_bH_child_prod_x = {fReader, "jet_bH_child_prod_x"};
    TTreeReaderArray<vector<float>> jet_bH_child_prod_y = {fReader, "jet_bH_child_prod_y"};
    TTreeReaderArray<vector<float>> jet_bH_child_prod_z = {fReader, "jet_bH_child_prod_z"};
@@ -323,7 +324,9 @@ public :
    TTreeReaderArray<vector<int>> jet_trk_expectInnermostPixelLayerHit = {fReader, "jet_trk_expectInnermostPixelLayerHit"};
    TTreeReaderArray<vector<int>> jet_trk_expectNextToInnermostPixelLayerHit = {fReader, "jet_trk_expectNextToInnermostPixelLayerHit"};
    TTreeReaderArray<vector<float>> jet_trk_d0 = {fReader, "jet_trk_d0"};
+   TTreeReaderArray<vector<float>> jet_trk_d0sig = {fReader, "jet_trk_d0sig"};
    TTreeReaderArray<vector<float>> jet_trk_z0 = {fReader, "jet_trk_z0"};
+   TTreeReaderArray<vector<float>> jet_trk_z0sig = {fReader, "jet_trk_z0sig"};
    TTreeReaderArray<vector<float>> jet_trk_ip3d_d0 = {fReader, "jet_trk_ip3d_d0"};
    TTreeReaderArray<vector<float>> jet_trk_ip3d_d02D = {fReader, "jet_trk_ip3d_d02D"};
    TTreeReaderArray<vector<float>> jet_trk_ip3d_z0 = {fReader, "jet_trk_ip3d_z0"};
@@ -345,7 +348,8 @@ public :
    DAOD_selector(TTree * /*tree*/ =0) { }
    virtual ~DAOD_selector() { }
    virtual Int_t   Version() const { return 2; }
-   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, float, float);
+   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
+   virtual void    setCuts(float, float, float, float, float, float, float, float, float);
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -364,17 +368,23 @@ public :
    private:
 
      bool selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retagT,debug,lxplus;
-     float pT_cut,eta_cut;
+
+     float jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,pT_bcH_cut,DR_bcH_cut;
+     float trk_pT_cut,trk_eta_cut,trk_d0_cut;
+
+     float pt_bH,DeltaR_bH,pt_cH,DeltaR_cH;
      double m_cut,m_fc;
-     int m_N,m_Ntot,m_b2d,m_b3d,m_bdl1,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_match_overlap,m_match_notoverlap,m_trk_pT_cut,m_trk_B,m_trk_C,m_trk_PU_pT_cut,m_trk_FRAG_pT_cut,m_trk_GEANT_pT_cut;
+     int m_N,m_Ntot,m_b2d,m_b3d,m_bdl1,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_match_overlap,m_match_notoverlap,n_trk_pT_cut,n_trk_B,n_trk_C,n_trk_PU_pT_cut,n_trk_FRAG_pT_cut,n_trk_GEANT_pT_cut;
      int m_qc,m_qj,q,a,b,sc,sgn;
-     double D_phi,D_eta,DR,px,py,pz,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Lxyz,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
+     double D_phi,D_eta,DR,px,py,pz,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Lxy,Lxyz,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
      double D_phi_trk,D_eta_trk,DR_trk,DpT_trk;
-     int match,mm,m1,m2,m1_ex,m2_ex,mm1_ex,mm2_ex,m1_ov,m2_ov,max_size;
+     int match,mm,m1,m2,m1_ex,m2_ex,mm1_ex,mm2_ex,m1_ov,m2_ov,max_size,m_GeomNOr_PU,m_GeomNOr_F,m_GeomNOr_G;
      double tmp_pTfraction,tmp_DR,tmp_min_pTfraction,tmp_min_DR,m_pTfraction_cut,m_DRcut,m_pTfraction_nocut,m_DRnocut;
      unsigned size_jet,size_child;
      int den,m_den;
+     int nEx_B,nEx_C,m_nBcheck,m_nCcheck;
 
+     int JF_ntrk,SV1_ntrk,SV0_ntrk,IP2D_ntrk,IP3D_ntrk;
      unsigned m_track_cut;
 
      float pt_max, pt_min;
@@ -466,7 +476,105 @@ public :
      TH2F *hist_trk_pT_jet_DR_inB;
      TH1F *hist_trk_pdgId_inB;
      TH1F *hist_trk_origin_inB;
+
      TH1F *hist_trk_d0_inB;
+     TH1F *hist_trk_z0sinth_inB;
+     TH1F *hist_trk_d0sig_inB;
+     TH1F *hist_trk_z0sinthsig_inB;
+     TH2F *hist_trk_d0sig_origin_inB;
+     TH2F *hist_trk_z0sinthsig_origin_inB;
+     TH2F *hist_trk_logpTfrac_origin_inB;
+     TH2F *hist_trk_logDR_origin_inB;
+     TH2F *hist_trk_IBLhits_origin_inB;
+     TH2F *hist_trk_NextToIBLhits_origin_inB;
+     TH2F *hist_trk_sharedIBLhits_origin_inB;
+     TH2F *hist_trk_splitIBLhits_origin_inB;
+     TH2F *hist_trk_nPixhits_origin_inB;
+     TH2F *hist_trk_sharedPixhits_origin_inB;
+     TH2F *hist_trk_splitPixhits_origin_inB;
+     TH2F *hist_trk_nSCThits_origin_inB;
+     TH2F *hist_trk_sharedSCThits_origin_inB;
+
+     TH1F *hist_trk_d0sig_JF_inB;
+     TH1F *hist_trk_z0sinthsig_JF_inB;
+     TH2F *hist_trk_d0sig_origin_JF_inB;
+     TH2F *hist_trk_z0sinthsig_origin_JF_inB;
+     TH2F *hist_trk_logpTfrac_origin_JF_inB;
+     TH2F *hist_trk_logDR_origin_JF_inB;
+     TH2F *hist_trk_IBLhits_origin_JF_inB;
+     TH2F *hist_trk_NextToIBLhits_origin_JF_inB;
+     TH2F *hist_trk_sharedIBLhits_origin_JF_inB;
+     TH2F *hist_trk_splitIBLhits_origin_JF_inB;
+     TH2F *hist_trk_nPixhits_origin_JF_inB;
+     TH2F *hist_trk_sharedPixhits_origin_JF_inB;
+     TH2F *hist_trk_splitPixhits_origin_JF_inB;
+     TH2F *hist_trk_nSCThits_origin_JF_inB;
+     TH2F *hist_trk_sharedSCThits_origin_JF_inB;
+
+     TH1F *hist_trk_d0sig_SV1_inB;
+     TH1F *hist_trk_z0sinthsig_SV1_inB;
+     TH2F *hist_trk_d0sig_origin_SV1_inB;
+     TH2F *hist_trk_z0sinthsig_origin_SV1_inB;
+     TH2F *hist_trk_logpTfrac_origin_SV1_inB;
+     TH2F *hist_trk_logDR_origin_SV1_inB;
+     TH2F *hist_trk_IBLhits_origin_SV1_inB;
+     TH2F *hist_trk_NextToIBLhits_origin_SV1_inB;
+     TH2F *hist_trk_sharedIBLhits_origin_SV1_inB;
+     TH2F *hist_trk_splitIBLhits_origin_SV1_inB;
+     TH2F *hist_trk_nPixhits_origin_SV1_inB;
+     TH2F *hist_trk_sharedPixhits_origin_SV1_inB;
+     TH2F *hist_trk_splitPixhits_origin_SV1_inB;
+     TH2F *hist_trk_nSCThits_origin_SV1_inB;
+     TH2F *hist_trk_sharedSCThits_origin_SV1_inB;
+
+     TH1F *hist_trk_d0sig_SV0_inB;
+     TH1F *hist_trk_z0sinthsig_SV0_inB;
+     TH2F *hist_trk_d0sig_origin_SV0_inB;
+     TH2F *hist_trk_z0sinthsig_origin_SV0_inB;
+     TH2F *hist_trk_logpTfrac_origin_SV0_inB;
+     TH2F *hist_trk_logDR_origin_SV0_inB;
+     TH2F *hist_trk_IBLhits_origin_SV0_inB;
+     TH2F *hist_trk_NextToIBLhits_origin_SV0_inB;
+     TH2F *hist_trk_sharedIBLhits_origin_SV0_inB;
+     TH2F *hist_trk_splitIBLhits_origin_SV0_inB;
+     TH2F *hist_trk_nPixhits_origin_SV0_inB;
+     TH2F *hist_trk_sharedPixhits_origin_SV0_inB;
+     TH2F *hist_trk_splitPixhits_origin_SV0_inB;
+     TH2F *hist_trk_nSCThits_origin_SV0_inB;
+     TH2F *hist_trk_sharedSCThits_origin_SV0_inB;
+
+     TH1F *hist_trk_d0sig_IP3D_inB;
+     TH1F *hist_trk_z0sinthsig_IP3D_inB;
+     TH2F *hist_trk_d0sig_origin_IP3D_inB;
+     TH2F *hist_trk_z0sinthsig_origin_IP3D_inB;
+     TH2F *hist_trk_logpTfrac_origin_IP3D_inB;
+     TH2F *hist_trk_logDR_origin_IP3D_inB;
+     TH2F *hist_trk_IBLhits_origin_IP3D_inB;
+     TH2F *hist_trk_NextToIBLhits_origin_IP3D_inB;
+     TH2F *hist_trk_sharedIBLhits_origin_IP3D_inB;
+     TH2F *hist_trk_splitIBLhits_origin_IP3D_inB;
+     TH2F *hist_trk_nPixhits_origin_IP3D_inB;
+     TH2F *hist_trk_sharedPixhits_origin_IP3D_inB;
+     TH2F *hist_trk_splitPixhits_origin_IP3D_inB;
+     TH2F *hist_trk_nSCThits_origin_IP3D_inB;
+     TH2F *hist_trk_sharedSCThits_origin_IP3D_inB;
+
+     TH1F *hist_trk_d0sig_IP2D_inB;
+     TH1F *hist_trk_z0sinthsig_IP2D_inB;
+     TH2F *hist_trk_d0sig_origin_IP2D_inB;
+     TH2F *hist_trk_z0sinthsig_origin_IP2D_inB;
+     TH2F *hist_trk_logpTfrac_origin_IP2D_inB;
+     TH2F *hist_trk_logDR_origin_IP2D_inB;
+     TH2F *hist_trk_IBLhits_origin_IP2D_inB;
+     TH2F *hist_trk_NextToIBLhits_origin_IP2D_inB;
+     TH2F *hist_trk_sharedIBLhits_origin_IP2D_inB;
+     TH2F *hist_trk_splitIBLhits_origin_IP2D_inB;
+     TH2F *hist_trk_nPixhits_origin_IP2D_inB;
+     TH2F *hist_trk_sharedPixhits_origin_IP2D_inB;
+     TH2F *hist_trk_splitPixhits_origin_IP2D_inB;
+     TH2F *hist_trk_nSCThits_origin_IP2D_inB;
+     TH2F *hist_trk_sharedSCThits_origin_IP2D_inB;
+
      TH1F *hist_trk_d0_PUinB;
      TH1F *hist_trk_d0_BinB;
      TH1F *hist_trk_d0_CinB;
@@ -484,6 +592,8 @@ public :
      TH2F *hist_child_pT_jet_DR_inB;
      TH1F *hist_child_pdgID_inB;
 
+     TH1F *hist_child_pi_notD;
+     TH1F *hist_child_K_notD;
      TH1F *hist_child_pi;
      TH1F *hist_child_pi_Lxy_inB;
      TH1F *hist_child_pi_Lxyz_inB;
@@ -518,6 +628,7 @@ public :
      TH1F *hist_child_d0_truth;
      TH1F *hist_child_d0;
      TH2F *hist_child_d0_pT;
+     TH1F *hist_child_z0sinth_inB;
      TH1F *hist_pT_vs_R0_ratio_inB;
   //   TH1F *hist_child_linearIP;
 
@@ -552,6 +663,8 @@ public :
      TH2F *hist_matched_pT_jet_DR_inB;
      TH1F *hist_matched_pdgId_inB;
 
+     TH1F *hist_matched_child_pi_notD;
+     TH1F *hist_matched_child_K_notD;
      TH1F *hist_matched_child_pi;
      TH1F *hist_matched_child_pi_Lxy_inB;
      TH1F *hist_matched_child_pi_Lxyz_inB;
