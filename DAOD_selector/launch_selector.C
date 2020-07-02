@@ -17,9 +17,9 @@ void launch_selector()
   bool cut=false;
   bool retagT=false;
 
-  float jet_pT_infcut=20*1e3,jet_pT_supcut=300*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
+  float jet_pT_infcut=20*1e3,jet_pT_supcut=1000*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
   float DR_bcH_cut=0.3,pT_bcH_cut=5*1e3;
-  float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
+  float trk_pT_cut=0.4*1e3,trk_eta_cut=2.4,trk_d0_cut=1e3;
 
   const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
 //  const char *jetcollection="bTag_AntiKt4EMPFlowJets";

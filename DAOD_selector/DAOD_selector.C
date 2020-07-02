@@ -543,7 +543,26 @@ Bool_t DAOD_selector::Process(Long64_t entry)
      }
 
      if(jet_aliveAfterOR[i]>0 && jet_aliveAfterORmu[i]>0 && jet_isBadMedium[i]==0 && jet_pt[i]<jet_pT_supcut && jet_pt[i]>jet_pT_infcut && abs(jet_eta[i])<jet_eta_cut){
-       if(jet_JVT[i]>jet_JVT_cut && jet_pt[i]<60*1e3 && abs(jet_eta[i])<2.4){
+       if(jet_pt[i]<60*1e3 && abs(jet_eta[i])<2.4){
+         if(jet_JVT[i]>jet_JVT_cut){
+           isJet.push_back(i);
+           if(jet_nBHadr[i]>0){
+             nBjets_2++;
+             isB_2.push_back(i);
+           }
+
+           if(jet_nCHadr[i]>0){
+             nCjets_2++;
+             isC_2.push_back(i);
+           }
+
+           if(jet_nBHadr[i]==0 && jet_nCHadr[i]==0){
+             nljets_2++;
+           }
+         }
+       }
+       else
+       {
          isJet.push_back(i);
          if(jet_nBHadr[i]>0){
            nBjets_2++;
@@ -559,6 +578,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
            nljets_2++;
          }
        }
+
      }
 
    }
