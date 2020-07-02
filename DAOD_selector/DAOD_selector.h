@@ -11,6 +11,8 @@
 #define bin_1 50
 #define tracksize 11
 
+#include "functions.h"
+
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -374,7 +376,7 @@ public :
 
      float pt_bH,DeltaR_bH,pt_cH,DeltaR_cH;
      double m_cut,m_fc;
-     int m_N,m_Ntot,m_b2d,m_b3d,m_bdl1,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_nbjets,m_nl,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_match_overlap,m_match_notoverlap,n_trk_pT_cut,n_trk_B,n_trk_C,n_trk_PU_pT_cut,n_trk_FRAG_pT_cut,n_trk_GEANT_pT_cut;
+     int m_N,m_Ntot,m_b2d,m_b3d,m_bdl1,m_c2d,m_c3d,m_noB,m_bb,m_b,m_bc_overlap,m_sc,m_sc2,m_sc3,m_match,m_nomatch,m_match_overlap,m_match_notoverlap,n_trk_pT_cut,n_trk_B,n_trk_C,n_trk_PU_pT_cut,n_trk_FRAG_pT_cut,n_trk_GEANT_pT_cut;
      int m_qc,m_qj,q,a,b,sc,sgn;
      double D_phi,D_eta,DR,px,py,pz,Dx_1,Dy_1,Dz_1,Dx_2,Dy_2,Dz_2,Lxy,Lxyz,Dxy_1,x0,y0,Dx_3,Dy_3,Dxy_3,rand_n,R0,d0,c,A,gamma;//,nx=0,ny=0;
      double D_phi_trk,D_eta_trk,DR_trk,DpT_trk;
@@ -382,8 +384,9 @@ public :
      double tmp_pTfraction,tmp_DR,tmp_min_pTfraction,tmp_min_DR,m_pTfraction_cut,m_DRcut,m_pTfraction_nocut,m_DRnocut;
      unsigned size_jet,size_child;
      int den,m_den;
-     int nEx_B,nEx_C,m_nBcheck,m_nCcheck;
-
+     int m_njets,m_njets_2,m_nBjets,m_nCjets,m_nljets,m_nBjets_2,m_nCjets_2,m_nljets_2;
+     int m_nBcheck,m_nCcheck,m_nlcheck;
+     int ov_1,ov_2,ov_check;
      int JF_ntrk,SV1_ntrk,SV0_ntrk,IP2D_ntrk,IP3D_ntrk;
      unsigned m_track_cut;
 

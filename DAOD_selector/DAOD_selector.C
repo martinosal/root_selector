@@ -64,7 +64,7 @@ void DAOD_selector::Begin(TTree * /*tree*/)
    // When running with PROOF Begin() is only called on the client.
    // The tree argument is deprecated (on PROOF 0 is passed).
    m_cut=1.,m_fc=0.08;
-   m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_bdl1=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_nbjets=0,m_nl=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_match_overlap=0,m_match_notoverlap=0,n_trk_pT_cut=0,n_trk_PU_pT_cut=0,n_trk_FRAG_pT_cut=0,n_trk_GEANT_pT_cut=0,n_trk_B=0,n_trk_C=0;
+   m_N=0,m_Ntot=0,m_b2d=0,m_b3d=0,m_bdl1=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_match_overlap=0,m_match_notoverlap=0,n_trk_pT_cut=0,n_trk_PU_pT_cut=0,n_trk_FRAG_pT_cut=0,n_trk_GEANT_pT_cut=0,n_trk_B=0,n_trk_C=0;
    m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
    D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxy=0,Lxyz=0,Dxy_1=0,x0=0,y0=0,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0,d0=0,c=2.99792458e8;//,nx=0,ny=0;
    D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
@@ -75,7 +75,11 @@ void DAOD_selector::Begin(TTree * /*tree*/)
    m1=0,m2=0,m1_ex=0,m2_ex=0,mm1_ex=0,mm2_ex=0,m1_ov=0,m2_ov=0,mm=0;
    m_GeomNOr_PU=0,m_GeomNOr_F=0,m_GeomNOr_G=0;
    DeltaR_bH=0.,pt_bH=0.,DeltaR_cH=0.,pt_cH=0.;
-   nEx_B=0,nEx_C=0,m_nBcheck=0,m_nCcheck=0;
+
+   m_njets=0,m_njets_2=0,m_nBcheck=0,m_nCcheck=0,m_nlcheck=0;
+   m_nBjets=0,m_nCjets=0,m_nljets=0;
+   m_nBjets_2=0,m_nCjets_2=0,m_nljets_2=0;
+   ov_1=0,ov_2=0,ov_check=0;
 
    m_track_cut=10;
 
@@ -516,129 +520,139 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 //   all TTreeReaderArray<int> and TTreeReaderArray<float> have the same dim, namely dim=*njets, the nuber of jets in each event.
 
-   int nB=0,nBjets=0,nBcheck=0;
-   int n1=0,n2=0,n3=0; //<- the file has max=3 b-tagged particles in a single jet
-   std::vector<int> isB,isBcheck,is1B,is2B,is3B;
-
-   int nl=0;
-   std::vector<int> isl;
+   int nBjets=0,nCjets=0,nljets=0,nBjets_2=0,nCjets_2=0,nljets_2=0,nBcheck=0,nCcheck=0,nlcheck=0;
+   std::vector<int> isJet,isBcheck,isCcheck,islcheck;
 
    m_Ntot++;
 
-   for(int i=0;i<*njets;i++) {
-     if(jet_nBHadr[i]==0 && jet_nCHadr[i]==0){
-       nl++;  //m_nl++;
-       isl.push_back(i);
-     }
-   }
-
+   std::vector<int> isB_1,isB_2,isC_1,isC_2;
    for(int i=0;i<*njets;i++) {
 
-     nB+=jet_nBHadr[i];
      if(jet_nBHadr[i]>0){
-       isB.push_back(i);
-       nBjets++;  m_nbjets++;
+       nBjets++;
+       isB_1.push_back(i);
      }
-     if(jet_nBHadr[i]==1)  {is1B.push_back(i); n1++;}
-     if(jet_nBHadr[i]==2)  {is2B.push_back(i); n2++;}
-     if(jet_nBHadr[i]==3)  {is3B.push_back(i); n3++;}
 
-   }
+     if(jet_nCHadr[i]>0){
+       nCjets++;
+       isC_1.push_back(i);
+     }
 
-   if(nBjets>0){
-     for(std::vector<int>::iterator it = isB.begin(); it != isB.end(); ++it){
-       if(jet_aliveAfterOR[*it]>0 && jet_aliveAfterORmu[*it]>0 && jet_isBadMedium[*it]==0 && jet_pt[*it]<jet_pT_supcut && jet_pt[*it]>jet_pT_infcut && abs(jet_eta[*it])<jet_eta_cut){
-         if(jet_JVT[*it]>jet_JVT_cut && jet_pt[*it]<60*1e3 && abs(jet_eta[*it])<2.4){
-           for(unsigned i=0;i<jet_bH_pt[*it].size();i++){
-             D_eta=jet_bH_eta[*it].at(i)-jet_eta[*it];
-             if(abs(jet_bH_phi[*it].at(i)-jet_phi[*it])>M_PI){
-               D_phi=2*M_PI-abs(jet_bH_phi[*it].at(i)-jet_phi[*it]);
-             }
-             if(abs(jet_bH_phi[*it].at(i)-jet_phi[*it])<M_PI){
-               D_phi=jet_bH_phi[*it].at(i)-jet_phi[*it];
-             }
+     if(jet_nBHadr[i]==0 && jet_nCHadr[i]==0){
+       nljets++;
+     }
 
-             DeltaR_bH=sqrt(D_eta*D_eta+D_phi*D_phi);
-             pt_bH=jet_bH_pt[*it].at(i);
+     if(jet_aliveAfterOR[i]>0 && jet_aliveAfterORmu[i]>0 && jet_isBadMedium[i]==0 && jet_pt[i]<jet_pT_supcut && jet_pt[i]>jet_pT_infcut && abs(jet_eta[i])<jet_eta_cut){
+       if(jet_JVT[i]>jet_JVT_cut && jet_pt[i]<60*1e3 && abs(jet_eta[i])<2.4){
+         isJet.push_back(i);
+         if(jet_nBHadr[i]>0){
+           nBjets_2++;
+           isB_2.push_back(i);
+         }
 
-             if(jet_bH_pt[*it].at(i)>pt_bH && sqrt(D_eta*D_eta+D_phi*D_phi)<DeltaR_bH){
-               pt_bH=jet_bH_pt[*it].at(i);
-               DeltaR_bH=sqrt(D_eta*D_eta+D_phi*D_phi);
-             }
-           }
+         if(jet_nCHadr[i]>0){
+           nCjets_2++;
+           isC_2.push_back(i);
+         }
 
-           if(DeltaR_bH<DR_bcH_cut && pt_bH>pT_bcH_cut){
-             isBcheck.push_back(*it);
-             nBcheck++;
-           }
+         if(jet_nBHadr[i]==0 && jet_nCHadr[i]==0){
+           nljets_2++;
          }
        }
-       else nEx_B++;
+     }
+
+   }
+//number of B-C-l jets before jet cut
+   m_njets+=*njets;
+   m_nBjets+=nBjets;
+   m_nCjets+=nCjets;
+   m_nljets+=nljets;
+
+//number of B-C-l jets after jet cut
+   m_njets_2+=isJet.size();
+   m_nBjets_2+=nBjets_2;
+   m_nCjets_2+=nCjets_2;
+   m_nljets_2+=nljets_2;
+
+   ov_1+=overlap(isB_1,isC_1);
+   ov_2+=overlap(isB_2,isC_2);
+
+   for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+     if(jet_nBHadr[*it]>0){
+       for(unsigned i=0;i<jet_bH_pt[*it].size();i++){
+         D_eta=jet_bH_eta[*it].at(i)-jet_eta[*it];
+         if(abs(jet_bH_phi[*it].at(i)-jet_phi[*it])>M_PI){
+           D_phi=2*M_PI-abs(jet_bH_phi[*it].at(i)-jet_phi[*it]);
+         }
+         if(abs(jet_bH_phi[*it].at(i)-jet_phi[*it])<M_PI){
+           D_phi=jet_bH_phi[*it].at(i)-jet_phi[*it];
+         }
+
+         DeltaR_bH=sqrt(D_eta*D_eta+D_phi*D_phi);
+         pt_bH=jet_bH_pt[*it].at(i);
+
+         if(jet_bH_pt[*it].at(i)>pt_bH && sqrt(D_eta*D_eta+D_phi*D_phi)<DeltaR_bH){
+           pt_bH=jet_bH_pt[*it].at(i);
+           DeltaR_bH=sqrt(D_eta*D_eta+D_phi*D_phi);
+         }
+       }
+
+       if(DeltaR_bH<DR_bcH_cut && pt_bH>pT_bcH_cut){
+         isBcheck.push_back(*it);
+         nBcheck++;
+       }
+     }
+
+     if(jet_nCHadr[*it]>0){
+       for(unsigned i=0;i<jet_cH_pt[*it].size();i++){
+         D_eta=jet_cH_eta[*it].at(i)-jet_eta[*it];
+         if(abs(jet_cH_phi[*it].at(i)-jet_phi[*it])>M_PI){
+           D_phi=2*M_PI-abs(jet_cH_phi[*it].at(i)-jet_phi[*it]);
+         }
+         if(abs(jet_cH_phi[*it].at(i)-jet_phi[*it])<M_PI){
+           D_phi=jet_cH_phi[*it].at(i)-jet_phi[*it];
+         }
+
+         DeltaR_cH=sqrt(D_eta*D_eta+D_phi*D_phi);
+         pt_cH=jet_cH_pt[*it].at(i);
+
+         if(jet_cH_pt[*it].at(i)>pt_cH && sqrt(D_eta*D_eta+D_phi*D_phi)<DeltaR_cH){
+           pt_cH=jet_cH_pt[*it].at(i);
+           DeltaR_cH=sqrt(D_eta*D_eta+D_phi*D_phi);
+         }
+       }
+
+       if(DeltaR_bH<DR_bcH_cut && pt_bH>pT_bcH_cut){
+         isCcheck.push_back(*it);
+         nCcheck++;
+       }
+     }
+     if(jet_nBHadr[*it]==0 && jet_nCHadr[*it]==0){
+       islcheck.push_back(*it);
+       nlcheck++;
      }
    }
    m_nBcheck+=nBcheck;
+   m_nCcheck+=nCcheck;
+   m_nlcheck+=nlcheck;
+
+   ov_check+=overlap(isBcheck,isCcheck);
 
 
+/*
    if(nB==0)  {m_noB++;}
 
    if (n1+2*n2+3*n3!=nB) {
         std::cout << "Warning: n1+n2+n3!=nB\t" << n1<<"\t"<<n2<<"\t"<<n3<<"\t"<<nB<<"\n";
     }
-
-   int nC=0,nCjets=0,nCcheck=0;
-   int nC1=0,nC2=0,nC3=0; //<- the file has max=3 b-tagged particles in a single jet
-   std::vector<int> isC,isCcheck,is1C,is2C,is3C;
-
-   for(unsigned i=0;i<jet_nCHadr.GetSize();i++) {
-
-     if(jet_nCHadr[i]>0){
-       isC.push_back(i);
-       nCjets++;
-     }
-     if(jet_nCHadr[i]==1)  {is1C.push_back(i); nC1++;}
-     if(jet_nCHadr[i]==2)  {is2C.push_back(i); nC2++;}
-     if(jet_nCHadr[i]==3)  {is3C.push_back(i); nC3++;}
-   }
+*/
 
 
-   if(nCjets>0){
-     for(std::vector<int>::iterator it = isC.begin(); it != isC.end(); ++it){
-       if(jet_aliveAfterOR[*it]>0 && jet_aliveAfterORmu[*it]>0 && jet_isBadMedium[*it]==0 && jet_pt[*it]<jet_pT_supcut && jet_pt[*it]>jet_pT_infcut && abs(jet_eta[*it])<jet_eta_cut){
-         if(jet_JVT[*it]>jet_JVT_cut && jet_pt[*it]<60*1e3 && abs(jet_eta[*it])<2.4){
-           for(unsigned i=0;i<jet_cH_pt[*it].size();i++){
-             D_eta=jet_cH_eta[*it].at(i)-jet_eta[*it];
-             if(abs(jet_cH_phi[*it].at(i)-jet_phi[*it])>M_PI){
-               D_phi=2*M_PI-abs(jet_cH_phi[*it].at(i)-jet_phi[*it]);
-             }
-             if(abs(jet_cH_phi[*it].at(i)-jet_phi[*it])<M_PI){
-               D_phi=jet_cH_phi[*it].at(i)-jet_phi[*it];
-             }
-
-             DeltaR_cH=sqrt(D_eta*D_eta+D_phi*D_phi);
-             pt_cH=jet_cH_pt[*it].at(i);
-
-             if(jet_cH_pt[*it].at(i)>pt_cH && sqrt(D_eta*D_eta+D_phi*D_phi)<DeltaR_cH){
-               pt_cH=jet_cH_pt[*it].at(i);
-               DeltaR_cH=sqrt(D_eta*D_eta+D_phi*D_phi);
-             }
-           }
-
-           if(DeltaR_bH<DR_bcH_cut && pt_bH>pT_bcH_cut){
-             isCcheck.push_back(*it);
-             nCcheck++;
-           }
-         }
-       }
-       else nEx_C++;// RIVEDI
-     }
-   }
-   m_nCcheck+=nCcheck;
 
    if(selections){
 
      if(nBcheck>0){
        for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
-         if(nCcheck>0) m_bc_overlap++;// WRONG !!
          hist_pt_inB->Fill(jet_pt[*it]*0.001);
          hist_eta_inB->Fill(jet_eta[*it]);
          hist_phi_inB->Fill(jet_phi[*it]);
@@ -646,6 +660,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
        }
      }
 
+/*
      if(n1==1 && n2==0 && n3==0){
        int i=is1B.at(0);
        m_b++;
@@ -665,7 +680,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
          hist_E_2->Fill(jet_E[*it]);
        }
      }
-/*
+
      //select by: n1==0 && n2==1 && n3==0
      if(n1==0 && n2==1 && n3==0){
        for(std::vector<int>::iterator it = is2B.begin(); it != is2B.end(); ++it){
@@ -711,54 +726,55 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
    if(shrinking_cone){
  //select by: n1==1 && n2==0 && n3==0
-     if(n1==1 && n2==0 && n3==0){
+     if(nBcheck>0){
 
-       int i=is1B.at(0);
-       if(jet_pt[i]*0.001<pt_max){
+       for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
+         if(jet_pt[*it]*0.001<pt_max){
 
-         std::vector<float> eta=jet_trk_eta[i];
-         std::vector<float> phi=jet_trk_phi[i];
-         if(eta.size()!=phi.size()) std::cout<< "ERROR"<< "\n";
-         int size=eta.size();//size is the number of tracks, on which we make a cut
- //        if(size>=m_track_cut){
-         std::vector<float> R(size);
-         for(int j=0;j<size;j++){
-           R.at(j)=sqrt(eta.at(j)*eta.at(j)+phi.at(j)*phi.at(j));
+           std::vector<float> eta=jet_trk_eta[*it];
+           std::vector<float> phi=jet_trk_phi[*it];
+           if(eta.size()!=phi.size()) std::cout<< "ERROR"<< "\n";
+           int size=eta.size();//size is the number of tracks, on which we make a cut
+   //        if(size>=m_track_cut){
+           std::vector<float> R(size);
+           for(int j=0;j<size;j++){
+             R.at(j)=sqrt(eta.at(j)*eta.at(j)+phi.at(j)*phi.at(j));
+           }
+           double R_m;
+   //          R_m=std::accumulate(R.begin(), R.end(), 0.0)/R.size();
+           R_m=sqrt(jet_eta[*it]*jet_eta[*it]+jet_phi[*it]*jet_phi[*it]);
+
+           float D_phi=0;
+           float DR_Max=0,tmp_M=0,sq_sum=0,std_dev=0;
+           for(int j=0;j<size;j++){
+   //            tmp_M=abs(R.at(j)-R_m);//<---------------------------------------WRONG!!!!!!!!!!!!!
+             if(abs(jet_trk_phi[*it].at(j)-jet_phi[*it])>M_PI){
+               D_phi=2*M_PI-abs(jet_trk_phi[*it].at(j)-jet_phi[*it]);
+             }
+             if(abs(jet_trk_phi[*it].at(j)-jet_phi[*it])<M_PI){
+               D_phi=jet_trk_phi[*it].at(j)-jet_phi[*it];
+             }
+               //if(jet_trk_phi[*it].at(j)>0 && jet_phi[*it]<0) std::cout<<D_phi<<"\n";
+             tmp_M=sqrt((eta.at(j)-jet_eta[*it])*(eta.at(j)-jet_eta[*it])+D_phi*D_phi);
+   //            sq_sum+=tmp_M*tmp_M;
+             if(tmp_M>DR_Max){
+               DR_Max=tmp_M;
+             }
+           }
+
+   //          std_dev=sqrt(sq_sum/(size-1));
+   //          hist_std_dev_DR_1->Fill(std_dev);
+           hist_n_tracks->Fill(size);
+   //        g->SetPoint(g->GetN(), jet_pt[*it]*0.001, DR_Max);
+           jet_DR_pT->Fill(jet_pt[*it]*0.001, DR_Max);
+           hist_tracks_DR->Fill(DR_Max, size);
+           hist_DR_1->Fill(DR_Max);
+
+           int quot=(int) jet_pt[*it]*0.001/Delta;
+           bin_v.at(quot).push_back(DR_Max);
+
+   //        }
          }
-         double R_m;
- //          R_m=std::accumulate(R.begin(), R.end(), 0.0)/R.size();
-         R_m=sqrt(jet_eta[i]*jet_eta[i]+jet_phi[i]*jet_phi[i]);
-
-         float D_phi=0;
-         float DR_Max=0,tmp_M=0,sq_sum=0,std_dev=0;
-         for(int j=0;j<size;j++){
- //            tmp_M=abs(R.at(j)-R_m);//<---------------------------------------WRONG!!!!!!!!!!!!!
-           if(abs(jet_trk_phi[i].at(j)-jet_phi[i])>M_PI){
-             D_phi=2*M_PI-abs(jet_trk_phi[i].at(j)-jet_phi[i]);
-           }
-           if(abs(jet_trk_phi[i].at(j)-jet_phi[i])<M_PI){
-             D_phi=jet_trk_phi[i].at(j)-jet_phi[i];
-           }
-             //if(jet_trk_phi[i].at(j)>0 && jet_phi[i]<0) std::cout<<D_phi<<"\n";
-           tmp_M=sqrt((eta.at(j)-jet_eta[i])*(eta.at(j)-jet_eta[i])+D_phi*D_phi);
- //            sq_sum+=tmp_M*tmp_M;
-           if(tmp_M>DR_Max){
-             DR_Max=tmp_M;
-           }
-         }
-
- //          std_dev=sqrt(sq_sum/(size-1));
- //          hist_std_dev_DR_1->Fill(std_dev);
-         hist_n_tracks->Fill(size);
- //        g->SetPoint(g->GetN(), jet_pt[i]*0.001, DR_Max);
-         jet_DR_pT->Fill(jet_pt[i]*0.001, DR_Max);
-         hist_tracks_DR->Fill(DR_Max, size);
-         hist_DR_1->Fill(DR_Max);
-
-         int quot=(int) jet_pt[i]*0.001/Delta;
-         bin_v.at(quot).push_back(DR_Max);
-
- //        }
        }
      }
    }
@@ -799,8 +815,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
        }
      }
 
-     if(nl>0){
-       for(std::vector<int>::iterator it = isl.begin(); it != isl.end(); ++it){
+     if(nljets>0){
+       for(std::vector<int>::iterator it = islcheck.begin(); it != islcheck.end(); ++it){
          if(jet_ip2d_pb[*it]!=-99){
            hist_ip2d_llr_l->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
          }
@@ -873,7 +889,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 
    if(selection_alg){
-     if(nBcheck>0){//nBcheck nBjets
+     if(nBcheck>0){
        for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){//isBcheck isB
 
          std::vector<int> matching_trk,matching_child,origin_trk;
@@ -2182,14 +2198,14 @@ void DAOD_selector::Terminate()
 
 
     file->Close();
-
+/*
     if(selections){
       std::cout<< "\nSELECTIONS\n\n";
       std::cout<< "fraction of events with one single b:\t" << (double) m_b/m_Ntot << "\n";
       std::cout<< "fraction of events with two single b:\t" << (double) m_bb/m_Ntot << "\n";
       std::cout<< "fraction of events without b:\t\t" << (double) m_noB/m_Ntot << "\n";
     }
-
+*/
     if(discriminants && selections){
       std::cout<< "\nDISCRIMINANTS\n\n";
       std::cout<< "Score ip2d with cut=" << m_cut << "\t" <<(double) m_b2d/m_N << "\n";
@@ -2283,10 +2299,11 @@ void DAOD_selector::Terminate()
     }
 
     if(selection_alg){
-      std::cout<<"\nB-C JET CUTS\n"<<1e-3*jet_pT_infcut<<" < Jet pT [GeV] < "<<1e-3*jet_pT_supcut<<"\nJet JVT > "<<jet_JVT_cut<<" (for jet pT in [20, 60] GeV, |eta| < 2.4)\nJet |eta| < "<<jet_eta_cut<<"OverlapRemoval (e+-/mu+-), NOT isBad\n";
+      std::cout<<"\nTRUTH LEVEL COMPOSITION\n# of jets: "<< m_njets << " of which:\n" << "b jets: " << m_nBjets << ", c jets: " << m_nCjets << ", light jets: "<< m_nljets << "\nB-C overlap: " << ov_1<<" ("<< (float) 100*ov_1/m_nBjets<<" %)\n";
+      std::cout<<"\nB-C JET CUTS\n"<<1e-3*jet_pT_infcut<<" < Jet pT [GeV] < "<<1e-3*jet_pT_supcut<<"\nJet JVT > "<<jet_JVT_cut<<" (for jet pT in [20, 60] GeV, |eta| < 2.4)\nJet |eta| < "<<jet_eta_cut<<", OverlapRemoval (e+-/mu+-), NOT isBad\n";
+      std::cout<<"\n# of jets: "<< m_njets_2 << " of which:\n" << "b jets: " << m_nBjets_2 << ", c jets: " << m_nCjets_2 << ", light jets: "<< m_nljets_2 << "\nB-C overlap: " <<ov_2<<" ("<< (float) 100*ov_2/m_nBjets_2<<" %)\n";
       std::cout<<"\nB-C HADRONS CUTS\n"<<"b-c Hadr pT > "<<1e-3*pT_bcH_cut<<" GeV\n"<<"b-c Hadr DR < "<<DR_bcH_cut<<"\n";
-//      std::cout<<"\nExcluded b-jets: "<<nEx_B<<"  ("<<(float) 100*nEx_B/m_nbjets<<"%)\nExcluded c-jets: "<<nEx_C<<"  ("<<(float) 100*nEx_C/m_nbjets<<"%)\n";
-      std::cout<< "total b-c overlap:\t" << (float) 100*m_bc_overlap/m_nbjets << " %\n";
+      std::cout<<"\nb jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << "\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
       std::cout<<"\nTRACK CUTS\ntrk pT > "<<1e-3*trk_pT_cut<<" GeV\n"<<"trk |eta| < "<<trk_eta_cut<<"\n"<<"trk |d0| < "<<trk_d0_cut<<" mm"<<"\n";
       std::cout<<"\n(JF_ntrk, SV1_ntrk, SV0_ntrk, IP2D_ntrk, IP3D_ntrk)\n"<<JF_ntrk<<", \t"<<SV1_ntrk<<", \t"<<SV0_ntrk<<", \t"<<IP2D_ntrk<<", \t"<<IP3D_ntrk<<"\n";
       if(origin_selection){
