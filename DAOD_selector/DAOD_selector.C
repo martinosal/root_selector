@@ -1912,22 +1912,22 @@ void DAOD_selector::openOutputFile(std::string fileNameStringID)
        std::cout<<"RETAG TRUE\n";
        if(cut){
          std::cout<<"CUT\n";
-         file = new TFile(("../output_files/output_13022127_000030_doRetagT_cut"+fileNameStringID+".root").c_str(),"RECREATE");
+         file = new TFile(("../output_files/output_doRetagT_cut"+fileNameStringID+".root").c_str(),"RECREATE");
        }
        if(!cut){
          std::cout<<"NO CUT\n";
-         file = new TFile(("../output_files/output_13022127_000030_doRetagT_nocut"+fileNameStringID+".root").c_str(),"RECREATE");
+         file = new TFile(("../output_files/output_doRetagT_nocut"+fileNameStringID+".root").c_str(),"RECREATE");
        }
      }
      if(!retagT){
        std::cout<<"RETAG FALSE\n";
        if(cut){
          std::cout<<"CUT\n";
-         file = new TFile(("../output_files/output_13022127_000030_doRetagF_cut"+fileNameStringID+".root").c_str(),"RECREATE");
+         file = new TFile(("../output_files/output_doRetagF_cut"+fileNameStringID+".root").c_str(),"RECREATE");
        }
        if(!cut){
          std::cout<<"NO CUT\n";
-         file = new TFile(("../output_files/output_13022127_000030_doRetagF_nocut"+fileNameStringID+".root").c_str(),"RECREATE");
+         file = new TFile(("../output_files/output_doRetagF_nocut"+fileNameStringID+".root").c_str(),"RECREATE");
        }
      }
    }
