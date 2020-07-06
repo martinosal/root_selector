@@ -12,7 +12,7 @@ void launch_selector()
 
   bool debug=true;
   bool selections=true;
-  bool discriminants=false;
+  bool discriminants=true;
   bool shrinking_cone=false;
   bool selection_alg=true;
   bool origin_selection=true;

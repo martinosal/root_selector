@@ -372,51 +372,28 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 //DISCRIMINANTS
    if(discriminants){
-     double DL1=0;
+     double DL1=0,RNNIP=0;
      if(nBcheck>0){
-
        for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
-         m_N++;
-  //        hist_jet_IP2_inB->Fill(jet_ip2[*it]);
-
          if(jet_ip2d_pb[*it]!=-99){
-           hist_ip2d_llr_inB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
-
-           if(jet_ip2d_llr[*it]>m_cut){
-             m_b2d++;
-           }
-  //             if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
-         }
-
-         if(jet_ip3d_pb[*it]!=-99){
-           hist_ip3d_llr_inB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
-  //          if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
-           if(jet_ip3d_llr[*it]>m_cut){
-             m_b3d++;
-           }
-         }
-
-         if(jet_dl1_pb[*it]!=-99){
-           DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
-           hist_dl1_inB->Fill(DL1);
-           if(DL1>m_cut){
-             m_bdl1++;
-           }
-         }
-       }
-     }
-
-     if(nlcheck>0){
-       for(std::vector<int>::iterator it = islcheck.begin(); it != islcheck.end(); ++it){
-         if(jet_ip2d_pb[*it]!=-99){
-           hist_ip2d_llr_l->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+           hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_ip3d_pb[*it]!=-99){
-           hist_ip3d_llr_l->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+           hist_ip3d_llr_exB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+         }
+         if(jet_rnnip_pb[*it]!=-99){
+           RNNIP=log(jet_rnnip_pb[*it]/(m_fcRNNIP*jet_rnnip_pc[*it]+(1.-m_fcRNNIP)*jet_rnnip_pu[*it]));
+           hist_rnnip_llr_exB->Fill(RNNIP); //llr is computed as log(pb/pu)
+         }
+         if(sv1_llr[*it]!=-99){
+           hist_sv1_llr_exB->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
+         }
+         if(jet_jf_llr[*it]!=-99){
+           hist_jf_llr_exB->Fill(jet_jf_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_dl1_pb[*it]!=-99){
            DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
-           hist_dl1_l->Fill(DL1);
+           hist_dl1_exB->Fill(DL1);
          }
        }
      }
@@ -426,29 +403,20 @@ Bool_t DAOD_selector::Process(Long64_t entry)
      if(nCcheck>0){
        for(std::vector<int>::iterator it = isCcheck.begin(); it != isCcheck.end(); ++it){
          if(jet_ip2d_pb[*it]!=-99){
-           hist_ip2d_llr_inC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
-  //          if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
-         }
-         if(jet_ip3d_pb[*it]!=-99){
-           hist_ip3d_llr_inC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
-  //                   if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
-         }
-         if(jet_dl1_pb[*it]!=-99){
-           DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
-           hist_dl1_inC->Fill(DL1);
-         }
-       }
-     }
-  //exclusive C plots
-     if(nCcheck>0 && nBcheck==0){
-       for(std::vector<int>::iterator it = isCcheck.begin(); it != isCcheck.end(); ++it){
-         if(jet_ip2d_pb[*it]!=-99){
            hist_ip2d_llr_exC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
-  //          if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
          }
          if(jet_ip3d_pb[*it]!=-99){
            hist_ip3d_llr_exC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
-  //            if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
+         }
+         if(jet_rnnip_pb[*it]!=-99){
+           RNNIP=log(jet_rnnip_pb[*it]/(m_fcRNNIP*jet_rnnip_pc[*it]+(1.-m_fcRNNIP)*jet_rnnip_pu[*it]));
+           hist_rnnip_llr_exC->Fill(RNNIP); //llr is computed as log(pb/pu)
+         }
+         if(sv1_llr[*it]!=-99){
+           hist_sv1_llr_exC->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
+         }
+         if(jet_jf_llr[*it]!=-99){
+           hist_jf_llr_exC->Fill(jet_jf_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_dl1_pb[*it]!=-99){
            DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
@@ -456,25 +424,35 @@ Bool_t DAOD_selector::Process(Long64_t entry)
          }
        }
      }
-  //exclusive B plots
-     if(nBcheck>0 && nCcheck==0){
-  //         std::cout<<"\nevent #: "<<m_Ntot<<"\n";
-       for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
 
+     if(nlcheck>0){
+       for(std::vector<int>::iterator it = islcheck.begin(); it != islcheck.end(); ++it){
          if(jet_ip2d_pb[*it]!=-99){
-           hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
-  //                 if(jet_ip2d_llr[*it]>m_cut){ m_c2d++; }
+           hist_ip2d_llr_l->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+           if(jet_ip2d_llr[*it]!=jet_ip2[*it])
+             std::cout<<"W\n";
          }
          if(jet_ip3d_pb[*it]!=-99){
-           hist_ip3d_llr_exB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
-  //             if(jet_ip3d_llr[*it]>m_cut){ m_c3d++; }
+           hist_ip3d_llr_l->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+         }
+         if(jet_rnnip_pb[*it]!=-99){
+           RNNIP=log(jet_rnnip_pb[*it]/(m_fcRNNIP*jet_rnnip_pc[*it]+(1.-m_fcRNNIP)*jet_rnnip_pu[*it]));
+           hist_rnnip_llr_l->Fill(RNNIP); //llr is computed as log(pb/pu)
+         }
+         if(sv1_llr[*it]!=-99){
+           hist_sv1_llr_l->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
+         }
+         if(jet_jf_llr[*it]!=-99){
+           hist_jf_llr_l->Fill(jet_jf_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_dl1_pb[*it]!=-99){
            DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
-           hist_dl1_exB->Fill(DL1);
+           hist_dl1_l->Fill(DL1);
          }
        }
      }
+
+
 
    }
 
@@ -1389,41 +1367,26 @@ void DAOD_selector::Terminate()
      hist_dl1_pc->Write();
      hist_dl1_pu->Write();
 */
-     hist_ip2d_llr_l->Write();
-     hist_ip2d_llr_inB->Write();
-     hist_ip2d_llr_inC->Write();
+
      hist_ip2d_llr_exB->Write();
      hist_ip2d_llr_exC->Write();
-     hist_ip3d_llr_l->Write();
-     hist_ip3d_llr_inB->Write();
-     hist_ip3d_llr_inC->Write();
+     hist_ip2d_llr_l->Write();
      hist_ip3d_llr_exB->Write();
      hist_ip3d_llr_exC->Write();
-
-     hist_dl1_l->Write();
-     hist_dl1_inC->Write();
-     hist_dl1_inB->Write();
-     hist_dl1_exC->Write();
+     hist_ip3d_llr_l->Write();
+     hist_rnnip_llr_exB->Write();
+     hist_rnnip_llr_exC->Write();
+     hist_rnnip_llr_l->Write();
+     hist_sv1_llr_exB->Write();
+     hist_sv1_llr_exC->Write();
+     hist_sv1_llr_l->Write();
+     hist_jf_llr_exB->Write();
+     hist_jf_llr_exC->Write();
+     hist_jf_llr_l->Write();
      hist_dl1_exB->Write();
+     hist_dl1_exC->Write();
+     hist_dl1_l->Write();
 
-/*
-   Double_t norm_1 = hist_ip2d_llr_inB->GetEntries();
-   hist_ip2d_llr_inB->Scale(1/norm_1);
-   Double_t norm_2 = hist_ip3d_llr_inB->GetEntries();
-   hist_ip3d_llr_inB->Scale(1/norm_2);
-   Double_t norm_3 = hist_ip2d_llr_inC->GetEntries();
-   hist_ip2d_llr_inC->Scale(1/norm_3);
-   Double_t norm_4 = hist_ip3d_llr_inC->GetEntries();
-   hist_ip3d_llr_inC->Scale(1/norm_4);
-   Double_t norm_5 = hist_ip2d_llr_exB->GetEntries();
-   hist_ip2d_llr_exB->Scale(1/norm_5);
-   Double_t norm_6 = hist_ip3d_llr_exB->GetEntries();
-   hist_ip3d_llr_exB->Scale(1/norm_6);
-   Double_t norm_7 = hist_ip2d_llr_exC->GetEntries();
-   hist_ip2d_llr_exC->Scale(1/norm_7);
-   Double_t norm_8 = hist_ip3d_llr_exC->GetEntries();
-   hist_ip3d_llr_exC->Scale(1/norm_8);
-*/
    }
 
 
@@ -1724,9 +1687,6 @@ void DAOD_selector::Terminate()
 */
     if(discriminants && selections){
       std::cout<< "\nDISCRIMINANTS\n\n";
-      std::cout<< "Score ip2d with cut=" << m_cut << "\t" <<(double) m_b2d/m_N << "\n";
-      std::cout<< "Score ip3d with cut=" << m_cut << "\t" <<(double) m_b3d/m_N << "\n";
-      std::cout<< "Score dl1  with cut=" << m_cut << "\t" <<(double) m_bdl1/m_N << "\n";
     }
 
     if(shrinking_cone){
@@ -1978,21 +1938,27 @@ void DAOD_selector::bookHistosForDiscriminants()
 
    if(discriminants){
 
-     hist_ip2d_llr_l = new TH1F("ip2d_llr_l","ip2d_light_jets",280., -20., 50.);
-     hist_ip2d_llr_inB = new TH1F("ip2d_llr_inB", "ip2d_b_jets", 280., -20., 50.);
-     hist_ip2d_llr_inC = new TH1F("ip2d_llr_inC", "ip2d_c_jets", 280., -20., 50.);
-     hist_ip2d_llr_exB = new TH1F("ip2d_llr_exB", "ip2d_b_jets", 280., -20., 50.);
-     hist_ip2d_llr_exC = new TH1F("ip2d_llr_exC", "ip2d_c_jets", 280., -20., 50.);
+     hist_ip2d_llr_l = new TH1F("ip2d_llr_l","ip2d_llr_l",280., -20., 50.);
+     hist_ip2d_llr_exB = new TH1F("ip2d_llr_exB", "ip2d_llr_exB", 280., -20., 50.);
+     hist_ip2d_llr_exC = new TH1F("ip2d_llr_exC", "ip2d_llr_exC", 280., -20., 50.);
 
-     hist_ip3d_llr_l = new TH1F("ip3d_llr_l","ip3d_light_jets",280., -20., 50.);
-     hist_ip3d_llr_inB = new TH1F("ip3d_llr_inB", "ip3d_b_jets", 280., -20., 50.);
-     hist_ip3d_llr_inC = new TH1F("ip3d_llr_inC", "ip3d_c_jets", 280., -20., 50.);
-     hist_ip3d_llr_exB = new TH1F("ip3d_llr_exB", "ip3d_b_jets", 280., -20., 50.);
-     hist_ip3d_llr_exC = new TH1F("ip3d_llr_exC", "ip3d_c_jets", 280., -20., 50.);
+     hist_ip3d_llr_l = new TH1F("ip3d_llr_l","ip3d_llr_l",280., -20., 50.);
+     hist_ip3d_llr_exB = new TH1F("ip3d_llr_exB", "ip3d_llr_exB", 280., -20., 50.);
+     hist_ip3d_llr_exC = new TH1F("ip3d_llr_exC", "ip3d_llr_exC", 280., -20., 50.);
+
+     hist_rnnip_llr_l = new TH1F("rnnip_llr_l","rnnip_llr_l",280., -20., 50.);
+     hist_rnnip_llr_exB = new TH1F("rnnip_llr_exB", "rnnip_llr_exB", 280., -20., 50.);
+     hist_rnnip_llr_exC = new TH1F("rnnip_llr_exC", "rnnip_llr_exC", 280., -20., 50.);
+
+     hist_sv1_llr_l = new TH1F("sv1_llr_l","sv1_llr_l",280., -20., 50.);
+     hist_sv1_llr_exB = new TH1F("sv1_llr_exB", "sv1_llr_exB", 280., -20., 50.);
+     hist_sv1_llr_exC = new TH1F("sv1_llr_exC", "sv1_llr_exC", 280., -20., 50.);
+
+     hist_jf_llr_l = new TH1F("jf_llr_l","jf_llr_l",280., -20., 50.);
+     hist_jf_llr_exB = new TH1F("jf_llr_exB", "jf_llr_exB", 280., -20., 50.);
+     hist_jf_llr_exC = new TH1F("jf_llr_exC", "jf_llr_exC", 280., -20., 50.);
 
      hist_dl1_l = new TH1F("DL1_light","DL1_light",260,-8.,18.);
-     hist_dl1_inC = new TH1F("DL1_inC","DL1_inC",260,-8.,18.);
-     hist_dl1_inB = new TH1F("DL1_inB","DL1_inB",260,-8.,18.);
      hist_dl1_exC = new TH1F("DL1_exC","DL1_exC",260,-8.,18.);
      hist_dl1_exB = new TH1F("DL1_exB","DL1_exB",260,-8.,18.);
 
@@ -2297,7 +2263,7 @@ void DAOD_selector::initFlagsAndCuts()
 
 
   m_cut=1.;  // the working point !!! maybe
-  m_fc=0.08; // fraction of c jets in the non-b jet sample
+  m_fc=0.08,m_fcRNNIP=0.07; // fraction of c jets in the non-b jet sample
   m_pTfraction_cut=1.,m_DRcut=0.1,m_pTfraction_nocut=1e6,m_DRnocut=1e6; // cuts for geometrical matching
   m_track_cut=10;
 
@@ -2320,7 +2286,7 @@ void DAOD_selector::initCounters()
 
   m_Ntot=0; // number of events read/processed
 
-  m_N=0,m_b2d=0,m_b3d=0,m_bdl1=0,m_c2d=0,m_c3d=0,m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_match_overlap=0,m_match_notoverlap=0,n_trk_pT_cut=0,n_trk_PU_pT_cut=0,n_trk_FRAG_pT_cut=0,n_trk_GEANT_pT_cut=0,n_trk_B=0,n_trk_C=0;
+  m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_match_overlap=0,m_match_notoverlap=0,n_trk_pT_cut=0,n_trk_PU_pT_cut=0,n_trk_FRAG_pT_cut=0,n_trk_GEANT_pT_cut=0,n_trk_B=0,n_trk_C=0;
 
   m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
   m_den=0; // some denominator
