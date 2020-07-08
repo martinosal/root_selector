@@ -458,6 +458,19 @@ public :
      TH1F *hist_eta_inB;
      TH1F *hist_phi_inB;
      TH1F *hist_E_inB;
+     TH1F *hist_Bjet_origin;
+
+     TH1F *hist_pt_inC;
+     TH1F *hist_eta_inC;
+     TH1F *hist_phi_inC;
+     TH1F *hist_E_inC;
+     TH1F *hist_Cjet_origin;
+
+     TH1F *hist_pt_l;
+     TH1F *hist_eta_l;
+     TH1F *hist_phi_l;
+     TH1F *hist_E_l;
+     TH1F *hist_ljet_origin;
 
      TH1F *hist_n_tracks;
      TH2F *hist_tracks_DR;
