@@ -4,10 +4,10 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
   TH1D *h1_proj;
   TH2D* h1 = (TH2D*)fData->Get(("trk_"+hist+"_origin_inB").c_str());
 
-  h1->SetTitle(hist.c_str());
+//  h1->SetTitle(hist.c_str());
 
   TCanvas c("c1", "canvas", 1300, 900);
-//  gStyle->SetOptTitle(0);
+  gStyle->SetOptTitle(0);
   /*
   TText *t = new TText(0.45,0.97,hist.c_str());
 //  t->SetTextAlign(22);
@@ -27,14 +27,14 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
   if(x2!=0){
     h2->GetXaxis()->SetRangeUser(0., x2);
   }
-  h2->GetXaxis()->SetTitle(("Number of "+hist).c_str());
+  h2->GetXaxis()->SetTitle((hist).c_str());
   h2->GetYaxis()->SetTitle("track origin");
   gStyle->SetPaintTextFormat(".4f");
   h2->Draw("colz");
 
   c.cd(2);
   gPad->SetLogy();
-  leg = new TLegend(0.7,0.7,0.9,0.9);
+  leg = new TLegend(0.75,0.75,0.9,0.9);
   h1_proj = new TH1D("a","b",5,-1,4);
 //  h1_proj->SetTitle(hist.c_str());
   h1_proj->GetYaxis()->SetRangeUser(0.,0.5);
@@ -52,8 +52,8 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
     if(x2!=0){
       h1_proj->GetXaxis()->SetRangeUser(0., x2);
     }
-    h1_proj->GetXaxis()->SetTitle(("Number of "+hist).c_str());
-    h1_proj->GetYaxis()->SetRangeUser(1e-3, 1.);
+    h1_proj->GetXaxis()->SetTitle((hist).c_str());
+//    h1_proj->GetYaxis()->SetRangeUser(1e-3, 1.);
     h1_proj->SetLineWidth(2);
     h1_proj->Draw("same hist PLC");
     leg->AddEntry(h1_proj,label[i-1],"l");
@@ -61,7 +61,7 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
   }
 //  leg->SetHeader("The Legend Title");
   leg->Draw();
-  c.SaveAs(("../plots/scripts_root/detectorPlots/"+hist+".pdf").c_str());
+  c.SaveAs(("../../plots/scripts_root/detectorPlots/"+hist+".pdf").c_str());
 
   delete h1,h2,c,h1_proj,leg;
 }
@@ -72,10 +72,11 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
   TH1D *h1_proj;
   TH2D* h1 = (TH2D*)fData->Get(("trk_"+hist+"_origin_"+alg+"_inB").c_str());
 
-  h1->SetTitle((hist+" "+alg).c_str());
+//  h1->SetTitle((hist+" "+alg).c_str());
 
   int max_origin=3;
   TCanvas c("c1", "canvas", 1300, 900);
+  gStyle->SetOptTitle(0);
   c.Divide(2,1);
   c.cd(1);
   gPad->SetLeftMargin(gPad->GetLeftMargin()*1.3);
@@ -88,14 +89,14 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
   if(x2!=0){
     h2->GetXaxis()->SetRangeUser(0., x2);
   }
-  h2->GetXaxis()->SetTitle(("Number of "+hist).c_str());
+  h2->GetXaxis()->SetTitle((hist).c_str());
   h2->GetYaxis()->SetTitle("track origin");
 //  gStyle->SetPaintTextFormat(".4f");
   h2->Draw("colz");
 
   c.cd(2);
   gPad->SetLogy();
-  leg = new TLegend(0.7,0.7,0.9,0.9);
+  leg = new TLegend(0.75,0.75,0.9,0.9);
   h1_proj = new TH1D("a","b",5,-1,4);
 //  h1_proj->SetTitle((hist +" "+ alg).c_str());
   h1_proj->GetYaxis()->SetRangeUser(0.,0.5);
@@ -112,8 +113,8 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
     if(x2!=0){
       h1_proj->GetXaxis()->SetRangeUser(0., x2);
     }
-    h1_proj->GetXaxis()->SetTitle(("Number of "+hist).c_str());
-    h1_proj->GetYaxis()->SetRangeUser(1e-3, 1.);
+    h1_proj->GetXaxis()->SetTitle((hist).c_str());
+//    h1_proj->GetYaxis()->SetRangeUser(1e-3, 1.);
     h1_proj->SetLineWidth(2);
     h1_proj->Draw("same hist PLC");
     leg->AddEntry(h1_proj,label[i-1],"l");
@@ -121,7 +122,7 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
   }
 //  leg->SetHeader("The Legend Title");
   leg->Draw();
-  c.SaveAs(("../plots/scripts_root/detectorPlots/"+hist+"_"+alg+".pdf").c_str());
+  c.SaveAs(("../../plots/scripts_root/detectorPlots/"+hist+"_"+alg+".pdf").c_str());
 
   delete h1,h2,c,h1_proj,leg;
 }

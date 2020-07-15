@@ -136,7 +136,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
    m_Ntot++;
 
-   double D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxy=0,Lxyz=0,Dxy_1=0.,x0=0.,y0=0.,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0.,d0=0.;
+   double D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxy=0,Lxyz=0,Dxy_1=0.,x0=0.,y0=0.,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0.,d0=0.,z0=0.;
 
    double D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
    double tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.;
@@ -216,7 +216,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    m_nJetBCoverlap_postJetSel+=overlap(isB_2,isC_2);
 
 
-// jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), exclusive samples
+// jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
    getTrueJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
 
    m_nBcheck+=isBcheck.size();
@@ -242,10 +242,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
      if(nBcheck>0){
        for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
-         hist_pt_inB->Fill(jet_pt[*it]*0.001);
-         hist_eta_inB->Fill(jet_eta[*it]);
-         hist_phi_inB->Fill(jet_phi[*it]);
-         hist_E_inB->Fill(jet_E[*it]);
+         hist_pt_B->Fill(jet_pt[*it]*0.001);
+         hist_eta_B->Fill(jet_eta[*it]);
+         hist_phi_B->Fill(jet_phi[*it]);
+         hist_E_B->Fill(jet_E[*it]);
          for(unsigned i=0;i<jet_trk_orig[*it].size();i++){
            hist_Bjet_origin->Fill(jet_trk_orig[*it].at(i));
          }
@@ -254,10 +254,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
      if(nCcheck>0){
        for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
-         hist_pt_inC->Fill(jet_pt[*it]*0.001);
-         hist_eta_inC->Fill(jet_eta[*it]);
-         hist_phi_inC->Fill(jet_phi[*it]);
-         hist_E_inC->Fill(jet_E[*it]);
+         hist_pt_C->Fill(jet_pt[*it]*0.001);
+         hist_eta_C->Fill(jet_eta[*it]);
+         hist_phi_C->Fill(jet_phi[*it]);
+         hist_E_C->Fill(jet_E[*it]);
          for(unsigned i=0;i<jet_trk_orig[*it].size();i++){
            hist_Cjet_origin->Fill(jet_trk_orig[*it].at(i));
          }
@@ -402,51 +402,51 @@ Bool_t DAOD_selector::Process(Long64_t entry)
      if(nBcheck>0){
        for(std::vector<int>::iterator it = isBcheck.begin(); it != isBcheck.end(); ++it){
          if(jet_ip2d_pb[*it]!=-99){
-           hist_ip2d_llr_exB->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+           hist_ip2d_llr_B->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_ip3d_pb[*it]!=-99){
-           hist_ip3d_llr_exB->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+           hist_ip3d_llr_B->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_rnnip_pb[*it]!=-99){
            RNNIP=log(jet_rnnip_pb[*it]/(m_fcRNNIP*jet_rnnip_pc[*it]+(1.-m_fcRNNIP)*jet_rnnip_pu[*it]));
-           hist_rnnip_llr_exB->Fill(RNNIP); //llr is computed as log(pb/pu)
+           hist_rnnip_llr_B->Fill(RNNIP); //llr is computed as log(pb/pu)
          }
          if(sv1_llr[*it]!=-99){
-           hist_sv1_llr_exB->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
+           hist_sv1_llr_B->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_jf_llr[*it]!=-99){
-           hist_jf_llr_exB->Fill(jet_jf_llr[*it]); //llr is computed as log(pb/pu)
+           hist_jf_llr_B->Fill(jet_jf_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_dl1_pb[*it]!=-99){
            DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
-           hist_dl1_exB->Fill(DL1);
+           hist_dl1_B->Fill(DL1);
          }
        }
      }
 
 
-  //inclusive plots
+  //Clusive plots
      if(nCcheck>0){
        for(std::vector<int>::iterator it = isCcheck.begin(); it != isCcheck.end(); ++it){
          if(jet_ip2d_pb[*it]!=-99){
-           hist_ip2d_llr_exC->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
+           hist_ip2d_llr_C->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_ip3d_pb[*it]!=-99){
-           hist_ip3d_llr_exC->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
+           hist_ip3d_llr_C->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_rnnip_pb[*it]!=-99){
            RNNIP=log(jet_rnnip_pb[*it]/(m_fcRNNIP*jet_rnnip_pc[*it]+(1.-m_fcRNNIP)*jet_rnnip_pu[*it]));
-           hist_rnnip_llr_exC->Fill(RNNIP); //llr is computed as log(pb/pu)
+           hist_rnnip_llr_C->Fill(RNNIP); //llr is computed as log(pb/pu)
          }
          if(sv1_llr[*it]!=-99){
-           hist_sv1_llr_exC->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
+           hist_sv1_llr_C->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_jf_llr[*it]!=-99){
-           hist_jf_llr_exC->Fill(jet_jf_llr[*it]); //llr is computed as log(pb/pu)
+           hist_jf_llr_C->Fill(jet_jf_llr[*it]); //llr is computed as log(pb/pu)
          }
          if(jet_dl1_pb[*it]!=-99){
            DL1=log(jet_dl1_pb[*it]/(m_fc*jet_dl1_pc[*it]+(1-m_fc)*jet_dl1_pu[*it]));
-           hist_dl1_exC->Fill(DL1);
+           hist_dl1_C->Fill(DL1);
          }
        }
      }
@@ -528,38 +528,44 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  D_phi=jet_trk_phi[*it].at(i)-jet_phi[*it];
                }
                DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-               hist_trk_pT_inB->Fill(1e-3*jet_trk_pt[*it].at(i));
-               hist_trk_eta_inB->Fill(jet_trk_eta[*it].at(i));
-               hist_trk_phi_inB->Fill(jet_trk_phi[*it].at(i));
-               hist_trk_Deta_inB->Fill(D_eta);
-               hist_trk_Dphi_inB->Fill(D_phi);
-               hist_trk_Dphi_Deta_inB->Fill(D_phi,D_eta);
-               hist_trk_DR_inB->Fill(DR);
-               hist_trk_pT_DR_inB->Fill(1e-3*jet_trk_pt[*it].at(i),DR);
-               hist_trk_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-               hist_trk_pdgId_inB->Fill(jet_trk_pdg_id[*it].at(i));
-               hist_trk_origin_inB->Fill(jet_trk_orig[*it].at(i));
+               hist_trk_pT_B->Fill(1e-3*jet_trk_pt[*it].at(i));
+               hist_trk_eta_B->Fill(jet_trk_eta[*it].at(i));
+               hist_trk_phi_B->Fill(jet_trk_phi[*it].at(i));
+               hist_trk_Deta_B->Fill(D_eta);
+               hist_trk_Dphi_B->Fill(D_phi);
+               hist_trk_Dphi_Deta_B->Fill(D_phi,D_eta);
+               hist_trk_DR_B->Fill(DR);
+               hist_trk_pT_DR_B->Fill(1e-3*jet_trk_pt[*it].at(i),DR);
+               hist_trk_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
+               hist_trk_pdgId_B->Fill(jet_trk_pdg_id[*it].at(i));
+               hist_trk_origin_B->Fill(jet_trk_orig[*it].at(i));
 
                A=sin(jet_phi[*it]-jet_trk_phi[*it].at(i))*jet_trk_d0[*it].at(i);
-               sgn=A/abs(A);
-               d0=sgn*abs(jet_trk_d0[*it].at(i));
-               hist_trk_d0_inB->Fill(d0);
-               hist_trk_z0sinth_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)));
-               hist_trk_d0sig_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
-               hist_trk_z0sinthsig_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
-               hist_trk_d0sig_origin_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_z0sinthsig_origin_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)),jet_trk_orig[*it].at(i));
-               hist_trk_logpTfrac_origin_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-               hist_trk_logDR_origin_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
-               hist_trk_IBLhits_origin_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_NextToIBLhits_origin_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_sharedIBLhits_origin_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_splitIBLhits_origin_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-               hist_trk_nPixhits_origin_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_sharedPixhits_origin_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_splitPixhits_origin_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_nSCThits_origin_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_sharedSCThits_origin_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+               sgn_d0=A/abs(A);
+               A=(jet_eta[*it]-jet_trk_eta[*it].at(i))*jet_trk_z0[*it].at(i);
+               sgn_z0=A/abs(A);
+               d0=sgn_d0*abs(jet_trk_d0[*it].at(i));
+               z0=sgn_z0*abs(jet_trk_z0[*it].at(i));
+               hist_trk_d0_B->Fill(d0);
+               hist_trk_sigd0_B->Fill(jet_trk_d0sig[*it].at(i));
+               hist_trk_z0_B->Fill(z0);
+               hist_trk_sigz0_B->Fill(jet_trk_z0sig[*it].at(i));
+               hist_trk_z0sinth_B->Fill(z0*sin(jet_trk_theta[*it].at(i)));
+               hist_trk_d0sig_B->Fill(d0/jet_trk_d0sig[*it].at(i));
+               hist_trk_z0sinthsig_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
+               hist_trk_d0sig_origin_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_z0sinthsig_origin_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_logpTfrac_origin_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+               hist_trk_logDR_origin_B->Fill(log(DR),jet_trk_orig[*it].at(i));
+               hist_trk_IBLhits_origin_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_NextToIBLhits_origin_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_sharedIBLhits_origin_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_splitIBLhits_origin_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+               hist_trk_nPixhits_origin_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_sharedPixhits_origin_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_splitPixhits_origin_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_nSCThits_origin_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_sharedSCThits_origin_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
 
 //               std::cout<<jet_trk_algo[*it].at(i)<<"\n";
                std::vector<int> bin_alg(5);
@@ -572,101 +578,101 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(idx==4) {
                    JF_ntrk=JF_ntrk+p;
                    if(p==1){
-                     hist_trk_d0sig_JF_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_JF_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
-                     hist_trk_d0sig_origin_JF_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_JF_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_JF_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_JF_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_JF_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_JF_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_JF_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_JF_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_JF_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_JF_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_JF_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_JF_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_JF_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_JF_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_JF_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_JF_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_JF_B->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_JF_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_JF_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_JF_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_JF_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_JF_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_JF_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_JF_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_JF_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_JF_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
                    }
                  }
                  if(idx==3) {
                    SV1_ntrk=SV1_ntrk+p;
                    if(p==1){
-                     hist_trk_d0sig_SV1_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_SV1_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
-                     hist_trk_d0sig_origin_SV1_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_SV1_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_SV1_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_SV1_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_SV1_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_SV1_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_SV1_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_SV1_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_SV1_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_SV1_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_SV1_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_SV1_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_SV1_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_SV1_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_SV1_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_SV1_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_SV1_B->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_SV1_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_SV1_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_SV1_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_SV1_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_SV1_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_SV1_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_SV1_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_SV1_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_SV1_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
                    }
                  }
                  if(idx==2) {
                    SV0_ntrk=SV0_ntrk+p;
                    if(p==1){
-                     hist_trk_d0sig_SV0_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_SV0_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
-                     hist_trk_d0sig_origin_SV0_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_SV0_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_SV0_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_SV0_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_SV0_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_SV0_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_SV0_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_SV0_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_SV0_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_SV0_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_SV0_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_SV0_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_SV0_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_SV0_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_SV0_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_SV0_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_SV0_B->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_SV0_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_SV0_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_SV0_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_SV0_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_SV0_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_SV0_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_SV0_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_SV0_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_SV0_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
                    }
                  }
                  if(idx==1) {
                    IP3D_ntrk=IP3D_ntrk+p;
                    if(p==1){
-                     hist_trk_d0sig_IP3D_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_IP3D_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
-                     hist_trk_d0sig_origin_IP3D_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_IP3D_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_IP3D_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_IP3D_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_IP3D_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_IP3D_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_IP3D_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_IP3D_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_IP3D_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_IP3D_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_IP3D_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_IP3D_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_IP3D_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_IP3D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_IP3D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_IP3D_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_IP3D_B->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_IP3D_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_IP3D_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_IP3D_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_IP3D_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_IP3D_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_IP3D_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_IP3D_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_IP3D_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_IP3D_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
                    }
                  }
                  if(idx==0) {
                    IP2D_ntrk=IP2D_ntrk+p;
                    if(p==1){
-                     hist_trk_d0sig_IP2D_inB->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_IP2D_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i));
-                     hist_trk_d0sig_origin_IP2D_inB->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_IP2D_inB->Fill(sgn*jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i))/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_IP2D_inB->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_IP2D_inB->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_IP2D_inB->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_IP2D_inB->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_IP2D_inB->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_IP2D_inB->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_IP2D_inB->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_IP2D_inB->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_IP2D_inB->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_IP2D_inB->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_IP2D_inB->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_IP2D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_z0sinthsig_origin_IP2D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_logpTfrac_origin_IP2D_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
+                     hist_trk_logDR_origin_IP2D_B->Fill(log(DR),jet_trk_orig[*it].at(i));
+                     hist_trk_IBLhits_origin_IP2D_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_NextToIBLhits_origin_IP2D_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedIBLhits_origin_IP2D_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitIBLhits_origin_IP2D_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_IP2D_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedPixhits_origin_IP2D_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_splitPixhits_origin_IP2D_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_nSCThits_origin_IP2D_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_sharedSCThits_origin_IP2D_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
                    }
                  }
                  x=x/2;
@@ -684,23 +690,23 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 */
 
                if(jet_trk_orig[*it].at(i)==-1){
-                 hist_trk_d0_PUinB->Fill(d0);
+                 hist_trk_d0_PUB->Fill(d0);
                  n_trk_PU_pT_cut++;
                }
                if(jet_trk_orig[*it].at(i)==0){
-                 hist_trk_d0_BinB->Fill(d0);
+                 hist_trk_d0_BB->Fill(d0);
                  n_trk_B++;
                }
                if(jet_trk_orig[*it].at(i)==1){
-                 hist_trk_d0_CinB->Fill(d0);
+                 hist_trk_d0_CB->Fill(d0);
                  n_trk_C++;
                }
                if(jet_trk_orig[*it].at(i)==2){
-                 hist_trk_d0_FRAGinB->Fill(d0);
+                 hist_trk_d0_FRAGB->Fill(d0);
                  n_trk_FRAG_pT_cut++;
                }
                if(jet_trk_orig[*it].at(i)==3){
-                 hist_trk_d0_GEANTinB->Fill(d0);
+                 hist_trk_d0_GEANTB->Fill(d0);
                  n_trk_GEANT_pT_cut++;
                }
 
@@ -708,20 +714,20 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
                    origin_trk.push_back(i);
 
-                   hist_matched_origin_pT_inB->Fill(1e-3*jet_trk_pt[*it].at(i));
-                   hist_matched_origin_eta_inB->Fill(jet_trk_eta[*it].at(i));
-                   hist_matched_origin_phi_inB->Fill(jet_trk_phi[*it].at(i));
-                   hist_matched_origin_Deta_inB->Fill(D_eta);
-                   hist_matched_origin_Dphi_inB->Fill(D_phi);
-                   hist_matched_origin_Dphi_Deta_inB->Fill(D_phi,D_eta);
-                   hist_matched_origin_DR_inB->Fill(DR);
-                   hist_matched_origin_pT_DR_inB->Fill(1e-3*jet_trk_pt[*it].at(i),DR);
-                   hist_matched_origin_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-                   hist_matched_origin_pdgId_inB->Fill(jet_trk_pdg_id[*it].at(i));
-                   hist_matched_origin_origin_inB->Fill(jet_trk_orig[*it].at(i));
-                   hist_matched_origin_d0_inB->Fill(d0);
-//                   hist_matched_origin_Lxy_inB->Fill();
-//                   hist_matched_origin_Lxyz_inB->Fill();
+                   hist_matched_origin_pT_B->Fill(1e-3*jet_trk_pt[*it].at(i));
+                   hist_matched_origin_eta_B->Fill(jet_trk_eta[*it].at(i));
+                   hist_matched_origin_phi_B->Fill(jet_trk_phi[*it].at(i));
+                   hist_matched_origin_Deta_B->Fill(D_eta);
+                   hist_matched_origin_Dphi_B->Fill(D_phi);
+                   hist_matched_origin_Dphi_Deta_B->Fill(D_phi,D_eta);
+                   hist_matched_origin_DR_B->Fill(DR);
+                   hist_matched_origin_pT_DR_B->Fill(1e-3*jet_trk_pt[*it].at(i),DR);
+                   hist_matched_origin_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
+                   hist_matched_origin_pdgId_B->Fill(jet_trk_pdg_id[*it].at(i));
+                   hist_matched_origin_origin_B->Fill(jet_trk_orig[*it].at(i));
+                   hist_matched_origin_d0_B->Fill(d0);
+//                   hist_matched_origin_Lxy_B->Fill();
+//                   hist_matched_origin_Lxyz_B->Fill();
 
                  }
 
@@ -773,8 +779,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  Lxy=800;
                  Lxyz=800;
 
-                 hist_child_Lxy_inB->Fill(Lxy);
-                 hist_child_Lxyz_inB->Fill(Lxyz);
+                 hist_child_Lxy_B->Fill(Lxy);
+                 hist_child_Lxyz_B->Fill(Lxyz);
                  child_Lxy[j]=Lxy;
                  child_Lxyz[j]=Lxyz;
 
@@ -814,8 +820,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  Lxy=sqrt( jet_bH_child_E[*it].at(j)*jet_bH_child_E[*it].at(j)/(px*px+py*py)-(px*px+py*py+pz*pz)/(px*px+py*py) )*sqrt( Dx_2*Dx_2+Dy_2*Dy_2 );
                  Lxyz=sqrt( jet_bH_child_E[*it].at(j)*jet_bH_child_E[*it].at(j)/(px*px+py*py+pz*pz)-1. )*sqrt( Dx_2*Dx_2+Dy_2*Dy_2+Dz_2*Dz_2 );
 
-                 hist_child_Lxy_inB->Fill(Lxy);
-                 hist_child_Lxyz_inB->Fill(Lxyz);
+                 hist_child_Lxy_B->Fill(Lxy);
+                 hist_child_Lxyz_B->Fill(Lxyz);
                  child_Lxy[j]=Lxy;
                  child_Lxyz[j]=Lxyz;
 //                 Dxy_2=sqrt((Dx_1*Dx_1)+(Dy_1*Dy_1));
@@ -839,7 +845,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 */
 //                 hist_child_decay_IP->Fill(d0);
 
-                 hist_pT_vs_R0_ratio_inB->Fill(child_Pt.at(j)/abs(R0));
+                 hist_pT_vs_R0_ratio_B->Fill(child_Pt.at(j)/abs(R0));
 
 //                 ncorr+=jet_bH_child_charge[*it].at(j)*d0/abs(d0);
 //                 std::cout<<jet_bH_child_charge[*it].at(j)*R0/abs(jet_bH_child_charge[*it].at(j)*R0)<<"\n";
@@ -857,7 +863,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                hist_child_d0_truth->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
                if(jet_bH_child_theta[*it].at(j)==-99)
                std::cout<<"W\n";
-               hist_child_z0sinth_inB->Fill((jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j)));//*sqrt(px*px+py*py)/sqrt(px*px+py*py+pz*pz)
+               hist_child_z0sinth_B->Fill((jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j)));//*sqrt(px*px+py*py)/sqrt(px*px+py*py+pz*pz)
 
                D_eta=child_Eta[j]-jet_eta[*it];
                if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
@@ -867,51 +873,51 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  D_phi=child_Phi[j]-jet_phi[*it];
                }
                DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-               hist_child_pT_inB->Fill(1e-3*child_Pt[j]);
-               hist_child_eta_inB->Fill(child_Eta[j]);
-               hist_child_phi_inB->Fill(child_Phi[j]);
-               hist_child_Deta_inB->Fill(D_eta);
-               hist_child_Dphi_inB->Fill(D_phi);
-               hist_child_Dphi_Deta_inB->Fill(D_phi,D_eta);
-               hist_child_DR_inB->Fill(DR);
-               hist_child_pT_DR_inB->Fill(1e-3*child_Pt[j],DR);
-               hist_child_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-               hist_child_pdgID_inB->Fill(jet_bH_child_pdg_id[*it].at(j));
+               hist_child_pT_B->Fill(1e-3*child_Pt[j]);
+               hist_child_eta_B->Fill(child_Eta[j]);
+               hist_child_phi_B->Fill(child_Phi[j]);
+               hist_child_Deta_B->Fill(D_eta);
+               hist_child_Dphi_B->Fill(D_phi);
+               hist_child_Dphi_Deta_B->Fill(D_phi,D_eta);
+               hist_child_DR_B->Fill(DR);
+               hist_child_pT_DR_B->Fill(1e-3*child_Pt[j],DR);
+               hist_child_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
+               hist_child_pdgID_B->Fill(jet_bH_child_pdg_id[*it].at(j));
 
                if(abs(jet_bH_child_pdg_id[*it].at(j))==211){
                  hist_child_pi->Fill(1e-3*child_Pt[j]);
-                 hist_child_pi_Lxy_inB->Fill(Lxy);
-                 hist_child_pi_Lxyz_inB->Fill(Lxyz);//CHECK
-                 hist_child_pi_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
-                 hist_child_pi_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
+                 hist_child_pi_Lxy_B->Fill(Lxy);
+                 hist_child_pi_Lxyz_B->Fill(Lxyz);//CHECK
+                 hist_child_pi_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_pi_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==321){
                  hist_child_K->Fill(1e-3*child_Pt[j]);
-                 hist_child_K_Lxy_inB->Fill(Lxy);
-                 hist_child_K_Lxyz_inB->Fill(Lxyz);
-                 hist_child_K_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
-                 hist_child_K_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
+                 hist_child_K_Lxy_B->Fill(Lxy);
+                 hist_child_K_Lxyz_B->Fill(Lxyz);
+                 hist_child_K_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_K_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==13){
                  hist_child_mu->Fill(1e-3*child_Pt[j]);
-                 hist_child_mu_Lxy_inB->Fill(Lxy);
-                 hist_child_mu_Lxyz_inB->Fill(Lxyz);
-                 hist_child_mu_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
-                 hist_child_mu_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
+                 hist_child_mu_Lxy_B->Fill(Lxy);
+                 hist_child_mu_Lxyz_B->Fill(Lxyz);
+                 hist_child_mu_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_mu_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==2212){
                  hist_child_p->Fill(1e-3*child_Pt[j]);
-                 hist_child_p_Lxy_inB->Fill(Lxy);
-                 hist_child_p_Lxyz_inB->Fill(Lxyz);
-                 hist_child_p_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
-                 hist_child_p_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
+                 hist_child_p_Lxy_B->Fill(Lxy);
+                 hist_child_p_Lxyz_B->Fill(Lxyz);
+                 hist_child_p_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_p_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==11){
                  hist_child_e->Fill(1e-3*child_Pt[j]);
-                 hist_child_e_Lxy_inB->Fill(Lxy);
-                 hist_child_e_Lxyz_inB->Fill(Lxyz);
-                 hist_child_e_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
-                 hist_child_e_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(j));
+                 hist_child_e_Lxy_B->Fill(Lxy);
+                 hist_child_e_Lxyz_B->Fill(Lxyz);
+                 hist_child_e_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_e_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
              }
            }
@@ -1036,7 +1042,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
     /*
                  if(a==-2 && b==-2 && sc>0){
-                   std::cout<<"EXCLUSED CHILDS:\t"<<m_Ntot<<"\t"<<tmp_DpT<<"\t"<<tmp_DR<<"\n";
+                   std::cout<<"CLUSED CHILDS:\t"<<m_Ntot<<"\t"<<tmp_DpT<<"\t"<<tmp_DR<<"\n";
     //               den--;
                  }
     */
@@ -1086,16 +1092,16 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    D_phi=child_Phi.at(b)-jet_phi[*it];
                  }
                  DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-                 hist_matched_pT_inB->Fill(1e-3*child_Pt.at(b));
-                 hist_matched_eta_inB->Fill(child_Eta.at(b));
-                 hist_matched_phi_inB->Fill(child_Phi.at(b));
-                 hist_matched_Deta_inB->Fill(D_eta);
-                 hist_matched_Dphi_inB->Fill(D_phi);
-                 hist_matched_Dphi_Deta_inB->Fill(D_phi,D_eta);
-                 hist_matched_DR_inB->Fill(DR);
-                 hist_matched_pT_DR_inB->Fill(1e-3*child_Pt.at(b),DR);
-                 hist_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-                 hist_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
+                 hist_matched_pT_B->Fill(1e-3*child_Pt.at(b));
+                 hist_matched_eta_B->Fill(child_Eta.at(b));
+                 hist_matched_phi_B->Fill(child_Phi.at(b));
+                 hist_matched_Deta_B->Fill(D_eta);
+                 hist_matched_Dphi_B->Fill(D_phi);
+                 hist_matched_Dphi_Deta_B->Fill(D_phi,D_eta);
+                 hist_matched_DR_B->Fill(DR);
+                 hist_matched_pT_DR_B->Fill(1e-3*child_Pt.at(b),DR);
+                 hist_matched_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
+                 hist_matched_pdgId_B->Fill(jet_bH_child_pdg_id[*it].at(b));
 
                  if(jet_bH_child_decay_x[*it].at(b)==-999){//NO DECAY MATCHED CHILD
                    if(abs(jet_bH_child_pdg_id[*it].at(b))==211){
@@ -1108,44 +1114,44 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==211){
                    hist_matched_child_pi->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_pi_Lxy_inB->Fill(Lxy);
-                   hist_matched_child_pi_Lxyz_inB->Fill(Lxyz);
-                   hist_matched_child_pi_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
-                   hist_matched_child_pi_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
+                   hist_matched_child_pi_Lxy_B->Fill(Lxy);
+                   hist_matched_child_pi_Lxyz_B->Fill(Lxyz);
+                   hist_matched_child_pi_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
+                   hist_matched_child_pi_z0_truth_B->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==321){
                    hist_matched_child_K->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_K_Lxy_inB->Fill(Lxy);
-                   hist_matched_child_K_Lxyz_inB->Fill(Lxyz);
-                   hist_matched_child_K_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
-                   hist_matched_child_K_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
+                   hist_matched_child_K_Lxy_B->Fill(Lxy);
+                   hist_matched_child_K_Lxyz_B->Fill(Lxyz);
+                   hist_matched_child_K_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
+                   hist_matched_child_K_z0_truth_B->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==13){
                    hist_matched_child_mu->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_mu_Lxy_inB->Fill(Lxy);
-                   hist_matched_child_mu_Lxyz_inB->Fill(Lxyz);
-                   hist_matched_child_mu_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
-                   hist_matched_child_mu_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
+                   hist_matched_child_mu_Lxy_B->Fill(Lxy);
+                   hist_matched_child_mu_Lxyz_B->Fill(Lxyz);
+                   hist_matched_child_mu_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
+                   hist_matched_child_mu_z0_truth_B->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==2212){
                    hist_matched_child_p->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_p_Lxy_inB->Fill(Lxy);
-                   hist_matched_child_p_Lxyz_inB->Fill(Lxyz);
-                   hist_matched_child_p_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
-                   hist_matched_child_p_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
+                   hist_matched_child_p_Lxy_B->Fill(Lxy);
+                   hist_matched_child_p_Lxyz_B->Fill(Lxyz);
+                   hist_matched_child_p_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
+                   hist_matched_child_p_z0_truth_B->Fill(jet_bH_child_z0[*it].at(b));
                  }
                  if(abs(jet_bH_child_pdg_id[*it].at(b))==11){
                    hist_matched_child_e->Fill(1e-3*child_Pt.at(b));
-                   hist_matched_child_e_Lxy_inB->Fill(Lxy);
-                   hist_matched_child_e_Lxyz_inB->Fill(Lxyz);
-                   hist_matched_child_e_d0_truth_inB->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
-                   hist_matched_child_e_z0_truth_inB->Fill(jet_bH_child_z0[*it].at(b));
+                   hist_matched_child_e_Lxy_B->Fill(Lxy);
+                   hist_matched_child_e_Lxyz_B->Fill(Lxyz);
+                   hist_matched_child_e_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(b)));
+                   hist_matched_child_e_z0_truth_B->Fill(jet_bH_child_z0[*it].at(b));
                  }
 
-                 hist_matched_origin_inB->Fill(jet_trk_orig[*it].at(a));
-                 hist_matched_d0_inB->Fill(child_IP[b]);
-                 hist_matched_Lxy_inB->Fill(child_Lxy[b]);
-                 hist_matched_Lxyz_inB->Fill(child_Lxyz[b]);
+                 hist_matched_origin_B->Fill(jet_trk_orig[*it].at(a));
+                 hist_matched_d0_B->Fill(child_IP[b]);
+                 hist_matched_Lxy_B->Fill(child_Lxy[b]);
+                 hist_matched_Lxyz_B->Fill(child_Lxyz[b]);
 
                  //CINEMATICA RISPETTO ALLA TRACCIA
                  DpT_trk=1e-3*(child_Pt.at(b)-jet_trk_pt[*it].at(a));
@@ -1157,30 +1163,30 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    D_phi_trk=child_Phi.at(b)-jet_trk_phi[*it].at(a);
                  }
                  DR_trk=sqrt(D_eta_trk*D_eta_trk+D_phi_trk*D_phi_trk);
-                 hist_matched_pT_child_pTfraction_inB->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
-                 hist_matched_DR_trk_inB->Fill(DR_trk);
+                 hist_matched_pT_child_pTfraction_B->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
+                 hist_matched_DR_trk_B->Fill(DR_trk);
                  hist_matched_DR_trk_pTfraction->Fill(DR_trk,-1.*DpT_trk/(1e-3*child_Pt.at(b)));
 
                  if(sc==1){
                    m_sc+=1;
                    /*
-                   hist_single_matched_pT_inB->Fill(1e-3*child_Pt.at(b));
-                   hist_single_matched_eta_inB->Fill(child_Eta.at(b));
-                   hist_single_matched_phi_inB->Fill(child_Phi.at(b));
-                   hist_single_matched_Deta_inB->Fill(D_eta);
-                   hist_single_matched_Dphi_inB->Fill(D_phi);
-                   hist_single_matched_Dphi_Deta_inB->Fill(D_phi,D_eta);
-                   hist_single_matched_DR_inB->Fill(DR);//RISPETTO AL JET
-                   hist_single_matched_pT_DR_inB->Fill(1e-3*child_Pt.at(b),DR);
-                   hist_single_matched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-                   hist_single_matched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(b));
-                   hist_single_matched_origin_inB->Fill(jet_trk_orig[*it].at(a));
+                   hist_single_matched_pT_B->Fill(1e-3*child_Pt.at(b));
+                   hist_single_matched_eta_B->Fill(child_Eta.at(b));
+                   hist_single_matched_phi_B->Fill(child_Phi.at(b));
+                   hist_single_matched_Deta_B->Fill(D_eta);
+                   hist_single_matched_Dphi_B->Fill(D_phi);
+                   hist_single_matched_Dphi_Deta_B->Fill(D_phi,D_eta);
+                   hist_single_matched_DR_B->Fill(DR);//RISPETTO AL JET
+                   hist_single_matched_pT_DR_B->Fill(1e-3*child_Pt.at(b),DR);
+                   hist_single_matched_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
+                   hist_single_matched_pdgId_B->Fill(jet_bH_child_pdg_id[*it].at(b));
+                   hist_single_matched_origin_B->Fill(jet_trk_orig[*it].at(a));
 
-                   hist_single_matched_pT_child_pTfraction_inB->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
-                   hist_single_matched_DR_trk_inB->Fill(DR_trk);
+                   hist_single_matched_pT_child_pTfraction_B->Fill(1e-3*child_Pt.at(b),-1.*DpT_trk/(1e-3*child_Pt.at(b)));
+                   hist_single_matched_DR_trk_B->Fill(DR_trk);
                    hist_single_matched_DR_trk_pTfraction->Fill(DR_trk,-1.*DpT_trk/(1e-3*child_Pt.at(b)));
 
-                   hist_single_matched_d0_inB->Fill(child_IP[b]);
+                   hist_single_matched_d0_B->Fill(child_IP[b]);
                    */
                  }
                  if(sc==2){
@@ -1230,16 +1236,16 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    D_phi=child_Phi.at(j)-jet_phi[*it];
                  }
                  DR=sqrt(D_eta*D_eta+D_phi*D_phi);
-                 hist_nomatched_pT_inB->Fill(1e-3*child_Pt.at(j));
-                 hist_nomatched_eta_inB->Fill(child_Eta.at(j));
-                 hist_nomatched_phi_inB->Fill(child_Phi.at(j));
-                 hist_nomatched_Deta_inB->Fill(D_eta);
-                 hist_nomatched_Dphi_inB->Fill(D_phi);
-                 hist_nomatched_Dphi_Deta_inB->Fill(D_phi,D_eta);
-                 hist_nomatched_DR_inB->Fill(DR);
-                 hist_nomatched_pT_DR_inB->Fill(1e-3*child_Pt.at(j),DR);
-                 hist_nomatched_pT_jet_DR_inB->Fill(1e-3*jet_pt[*it],DR);
-                 hist_nomatched_pdgId_inB->Fill(jet_bH_child_pdg_id[*it].at(j));
+                 hist_nomatched_pT_B->Fill(1e-3*child_Pt.at(j));
+                 hist_nomatched_eta_B->Fill(child_Eta.at(j));
+                 hist_nomatched_phi_B->Fill(child_Phi.at(j));
+                 hist_nomatched_Deta_B->Fill(D_eta);
+                 hist_nomatched_Dphi_B->Fill(D_phi);
+                 hist_nomatched_Dphi_Deta_B->Fill(D_phi,D_eta);
+                 hist_nomatched_DR_B->Fill(DR);
+                 hist_nomatched_pT_DR_B->Fill(1e-3*child_Pt.at(j),DR);
+                 hist_nomatched_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
+                 hist_nomatched_pdgId_B->Fill(jet_bH_child_pdg_id[*it].at(j));
                }
              }
   */
@@ -1248,7 +1254,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              m_match+=match;
              m_den+=den;
              hist_n_match->Fill(match);
-             hist_efficiency_inB->Fill((float) match/den);
+             hist_efficiency_B->Fill((float) match/den);
              match=0;
 
            }
@@ -1369,16 +1375,16 @@ void DAOD_selector::Terminate()
      hist_phi_4->Write();
      hist_E_4->Write();
 
-     hist_pt_inB->Write();
-     hist_eta_inB->Write();
-     hist_phi_inB->Write();
-     hist_E_inB->Write();
+     hist_pt_B->Write();
+     hist_eta_B->Write();
+     hist_phi_B->Write();
+     hist_E_B->Write();
      hist_Bjet_origin->Write();
 
-     hist_pt_inC->Write();
-     hist_eta_inC->Write();
-     hist_phi_inC->Write();
-     hist_E_inC->Write();
+     hist_pt_C->Write();
+     hist_eta_C->Write();
+     hist_phi_C->Write();
+     hist_E_C->Write();
      hist_Cjet_origin->Write();
 
      hist_pt_l->Write();
@@ -1391,7 +1397,7 @@ void DAOD_selector::Terminate()
 
    if(discriminants){
 
-//     hist_jet_IP2_inB->Write();
+//     hist_jet_IP2_B->Write();
 /*
      hist_ip2d_pb->Write();
      hist_ip2d_pc->Write();
@@ -1406,23 +1412,23 @@ void DAOD_selector::Terminate()
      hist_dl1_pu->Write();
 */
 
-     hist_ip2d_llr_exB->Write();
-     hist_ip2d_llr_exC->Write();
+     hist_ip2d_llr_B->Write();
+     hist_ip2d_llr_C->Write();
      hist_ip2d_llr_l->Write();
-     hist_ip3d_llr_exB->Write();
-     hist_ip3d_llr_exC->Write();
+     hist_ip3d_llr_B->Write();
+     hist_ip3d_llr_C->Write();
      hist_ip3d_llr_l->Write();
-     hist_rnnip_llr_exB->Write();
-     hist_rnnip_llr_exC->Write();
+     hist_rnnip_llr_B->Write();
+     hist_rnnip_llr_C->Write();
      hist_rnnip_llr_l->Write();
-     hist_sv1_llr_exB->Write();
-     hist_sv1_llr_exC->Write();
+     hist_sv1_llr_B->Write();
+     hist_sv1_llr_C->Write();
      hist_sv1_llr_l->Write();
-     hist_jf_llr_exB->Write();
-     hist_jf_llr_exC->Write();
+     hist_jf_llr_B->Write();
+     hist_jf_llr_C->Write();
      hist_jf_llr_l->Write();
-     hist_dl1_exB->Write();
-     hist_dl1_exC->Write();
+     hist_dl1_B->Write();
+     hist_dl1_C->Write();
      hist_dl1_l->Write();
 
    }
@@ -1443,272 +1449,275 @@ void DAOD_selector::Terminate()
 
     if(selection_alg){
 
-      hist_trk_pT_inB->Write();
-      hist_trk_eta_inB->Write();
-      hist_trk_phi_inB->Write();
-      hist_trk_Deta_inB->Write();
-      hist_trk_Dphi_inB->Write();
-      hist_trk_Dphi_Deta_inB->Write();
-      hist_trk_DR_inB->Write();
-      hist_trk_pT_DR_inB->Write();
-      hist_trk_pT_jet_DR_inB->Write();
-      hist_trk_pdgId_inB->Write();
-      hist_trk_origin_inB->Write();
+      hist_trk_pT_B->Write();
+      hist_trk_eta_B->Write();
+      hist_trk_phi_B->Write();
+      hist_trk_Deta_B->Write();
+      hist_trk_Dphi_B->Write();
+      hist_trk_Dphi_Deta_B->Write();
+      hist_trk_DR_B->Write();
+      hist_trk_pT_DR_B->Write();
+      hist_trk_pT_jet_DR_B->Write();
+      hist_trk_pdgId_B->Write();
+      hist_trk_origin_B->Write();
 
-      hist_trk_d0_inB->Write();
-      hist_trk_z0sinth_inB->Write();
-      hist_trk_d0sig_inB->Write();
-      hist_trk_z0sinthsig_inB->Write();
-      hist_trk_d0sig_origin_inB->Write();
-      hist_trk_z0sinthsig_origin_inB->Write();
-      hist_trk_logpTfrac_origin_inB->Write();
-      hist_trk_logDR_origin_inB->Write();
-      hist_trk_IBLhits_origin_inB->Write();
-      hist_trk_NextToIBLhits_origin_inB->Write();
-      hist_trk_sharedIBLhits_origin_inB->Write();
-      hist_trk_splitIBLhits_origin_inB->Write();
-      hist_trk_nPixhits_origin_inB->Write();
-      hist_trk_sharedPixhits_origin_inB->Write();
-      hist_trk_splitPixhits_origin_inB->Write();
-      hist_trk_nSCThits_origin_inB->Write();
-      hist_trk_sharedSCThits_origin_inB->Write();
+      hist_trk_d0_B->Write();
+      hist_trk_sigd0_B->Write();
+      hist_trk_z0_B->Write();
+      hist_trk_sigz0_B->Write();
+      hist_trk_z0sinth_B->Write();
+      hist_trk_d0sig_B->Write();
+      hist_trk_z0sinthsig_B->Write();
+      hist_trk_d0sig_origin_B->Write();
+      hist_trk_z0sinthsig_origin_B->Write();
+      hist_trk_logpTfrac_origin_B->Write();
+      hist_trk_logDR_origin_B->Write();
+      hist_trk_IBLhits_origin_B->Write();
+      hist_trk_NextToIBLhits_origin_B->Write();
+      hist_trk_sharedIBLhits_origin_B->Write();
+      hist_trk_splitIBLhits_origin_B->Write();
+      hist_trk_nPixhits_origin_B->Write();
+      hist_trk_sharedPixhits_origin_B->Write();
+      hist_trk_splitPixhits_origin_B->Write();
+      hist_trk_nSCThits_origin_B->Write();
+      hist_trk_sharedSCThits_origin_B->Write();
 
-      hist_trk_d0sig_JF_inB->Write();
-      hist_trk_z0sinthsig_JF_inB->Write();
-      hist_trk_d0sig_origin_JF_inB->Write();
-      hist_trk_z0sinthsig_origin_JF_inB->Write();
-      hist_trk_logpTfrac_origin_JF_inB->Write();
-      hist_trk_logDR_origin_JF_inB->Write();
-      hist_trk_IBLhits_origin_JF_inB->Write();
-      hist_trk_NextToIBLhits_origin_JF_inB->Write();
-      hist_trk_sharedIBLhits_origin_JF_inB->Write();
-      hist_trk_splitIBLhits_origin_JF_inB->Write();
-      hist_trk_nPixhits_origin_JF_inB->Write();
-      hist_trk_sharedPixhits_origin_JF_inB->Write();
-      hist_trk_splitPixhits_origin_JF_inB->Write();
-      hist_trk_nSCThits_origin_JF_inB->Write();
-      hist_trk_sharedSCThits_origin_JF_inB->Write();
+      hist_trk_d0sig_JF_B->Write();
+      hist_trk_z0sinthsig_JF_B->Write();
+      hist_trk_d0sig_origin_JF_B->Write();
+      hist_trk_z0sinthsig_origin_JF_B->Write();
+      hist_trk_logpTfrac_origin_JF_B->Write();
+      hist_trk_logDR_origin_JF_B->Write();
+      hist_trk_IBLhits_origin_JF_B->Write();
+      hist_trk_NextToIBLhits_origin_JF_B->Write();
+      hist_trk_sharedIBLhits_origin_JF_B->Write();
+      hist_trk_splitIBLhits_origin_JF_B->Write();
+      hist_trk_nPixhits_origin_JF_B->Write();
+      hist_trk_sharedPixhits_origin_JF_B->Write();
+      hist_trk_splitPixhits_origin_JF_B->Write();
+      hist_trk_nSCThits_origin_JF_B->Write();
+      hist_trk_sharedSCThits_origin_JF_B->Write();
 
-      hist_trk_d0sig_SV1_inB->Write();
-      hist_trk_z0sinthsig_SV1_inB->Write();
-      hist_trk_d0sig_origin_SV1_inB->Write();
-      hist_trk_z0sinthsig_origin_SV1_inB->Write();
-      hist_trk_logpTfrac_origin_SV1_inB->Write();
-      hist_trk_logDR_origin_SV1_inB->Write();
-      hist_trk_IBLhits_origin_SV1_inB->Write();
-      hist_trk_NextToIBLhits_origin_SV1_inB->Write();
-      hist_trk_sharedIBLhits_origin_SV1_inB->Write();
-      hist_trk_splitIBLhits_origin_SV1_inB->Write();
-      hist_trk_nPixhits_origin_SV1_inB->Write();
-      hist_trk_sharedPixhits_origin_SV1_inB->Write();
-      hist_trk_splitPixhits_origin_SV1_inB->Write();
-      hist_trk_nSCThits_origin_SV1_inB->Write();
-      hist_trk_sharedSCThits_origin_SV1_inB->Write();
+      hist_trk_d0sig_SV1_B->Write();
+      hist_trk_z0sinthsig_SV1_B->Write();
+      hist_trk_d0sig_origin_SV1_B->Write();
+      hist_trk_z0sinthsig_origin_SV1_B->Write();
+      hist_trk_logpTfrac_origin_SV1_B->Write();
+      hist_trk_logDR_origin_SV1_B->Write();
+      hist_trk_IBLhits_origin_SV1_B->Write();
+      hist_trk_NextToIBLhits_origin_SV1_B->Write();
+      hist_trk_sharedIBLhits_origin_SV1_B->Write();
+      hist_trk_splitIBLhits_origin_SV1_B->Write();
+      hist_trk_nPixhits_origin_SV1_B->Write();
+      hist_trk_sharedPixhits_origin_SV1_B->Write();
+      hist_trk_splitPixhits_origin_SV1_B->Write();
+      hist_trk_nSCThits_origin_SV1_B->Write();
+      hist_trk_sharedSCThits_origin_SV1_B->Write();
 
-      hist_trk_d0sig_SV0_inB->Write();
-      hist_trk_z0sinthsig_SV0_inB->Write();
-      hist_trk_d0sig_origin_SV0_inB->Write();
-      hist_trk_z0sinthsig_origin_SV0_inB->Write();
-      hist_trk_logpTfrac_origin_SV0_inB->Write();
-      hist_trk_logDR_origin_SV0_inB->Write();
-      hist_trk_IBLhits_origin_SV0_inB->Write();
-      hist_trk_NextToIBLhits_origin_SV0_inB->Write();
-      hist_trk_sharedIBLhits_origin_SV0_inB->Write();
-      hist_trk_splitIBLhits_origin_SV0_inB->Write();
-      hist_trk_nPixhits_origin_SV0_inB->Write();
-      hist_trk_sharedPixhits_origin_SV0_inB->Write();
-      hist_trk_splitPixhits_origin_SV0_inB->Write();
-      hist_trk_nSCThits_origin_SV0_inB->Write();
-      hist_trk_sharedSCThits_origin_SV0_inB->Write();
+      hist_trk_d0sig_SV0_B->Write();
+      hist_trk_z0sinthsig_SV0_B->Write();
+      hist_trk_d0sig_origin_SV0_B->Write();
+      hist_trk_z0sinthsig_origin_SV0_B->Write();
+      hist_trk_logpTfrac_origin_SV0_B->Write();
+      hist_trk_logDR_origin_SV0_B->Write();
+      hist_trk_IBLhits_origin_SV0_B->Write();
+      hist_trk_NextToIBLhits_origin_SV0_B->Write();
+      hist_trk_sharedIBLhits_origin_SV0_B->Write();
+      hist_trk_splitIBLhits_origin_SV0_B->Write();
+      hist_trk_nPixhits_origin_SV0_B->Write();
+      hist_trk_sharedPixhits_origin_SV0_B->Write();
+      hist_trk_splitPixhits_origin_SV0_B->Write();
+      hist_trk_nSCThits_origin_SV0_B->Write();
+      hist_trk_sharedSCThits_origin_SV0_B->Write();
 
-      hist_trk_d0sig_IP3D_inB->Write();
-      hist_trk_z0sinthsig_IP3D_inB->Write();
-      hist_trk_d0sig_origin_IP3D_inB->Write();
-      hist_trk_z0sinthsig_origin_IP3D_inB->Write();
-      hist_trk_logpTfrac_origin_IP3D_inB->Write();
-      hist_trk_logDR_origin_IP3D_inB->Write();
-      hist_trk_IBLhits_origin_IP3D_inB->Write();
-      hist_trk_NextToIBLhits_origin_IP3D_inB->Write();
-      hist_trk_sharedIBLhits_origin_IP3D_inB->Write();
-      hist_trk_splitIBLhits_origin_IP3D_inB->Write();
-      hist_trk_nPixhits_origin_IP3D_inB->Write();
-      hist_trk_sharedPixhits_origin_IP3D_inB->Write();
-      hist_trk_splitPixhits_origin_IP3D_inB->Write();
-      hist_trk_nSCThits_origin_IP3D_inB->Write();
-      hist_trk_sharedSCThits_origin_IP3D_inB->Write();
+      hist_trk_d0sig_IP3D_B->Write();
+      hist_trk_z0sinthsig_IP3D_B->Write();
+      hist_trk_d0sig_origin_IP3D_B->Write();
+      hist_trk_z0sinthsig_origin_IP3D_B->Write();
+      hist_trk_logpTfrac_origin_IP3D_B->Write();
+      hist_trk_logDR_origin_IP3D_B->Write();
+      hist_trk_IBLhits_origin_IP3D_B->Write();
+      hist_trk_NextToIBLhits_origin_IP3D_B->Write();
+      hist_trk_sharedIBLhits_origin_IP3D_B->Write();
+      hist_trk_splitIBLhits_origin_IP3D_B->Write();
+      hist_trk_nPixhits_origin_IP3D_B->Write();
+      hist_trk_sharedPixhits_origin_IP3D_B->Write();
+      hist_trk_splitPixhits_origin_IP3D_B->Write();
+      hist_trk_nSCThits_origin_IP3D_B->Write();
+      hist_trk_sharedSCThits_origin_IP3D_B->Write();
 
-      hist_trk_d0sig_IP2D_inB->Write();
-      hist_trk_z0sinthsig_IP2D_inB->Write();
-      hist_trk_d0sig_origin_IP2D_inB->Write();
-      hist_trk_z0sinthsig_origin_IP2D_inB->Write();
-      hist_trk_logpTfrac_origin_IP2D_inB->Write();
-      hist_trk_logDR_origin_IP2D_inB->Write();
-      hist_trk_IBLhits_origin_IP2D_inB->Write();
-      hist_trk_NextToIBLhits_origin_IP2D_inB->Write();
-      hist_trk_sharedIBLhits_origin_IP2D_inB->Write();
-      hist_trk_splitIBLhits_origin_IP2D_inB->Write();
-      hist_trk_nPixhits_origin_IP2D_inB->Write();
-      hist_trk_sharedPixhits_origin_IP2D_inB->Write();
-      hist_trk_splitPixhits_origin_IP2D_inB->Write();
-      hist_trk_nSCThits_origin_IP2D_inB->Write();
-      hist_trk_sharedSCThits_origin_IP2D_inB->Write();
+      hist_trk_d0sig_IP2D_B->Write();
+      hist_trk_z0sinthsig_IP2D_B->Write();
+      hist_trk_d0sig_origin_IP2D_B->Write();
+      hist_trk_z0sinthsig_origin_IP2D_B->Write();
+      hist_trk_logpTfrac_origin_IP2D_B->Write();
+      hist_trk_logDR_origin_IP2D_B->Write();
+      hist_trk_IBLhits_origin_IP2D_B->Write();
+      hist_trk_NextToIBLhits_origin_IP2D_B->Write();
+      hist_trk_sharedIBLhits_origin_IP2D_B->Write();
+      hist_trk_splitIBLhits_origin_IP2D_B->Write();
+      hist_trk_nPixhits_origin_IP2D_B->Write();
+      hist_trk_sharedPixhits_origin_IP2D_B->Write();
+      hist_trk_splitPixhits_origin_IP2D_B->Write();
+      hist_trk_nSCThits_origin_IP2D_B->Write();
+      hist_trk_sharedSCThits_origin_IP2D_B->Write();
 
-      hist_trk_d0_PUinB->Write();
-      hist_trk_d0_BinB->Write();
-      hist_trk_d0_CinB->Write();
-      hist_trk_d0_FRAGinB->Write();
-      hist_trk_d0_GEANTinB->Write();
+      hist_trk_d0_PUB->Write();
+      hist_trk_d0_BB->Write();
+      hist_trk_d0_CB->Write();
+      hist_trk_d0_FRAGB->Write();
+      hist_trk_d0_GEANTB->Write();
 
-      hist_child_pT_inB->Write();
-      hist_child_eta_inB->Write();
-      hist_child_phi_inB->Write();
-      hist_child_Deta_inB->Write();
-      hist_child_Dphi_inB->Write();
-      hist_child_Dphi_Deta_inB->Write();
-      hist_child_DR_inB->Write();
-      hist_child_pT_DR_inB->Write();
-      hist_child_pT_jet_DR_inB->Write();
-      hist_child_pdgID_inB->Write();
+      hist_child_pT_B->Write();
+      hist_child_eta_B->Write();
+      hist_child_phi_B->Write();
+      hist_child_Deta_B->Write();
+      hist_child_Dphi_B->Write();
+      hist_child_Dphi_Deta_B->Write();
+      hist_child_DR_B->Write();
+      hist_child_pT_DR_B->Write();
+      hist_child_pT_jet_DR_B->Write();
+      hist_child_pdgID_B->Write();
 
       hist_child_pi_notD->Write();
       hist_child_K_notD->Write();
       hist_child_pi->Write();
-      hist_child_pi_Lxy_inB->Write();
-      hist_child_pi_Lxyz_inB->Write();
-      hist_child_pi_d0_truth_inB->Write();
-      hist_child_pi_z0_truth_inB->Write();
+      hist_child_pi_Lxy_B->Write();
+      hist_child_pi_Lxyz_B->Write();
+      hist_child_pi_d0_truth_B->Write();
+      hist_child_pi_z0_truth_B->Write();
       hist_child_K->Write();
-      hist_child_K_Lxy_inB->Write();
-      hist_child_K_Lxyz_inB->Write();
-      hist_child_K_d0_truth_inB->Write();
-      hist_child_K_z0_truth_inB->Write();
+      hist_child_K_Lxy_B->Write();
+      hist_child_K_Lxyz_B->Write();
+      hist_child_K_d0_truth_B->Write();
+      hist_child_K_z0_truth_B->Write();
       hist_child_mu->Write();
-      hist_child_mu_Lxy_inB->Write();
-      hist_child_mu_Lxyz_inB->Write();
-      hist_child_mu_d0_truth_inB->Write();
-      hist_child_mu_z0_truth_inB->Write();
+      hist_child_mu_Lxy_B->Write();
+      hist_child_mu_Lxyz_B->Write();
+      hist_child_mu_d0_truth_B->Write();
+      hist_child_mu_z0_truth_B->Write();
       hist_child_p->Write();
-      hist_child_p_Lxy_inB->Write();
-      hist_child_p_Lxyz_inB->Write();
-      hist_child_p_d0_truth_inB->Write();
-      hist_child_p_z0_truth_inB->Write();
+      hist_child_p_Lxy_B->Write();
+      hist_child_p_Lxyz_B->Write();
+      hist_child_p_d0_truth_B->Write();
+      hist_child_p_z0_truth_B->Write();
       hist_child_e->Write();
-      hist_child_e_Lxy_inB->Write();
-      hist_child_e_Lxyz_inB->Write();
-      hist_child_e_d0_truth_inB->Write();
-      hist_child_e_z0_truth_inB->Write();
+      hist_child_e_Lxy_B->Write();
+      hist_child_e_Lxyz_B->Write();
+      hist_child_e_d0_truth_B->Write();
+      hist_child_e_z0_truth_B->Write();
 
-      hist_child_Lxy_inB->Write();
-      hist_child_Lxyz_inB->Write();
+      hist_child_Lxy_B->Write();
+      hist_child_Lxyz_B->Write();
 //      hist_child_decay_IP->Write();
 //      hist_child_nodecay_IP->Write();
 //      hist_child_linear_IP->Write();
       hist_child_d0_truth->Write();
       hist_child_d0->Write();
       hist_child_d0_pT->Write();
-      hist_child_z0sinth_inB->Write();
-      hist_pT_vs_R0_ratio_inB->Write();
+      hist_child_z0sinth_B->Write();
+      hist_pT_vs_R0_ratio_B->Write();
 
       if(origin_selection){
 
-        hist_matched_origin_pT_inB->Write();
-        hist_matched_origin_eta_inB->Write();
-        hist_matched_origin_phi_inB->Write();
-        hist_matched_origin_Deta_inB->Write();
-        hist_matched_origin_Dphi_inB->Write();
-        hist_matched_origin_Dphi_Deta_inB->Write();
-        hist_matched_origin_DR_inB->Write();
-        hist_matched_origin_pT_DR_inB->Write();
-        hist_matched_origin_pT_jet_DR_inB->Write();
-        hist_matched_origin_pdgId_inB->Write();
-        hist_matched_origin_origin_inB->Write();
-//        hist_matched_origin_Lxy_inB->Write();
-//        hist_matched_origin_Lxyz_inB->Write();
-        hist_matched_origin_d0_inB->Write();
+        hist_matched_origin_pT_B->Write();
+        hist_matched_origin_eta_B->Write();
+        hist_matched_origin_phi_B->Write();
+        hist_matched_origin_Deta_B->Write();
+        hist_matched_origin_Dphi_B->Write();
+        hist_matched_origin_Dphi_Deta_B->Write();
+        hist_matched_origin_DR_B->Write();
+        hist_matched_origin_pT_DR_B->Write();
+        hist_matched_origin_pT_jet_DR_B->Write();
+        hist_matched_origin_pdgId_B->Write();
+        hist_matched_origin_origin_B->Write();
+//        hist_matched_origin_Lxy_B->Write();
+//        hist_matched_origin_Lxyz_B->Write();
+        hist_matched_origin_d0_B->Write();
 
       }
 
       if(geometric_selection){
 
-        hist_efficiency_inB->Write();
+        hist_efficiency_B->Write();
         hist_n_trk->Write();
         hist_n_child->Write();
         hist_n_match->Write();
 
-        hist_matched_pT_inB->Write();
-        hist_matched_eta_inB->Write();
-        hist_matched_phi_inB->Write();
-        hist_matched_Deta_inB->Write();
-        hist_matched_Dphi_inB->Write();
-        hist_matched_Dphi_Deta_inB->Write();
-        hist_matched_DR_inB->Write();
-        hist_matched_pT_DR_inB->Write();
-        hist_matched_pT_jet_DR_inB->Write();
-        hist_matched_pdgId_inB->Write();
+        hist_matched_pT_B->Write();
+        hist_matched_eta_B->Write();
+        hist_matched_phi_B->Write();
+        hist_matched_Deta_B->Write();
+        hist_matched_Dphi_B->Write();
+        hist_matched_Dphi_Deta_B->Write();
+        hist_matched_DR_B->Write();
+        hist_matched_pT_DR_B->Write();
+        hist_matched_pT_jet_DR_B->Write();
+        hist_matched_pdgId_B->Write();
 
         hist_matched_child_pi_notD->Write();
         hist_matched_child_K_notD->Write();
         hist_matched_child_pi->Write();
-        hist_matched_child_pi_Lxy_inB->Write();
-        hist_matched_child_pi_Lxyz_inB->Write();
-        hist_matched_child_pi_d0_truth_inB->Write();
-        hist_matched_child_pi_z0_truth_inB->Write();
+        hist_matched_child_pi_Lxy_B->Write();
+        hist_matched_child_pi_Lxyz_B->Write();
+        hist_matched_child_pi_d0_truth_B->Write();
+        hist_matched_child_pi_z0_truth_B->Write();
         hist_matched_child_K->Write();
-        hist_matched_child_K_Lxy_inB->Write();
-        hist_matched_child_K_Lxyz_inB->Write();
-        hist_matched_child_K_d0_truth_inB->Write();
-        hist_matched_child_K_z0_truth_inB->Write();
+        hist_matched_child_K_Lxy_B->Write();
+        hist_matched_child_K_Lxyz_B->Write();
+        hist_matched_child_K_d0_truth_B->Write();
+        hist_matched_child_K_z0_truth_B->Write();
         hist_matched_child_mu->Write();
-        hist_matched_child_mu_Lxy_inB->Write();
-        hist_matched_child_mu_Lxyz_inB->Write();
-        hist_matched_child_mu_d0_truth_inB->Write();
-        hist_matched_child_mu_z0_truth_inB->Write();
+        hist_matched_child_mu_Lxy_B->Write();
+        hist_matched_child_mu_Lxyz_B->Write();
+        hist_matched_child_mu_d0_truth_B->Write();
+        hist_matched_child_mu_z0_truth_B->Write();
         hist_matched_child_p->Write();
-        hist_matched_child_p_Lxy_inB->Write();
-        hist_matched_child_p_Lxyz_inB->Write();
-        hist_matched_child_p_d0_truth_inB->Write();
-        hist_matched_child_p_z0_truth_inB->Write();
+        hist_matched_child_p_Lxy_B->Write();
+        hist_matched_child_p_Lxyz_B->Write();
+        hist_matched_child_p_d0_truth_B->Write();
+        hist_matched_child_p_z0_truth_B->Write();
         hist_matched_child_e->Write();
-        hist_matched_child_e_Lxy_inB->Write();
-        hist_matched_child_e_Lxyz_inB->Write();
-        hist_matched_child_e_d0_truth_inB->Write();
-        hist_matched_child_e_z0_truth_inB->Write();
+        hist_matched_child_e_Lxy_B->Write();
+        hist_matched_child_e_Lxyz_B->Write();
+        hist_matched_child_e_d0_truth_B->Write();
+        hist_matched_child_e_z0_truth_B->Write();
 
-        hist_matched_origin_inB->Write();
-        hist_matched_pT_child_pTfraction_inB->Write();
-        hist_matched_DR_trk_inB->Write();
+        hist_matched_origin_B->Write();
+        hist_matched_pT_child_pTfraction_B->Write();
+        hist_matched_DR_trk_B->Write();
         hist_matched_DR_trk_pTfraction->Write();
-        hist_matched_Lxy_inB->Write();
-        hist_matched_Lxyz_inB->Write();
-        hist_matched_d0_inB->Write();
+        hist_matched_Lxy_B->Write();
+        hist_matched_Lxyz_B->Write();
+        hist_matched_d0_B->Write();
   /*
-        hist_nomatched_pT_inB->Write();
-        hist_nomatched_eta_inB->Write();
-        hist_nomatched_phi_inB->Write();
-        hist_nomatched_Deta_inB->Write();
-        hist_nomatched_Dphi_inB->Write();
-        hist_nomatched_Dphi_Deta_inB->Write();
-        hist_nomatched_DR_inB->Write();
-        hist_nomatched_pT_DR_inB->Write();
-        hist_nomatched_pT_jet_DR_inB->Write();
-        hist_nomatched_pdgId_inB->Write();
+        hist_nomatched_pT_B->Write();
+        hist_nomatched_eta_B->Write();
+        hist_nomatched_phi_B->Write();
+        hist_nomatched_Deta_B->Write();
+        hist_nomatched_Dphi_B->Write();
+        hist_nomatched_Dphi_Deta_B->Write();
+        hist_nomatched_DR_B->Write();
+        hist_nomatched_pT_DR_B->Write();
+        hist_nomatched_pT_jet_DR_B->Write();
+        hist_nomatched_pdgId_B->Write();
   */
   /*
-        hist_single_matched_pT_inB->Write();
-        hist_single_matched_eta_inB->Write();
-        hist_single_matched_phi_inB->Write();
-        hist_single_matched_Deta_inB->Write();
-        hist_single_matched_Dphi_inB->Write();
-        hist_single_matched_Dphi_Deta_inB->Write();
-        hist_single_matched_DR_inB->Write();
-        hist_single_matched_pT_DR_inB->Write();
-        hist_single_matched_pT_jet_DR_inB->Write();
-        hist_single_matched_pdgId_inB->Write();
-        hist_single_matched_origin_inB->Write();
-        hist_single_matched_pT_child_pTfraction_inB->Write();
-        hist_single_matched_DR_trk_inB->Write();
+        hist_single_matched_pT_B->Write();
+        hist_single_matched_eta_B->Write();
+        hist_single_matched_phi_B->Write();
+        hist_single_matched_Deta_B->Write();
+        hist_single_matched_Dphi_B->Write();
+        hist_single_matched_Dphi_Deta_B->Write();
+        hist_single_matched_DR_B->Write();
+        hist_single_matched_pT_DR_B->Write();
+        hist_single_matched_pT_jet_DR_B->Write();
+        hist_single_matched_pdgId_B->Write();
+        hist_single_matched_origin_B->Write();
+        hist_single_matched_pT_child_pTfraction_B->Write();
+        hist_single_matched_DR_trk_B->Write();
         hist_single_matched_DR_trk_pTfraction->Write();
-        hist_single_matched_d0_inB->Write();
+        hist_single_matched_d0_B->Write();
   */
       }
     }
@@ -1963,16 +1972,16 @@ void DAOD_selector::bookHistosForSelections()
      hist_phi_4 = new TH1F("phi_4", "n1==4", 100,  -4.,4.);
      hist_E_4 = new TH1F("E_4", "n1==4", 100, 0., 10e5);
 
-     hist_pt_inB = new TH1F("pT_inB", "inB", 100, 0., 1000.);
-     hist_eta_inB = new TH1F("eta_inB", "inB", 100, -5., 5.);
-     hist_phi_inB = new TH1F("phi_inB", "inB", 100, -4.,4.);
-     hist_E_inB = new TH1F("E_inB", "inB", 100, 0., 10e5);
+     hist_pt_B = new TH1F("pT_B", "B", 100, 0., 1000.);
+     hist_eta_B = new TH1F("eta_B", "B", 100, -5., 5.);
+     hist_phi_B = new TH1F("phi_B", "B", 100, -4.,4.);
+     hist_E_B = new TH1F("E_B", "B", 100, 0., 10e5);
      hist_Bjet_origin = new TH1F("Bjet_origin","Bjet_origin",5,-1,4);
 
-     hist_pt_inC = new TH1F("pT_inC", "inC", 100, 0., 1000.);
-     hist_eta_inC = new TH1F("eta_inC", "inC", 100, -5., 5.);
-     hist_phi_inC = new TH1F("phi_inC", "inC", 100, -4.,4.);
-     hist_E_inC = new TH1F("E_inC", "inC", 100, 0., 10e5);
+     hist_pt_C = new TH1F("pT_C", "C", 100, 0., 1000.);
+     hist_eta_C = new TH1F("eta_C", "C", 100, -5., 5.);
+     hist_phi_C = new TH1F("phi_C", "C", 100, -4.,4.);
+     hist_E_C = new TH1F("E_C", "C", 100, 0., 10e5);
      hist_Cjet_origin = new TH1F("Cjet_origin","Cjet_origin",5,-1,4);
 
      hist_pt_l = new TH1F("pT_l", "l", 100, 0., 1000.);
@@ -1989,28 +1998,28 @@ void DAOD_selector::bookHistosForDiscriminants()
    if(discriminants){
 
      hist_ip2d_llr_l = new TH1F("ip2d_llr_l","ip2d_llr_l",280., -20., 50.);
-     hist_ip2d_llr_exB = new TH1F("ip2d_llr_exB", "ip2d_llr_exB", 280., -20., 50.);
-     hist_ip2d_llr_exC = new TH1F("ip2d_llr_exC", "ip2d_llr_exC", 280., -20., 50.);
+     hist_ip2d_llr_B = new TH1F("ip2d_llr_B", "ip2d_llr_B", 280., -20., 50.);
+     hist_ip2d_llr_C = new TH1F("ip2d_llr_C", "ip2d_llr_C", 280., -20., 50.);
 
      hist_ip3d_llr_l = new TH1F("ip3d_llr_l","ip3d_llr_l",280., -20., 50.);
-     hist_ip3d_llr_exB = new TH1F("ip3d_llr_exB", "ip3d_llr_exB", 280., -20., 50.);
-     hist_ip3d_llr_exC = new TH1F("ip3d_llr_exC", "ip3d_llr_exC", 280., -20., 50.);
+     hist_ip3d_llr_B = new TH1F("ip3d_llr_B", "ip3d_llr_B", 280., -20., 50.);
+     hist_ip3d_llr_C = new TH1F("ip3d_llr_C", "ip3d_llr_C", 280., -20., 50.);
 
      hist_rnnip_llr_l = new TH1F("rnnip_llr_l","rnnip_llr_l",280., -20., 50.);
-     hist_rnnip_llr_exB = new TH1F("rnnip_llr_exB", "rnnip_llr_exB", 280., -20., 50.);
-     hist_rnnip_llr_exC = new TH1F("rnnip_llr_exC", "rnnip_llr_exC", 280., -20., 50.);
+     hist_rnnip_llr_B = new TH1F("rnnip_llr_B", "rnnip_llr_B", 280., -20., 50.);
+     hist_rnnip_llr_C = new TH1F("rnnip_llr_C", "rnnip_llr_C", 280., -20., 50.);
 
      hist_sv1_llr_l = new TH1F("sv1_llr_l","sv1_llr_l",280., -20., 50.);
-     hist_sv1_llr_exB = new TH1F("sv1_llr_exB", "sv1_llr_exB", 280., -20., 50.);
-     hist_sv1_llr_exC = new TH1F("sv1_llr_exC", "sv1_llr_exC", 280., -20., 50.);
+     hist_sv1_llr_B = new TH1F("sv1_llr_B", "sv1_llr_B", 280., -20., 50.);
+     hist_sv1_llr_C = new TH1F("sv1_llr_C", "sv1_llr_C", 280., -20., 50.);
 
      hist_jf_llr_l = new TH1F("jf_llr_l","jf_llr_l",280., -20., 50.);
-     hist_jf_llr_exB = new TH1F("jf_llr_exB", "jf_llr_exB", 280., -20., 50.);
-     hist_jf_llr_exC = new TH1F("jf_llr_exC", "jf_llr_exC", 280., -20., 50.);
+     hist_jf_llr_B = new TH1F("jf_llr_B", "jf_llr_B", 280., -20., 50.);
+     hist_jf_llr_C = new TH1F("jf_llr_C", "jf_llr_C", 280., -20., 50.);
 
      hist_dl1_l = new TH1F("DL1_light","DL1_light",260,-8.,18.);
-     hist_dl1_exC = new TH1F("DL1_exC","DL1_exC",260,-8.,18.);
-     hist_dl1_exB = new TH1F("DL1_exB","DL1_exB",260,-8.,18.);
+     hist_dl1_C = new TH1F("DL1_C","DL1_C",260,-8.,18.);
+     hist_dl1_B = new TH1F("DL1_B","DL1_B",260,-8.,18.);
 
    }
 
@@ -2036,272 +2045,275 @@ void DAOD_selector::bookHistosForSelectionAlgos()
 
    if(selection_alg){
 
-     hist_efficiency_inB = new TH1F("efficiency","efficiency",120,-0.1,1.1);
+     hist_efficiency_B = new TH1F("efficiency","efficiency",120,-0.1,1.1);
      hist_n_trk = new TH1D("n_trk","n_trk",100,0.,100);
      hist_n_child = new TH1D("n_child","n_child",100,0.,100);
      hist_n_match = new TH1D("n_match","n_match",100,0.,100);
 
-     hist_trk_pT_inB = new TH1F("trk_pT_inB", "trk_pT_inB", 300, 0., 150.);
-     hist_trk_eta_inB = new TH1F("trk_eta_inB","trk_eta_inB",260,-2.6,2.6);
-     hist_trk_phi_inB = new TH1F("trk_phi_inB","trk_phi_inB",200,-4.,4.);
-     hist_trk_Deta_inB = new TH1F("trk_Deta_inB","trk_Deta_inB",200,-1.,1.);
-     hist_trk_Dphi_inB = new TH1F("trk_Dphi_inB","trk_Dphi_inB",200,-1.,1.);
-     hist_trk_Dphi_Deta_inB = new TH2F("trk_Dphi_Deta","trk_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
-     hist_trk_DR_inB = new TH1F("trk_DR_inB","trk_DR_inB",200,0.,2.);
-     hist_trk_pT_DR_inB = new TH2F("trk_pT_DR_inB","trk_pT_DR_inB",300,0.,150.,200,0.,2.);
-     hist_trk_pT_jet_DR_inB = new TH2F("trk_pT_jet_DR_inB","trk_pT_jet_DR_inB",1000,0.,500.,200,0.,2.);
-     hist_trk_pdgId_inB = new TH1F("trk_pdgID_inB","trk_pdgID_inB",200000,-100000,100000);
-     hist_trk_origin_inB = new TH1F("trk_origin_inB","trk_origin_inB",5,-1,4);
+     hist_trk_pT_B = new TH1F("trk_pT_B", "trk_pT_B", 300, 0., 150.);
+     hist_trk_eta_B = new TH1F("trk_eta_B","trk_eta_B",260,-2.6,2.6);
+     hist_trk_phi_B = new TH1F("trk_phi_B","trk_phi_B",200,-4.,4.);
+     hist_trk_Deta_B = new TH1F("trk_Deta_B","trk_Deta_B",200,-1.,1.);
+     hist_trk_Dphi_B = new TH1F("trk_Dphi_B","trk_Dphi_B",200,-1.,1.);
+     hist_trk_Dphi_Deta_B = new TH2F("trk_Dphi_Deta","trk_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
+     hist_trk_DR_B = new TH1F("trk_DR_B","trk_DR_B",200,0.,2.);
+     hist_trk_pT_DR_B = new TH2F("trk_pT_DR_B","trk_pT_DR_B",300,0.,150.,200,0.,2.);
+     hist_trk_pT_jet_DR_B = new TH2F("trk_pT_jet_DR_B","trk_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
+     hist_trk_pdgId_B = new TH1F("trk_pdgID_B","trk_pdgID_B",200000,-100000,100000);
+     hist_trk_origin_B = new TH1F("trk_origin_B","trk_origin_B",5,-1,4);
 
-     hist_trk_d0_inB = new TH1F("trk_d0_inB","trk_d0_inB",300,-15.,15.);
-     hist_trk_z0sinth_inB = new TH1F("trk_z0sinth_inB","trk_z0sinth_inB",300,-15.,15.);
-     hist_trk_d0sig_inB = new TH1F("trk_d0sig_inB","trk_d0sig_inB",300,-15.,15.);
-     hist_trk_z0sinthsig_inB = new TH1F("trk_z0sinthsig_inB","trk_z0sinthsig_inB",300,-15.,15.);
-     hist_trk_d0sig_origin_inB = new TH2F("trk_d0sig_origin_inB","trk_d0sig_origin_inB",300,-15.,15.,5,-1,4);
-     hist_trk_z0sinthsig_origin_inB = new TH2F("trk_z0sinthsig_origin_inB","trk_z0sinthsig_origin_inB",300,-15.,15.,5,-1,4);
-     hist_trk_logpTfrac_origin_inB = new TH2F("trk_logpTfrac_origin_inB","trk_logpTfrac_origin_inB",300,-10.,2,5,-1,4);
-     hist_trk_logDR_origin_inB = new TH2F("trk_logDR_origin_inB","trk_logDR_origin_inB",200,-10.,2.,5,-1,4);
-     hist_trk_IBLhits_origin_inB = new TH2F("trk_IBLhits_origin_inB","trk_IBLhits_origin_inB",12,0.,12.,5,-1,4);
-     hist_trk_NextToIBLhits_origin_inB = new TH2F("trk_NextToIBLhits_origin_inB","trk_NextToIBLhits_origin_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedIBLhits_origin_inB = new TH2F("trk_sharedIBLhits_origin_inB","trk_sharedIBLhits_origin_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitIBLhits_origin_inB = new TH2F("trk_splitIBLhits_origin_inB","trk_splitIBLhits_origin_inB",12,0.,12.,5,-1,4);
-     hist_trk_nPixhits_origin_inB = new TH2F("trk_nPixhits_origin_inB","trk_nPixhits_origin_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedPixhits_origin_inB = new TH2F("trk_sharedPixhits_origin_inB","trk_sharedPixhits_origin_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitPixhits_origin_inB = new TH2F("trk_splitPixhits_origin_inB","trk_splitPixhits_origin_inB",12,0.,12.,5,-1,4);
-     hist_trk_nSCThits_origin_inB = new TH2F("trk_nSCThits_origin_inB","trk_nSCThits_origin_inB",24,0.,24.,5,-1,4);
-     hist_trk_sharedSCThits_origin_inB = new TH2F("trk_sharedSCThits_origin_inB","trk_sharedSCThits_origin_inB",24,0.,24.,5,-1,4);
+     hist_trk_d0_B = new TH1F("trk_d0_B","trk_d0_B",300,-15.,15.);
+     hist_trk_sigd0_B = new TH1F("trk_sigd0_B","trk_sigd0_B",100,0.,10.);
+     hist_trk_z0_B = new TH1F("trk_z0_B","trk_z0_B",300,-15.,15.);
+     hist_trk_sigz0_B = new TH1F("trk_sigz0_B","trk_sigz0_B",100,0.,10.);
+     hist_trk_z0sinth_B = new TH1F("trk_z0sinth_B","trk_z0sinth_B",300,-15.,15.);
+     hist_trk_d0sig_B = new TH1F("trk_d0sig_B","trk_d0sig_B",300,-15.,15.);
+     hist_trk_z0sinthsig_B = new TH1F("trk_z0sinthsig_B","trk_z0sinthsig_B",300,-15.,15.);
+     hist_trk_d0sig_origin_B = new TH2F("trk_d0sig_origin_B","trk_d0sig_origin_B",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_B = new TH2F("trk_z0sinthsig_origin_B","trk_z0sinthsig_origin_B",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_B = new TH2F("trk_logpTfrac_origin_B","trk_logpTfrac_origin_B",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_B = new TH2F("trk_logDR_origin_B","trk_logDR_origin_B",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_B = new TH2F("trk_IBLhits_origin_B","trk_IBLhits_origin_B",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_B = new TH2F("trk_NextToIBLhits_origin_B","trk_NextToIBLhits_origin_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_B = new TH2F("trk_sharedIBLhits_origin_B","trk_sharedIBLhits_origin_B",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_B = new TH2F("trk_splitIBLhits_origin_B","trk_splitIBLhits_origin_B",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_B = new TH2F("trk_nPixhits_origin_B","trk_nPixhits_origin_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_B = new TH2F("trk_sharedPixhits_origin_B","trk_sharedPixhits_origin_B",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_B = new TH2F("trk_splitPixhits_origin_B","trk_splitPixhits_origin_B",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_B = new TH2F("trk_nSCThits_origin_B","trk_nSCThits_origin_B",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_B = new TH2F("trk_sharedSCThits_origin_B","trk_sharedSCThits_origin_B",24,0.,24.,5,-1,4);
 
-     hist_trk_d0sig_JF_inB = new TH1F("trk_d0sig_JF_inB","trk_d0sig_JF_inB",300,-15.,15.);
-     hist_trk_z0sinthsig_JF_inB = new TH1F("trk_z0sinthsig_JF_inB","trk_z0sinthsig_JF_inB",300,-15.,15.);
-     hist_trk_d0sig_origin_JF_inB = new TH2F("trk_d0sig_origin_JF_inB","trk_d0sig_origin_JF_inB",300,-15.,15.,5,-1,4);
-     hist_trk_z0sinthsig_origin_JF_inB = new TH2F("trk_z0sinthsig_origin_JF_inB","trk_z0sinthsig_origin_JF_inB",300,-15.,15.,5,-1,4);
-     hist_trk_logpTfrac_origin_JF_inB = new TH2F("trk_logpTfrac_origin_JF_inB","trk_logpTfrac_origin_JF_inB",300,-10.,2,5,-1,4);
-     hist_trk_logDR_origin_JF_inB = new TH2F("trk_logDR_origin_JF_inB","trk_logDR_origin_JF_inB",200,-10.,2.,5,-1,4);
-     hist_trk_IBLhits_origin_JF_inB = new TH2F("trk_IBLhits_origin_JF_inB","trk_IBLhits_origin_JF_inB",12,0.,12.,5,-1,4);
-     hist_trk_NextToIBLhits_origin_JF_inB = new TH2F("trk_NextToIBLhits_origin_JF_inB","trk_NextToIBLhits_origin_JF_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedIBLhits_origin_JF_inB = new TH2F("trk_sharedIBLhits_origin_JF_inB","trk_sharedIBLhits_origin_JF_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitIBLhits_origin_JF_inB = new TH2F("trk_splitIBLhits_origin_JF_inB","trk_splitIBLhits_origin_JF_inB",12,0.,12.,5,-1,4);
-     hist_trk_nPixhits_origin_JF_inB = new TH2F("trk_nPixhits_origin_JF_inB","trk_nPixhits_origin_JF_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedPixhits_origin_JF_inB = new TH2F("trk_sharedPixhits_origin_JF_inB","trk_sharedPixhits_origin_JF_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitPixhits_origin_JF_inB = new TH2F("trk_splitPixhits_origin_JF_inB","trk_splitPixhits_origin_JF_inB",12,0.,12.,5,-1,4);
-     hist_trk_nSCThits_origin_JF_inB = new TH2F("trk_nSCThits_origin_JF_inB","trk_nSCThits_origin_JF_inB",24,0.,24.,5,-1,4);
-     hist_trk_sharedSCThits_origin_JF_inB = new TH2F("trk_sharedSCThits_origin_JF_inB","trk_sharedSCThits_origin_JF_inB",24,0.,24.,5,-1,4);
+     hist_trk_d0sig_JF_B = new TH1F("trk_d0sig_JF_B","trk_d0sig_JF_B",300,-15.,15.);
+     hist_trk_z0sinthsig_JF_B = new TH1F("trk_z0sinthsig_JF_B","trk_z0sinthsig_JF_B",300,-15.,15.);
+     hist_trk_d0sig_origin_JF_B = new TH2F("trk_d0sig_origin_JF_B","trk_d0sig_origin_JF_B",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_JF_B = new TH2F("trk_z0sinthsig_origin_JF_B","trk_z0sinthsig_origin_JF_B",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_JF_B = new TH2F("trk_logpTfrac_origin_JF_B","trk_logpTfrac_origin_JF_B",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_JF_B = new TH2F("trk_logDR_origin_JF_B","trk_logDR_origin_JF_B",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_JF_B = new TH2F("trk_IBLhits_origin_JF_B","trk_IBLhits_origin_JF_B",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_JF_B = new TH2F("trk_NextToIBLhits_origin_JF_B","trk_NextToIBLhits_origin_JF_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_JF_B = new TH2F("trk_sharedIBLhits_origin_JF_B","trk_sharedIBLhits_origin_JF_B",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_JF_B = new TH2F("trk_splitIBLhits_origin_JF_B","trk_splitIBLhits_origin_JF_B",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_JF_B = new TH2F("trk_nPixhits_origin_JF_B","trk_nPixhits_origin_JF_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_JF_B = new TH2F("trk_sharedPixhits_origin_JF_B","trk_sharedPixhits_origin_JF_B",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_JF_B = new TH2F("trk_splitPixhits_origin_JF_B","trk_splitPixhits_origin_JF_B",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_JF_B = new TH2F("trk_nSCThits_origin_JF_B","trk_nSCThits_origin_JF_B",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_JF_B = new TH2F("trk_sharedSCThits_origin_JF_B","trk_sharedSCThits_origin_JF_B",24,0.,24.,5,-1,4);
 
-     hist_trk_d0sig_SV1_inB = new TH1F("trk_d0sig_SV1_inB","trk_d0sig_SV1_inB",300,-15.,15.);
-     hist_trk_z0sinthsig_SV1_inB = new TH1F("trk_z0sinthsig_SV1_inB","trk_z0sinthsig_SV1_inB",300,-15.,15.);
-     hist_trk_d0sig_origin_SV1_inB = new TH2F("trk_d0sig_origin_SV1_inB","trk_d0sig_origin_SV1_inB",300,-15.,15.,5,-1,4);
-     hist_trk_z0sinthsig_origin_SV1_inB = new TH2F("trk_z0sinthsig_origin_SV1_inB","trk_z0sinthsig_origin_SV1_inB",300,-15.,15.,5,-1,4);
-     hist_trk_logpTfrac_origin_SV1_inB = new TH2F("trk_logpTfrac_origin_SV1_inB","trk_logpTfrac_origin_SV1_inB",300,-10.,2,5,-1,4);
-     hist_trk_logDR_origin_SV1_inB = new TH2F("trk_logDR_origin_SV1_inB","trk_logDR_origin_SV1_inB",200,-10.,2.,5,-1,4);
-     hist_trk_IBLhits_origin_SV1_inB = new TH2F("trk_IBLhits_origin_SV1_inB","trk_IBLhits_origin_SV1_inB",12,0.,12.,5,-1,4);
-     hist_trk_NextToIBLhits_origin_SV1_inB = new TH2F("trk_NextToIBLhits_origin_SV1_inB","trk_NextToIBLhits_origin_SV1_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedIBLhits_origin_SV1_inB = new TH2F("trk_sharedIBLhits_origin_SV1_inB","trk_sharedIBLhits_origin_SV1_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitIBLhits_origin_SV1_inB = new TH2F("trk_splitIBLhits_origin_SV1_inB","trk_splitIBLhits_origin_SV1_inB",12,0.,12.,5,-1,4);
-     hist_trk_nPixhits_origin_SV1_inB = new TH2F("trk_nPixhits_origin_SV1_inB","trk_nPixhits_origin_SV1_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedPixhits_origin_SV1_inB = new TH2F("trk_sharedPixhits_origin_SV1_inB","trk_sharedPixhits_origin_SV1_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitPixhits_origin_SV1_inB = new TH2F("trk_splitPixhits_origin_SV1_inB","trk_splitPixhits_origin_SV1_inB",12,0.,12.,5,-1,4);
-     hist_trk_nSCThits_origin_SV1_inB = new TH2F("trk_nSCThits_origin_SV1_inB","trk_nSCThits_origin_SV1_inB",24,0.,24.,5,-1,4);
-     hist_trk_sharedSCThits_origin_SV1_inB = new TH2F("trk_sharedSCThits_origin_SV1_inB","trk_sharedSCThits_origin_SV1_inB",24,0.,24.,5,-1,4);
+     hist_trk_d0sig_SV1_B = new TH1F("trk_d0sig_SV1_B","trk_d0sig_SV1_B",300,-15.,15.);
+     hist_trk_z0sinthsig_SV1_B = new TH1F("trk_z0sinthsig_SV1_B","trk_z0sinthsig_SV1_B",300,-15.,15.);
+     hist_trk_d0sig_origin_SV1_B = new TH2F("trk_d0sig_origin_SV1_B","trk_d0sig_origin_SV1_B",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_SV1_B = new TH2F("trk_z0sinthsig_origin_SV1_B","trk_z0sinthsig_origin_SV1_B",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_SV1_B = new TH2F("trk_logpTfrac_origin_SV1_B","trk_logpTfrac_origin_SV1_B",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_SV1_B = new TH2F("trk_logDR_origin_SV1_B","trk_logDR_origin_SV1_B",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_SV1_B = new TH2F("trk_IBLhits_origin_SV1_B","trk_IBLhits_origin_SV1_B",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_SV1_B = new TH2F("trk_NextToIBLhits_origin_SV1_B","trk_NextToIBLhits_origin_SV1_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_SV1_B = new TH2F("trk_sharedIBLhits_origin_SV1_B","trk_sharedIBLhits_origin_SV1_B",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_SV1_B = new TH2F("trk_splitIBLhits_origin_SV1_B","trk_splitIBLhits_origin_SV1_B",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_SV1_B = new TH2F("trk_nPixhits_origin_SV1_B","trk_nPixhits_origin_SV1_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_SV1_B = new TH2F("trk_sharedPixhits_origin_SV1_B","trk_sharedPixhits_origin_SV1_B",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_SV1_B = new TH2F("trk_splitPixhits_origin_SV1_B","trk_splitPixhits_origin_SV1_B",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_SV1_B = new TH2F("trk_nSCThits_origin_SV1_B","trk_nSCThits_origin_SV1_B",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_SV1_B = new TH2F("trk_sharedSCThits_origin_SV1_B","trk_sharedSCThits_origin_SV1_B",24,0.,24.,5,-1,4);
 
-     hist_trk_d0sig_SV0_inB = new TH1F("trk_d0sig_SV0_inB","trk_d0sig_SV0_inB",300,-15.,15.);
-     hist_trk_z0sinthsig_SV0_inB = new TH1F("trk_z0sinthsig_SV0_inB","trk_z0sinthsig_SV0_inB",300,-15.,15.);
-     hist_trk_d0sig_origin_SV0_inB = new TH2F("trk_d0sig_origin_SV0_inB","trk_d0sig_origin_SV0_inB",300,-15.,15.,5,-1,4);
-     hist_trk_z0sinthsig_origin_SV0_inB = new TH2F("trk_z0sinthsig_origin_SV0_inB","trk_z0sinthsig_origin_SV0_inB",300,-15.,15.,5,-1,4);
-     hist_trk_logpTfrac_origin_SV0_inB = new TH2F("trk_logpTfrac_origin_SV0_inB","trk_logpTfrac_origin_SV0_inB",300,-10.,2,5,-1,4);
-     hist_trk_logDR_origin_SV0_inB = new TH2F("trk_logDR_origin_SV0_inB","trk_logDR_origin_SV0_inB",200,-10.,2.,5,-1,4);
-     hist_trk_IBLhits_origin_SV0_inB = new TH2F("trk_IBLhits_origin_SV0_inB","trk_IBLhits_origin_SV0_inB",12,0.,12.,5,-1,4);
-     hist_trk_NextToIBLhits_origin_SV0_inB = new TH2F("trk_NextToIBLhits_origin_SV0_inB","trk_NextToIBLhits_origin_SV0_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedIBLhits_origin_SV0_inB = new TH2F("trk_sharedIBLhits_origin_SV0_inB","trk_sharedIBLhits_origin_SV0_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitIBLhits_origin_SV0_inB = new TH2F("trk_splitIBLhits_origin_SV0_inB","trk_splitIBLhits_origin_SV0_inB",12,0.,12.,5,-1,4);
-     hist_trk_nPixhits_origin_SV0_inB = new TH2F("trk_nPixhits_origin_SV0_inB","trk_nPixhits_origin_SV0_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedPixhits_origin_SV0_inB = new TH2F("trk_sharedPixhits_origin_SV0_inB","trk_sharedPixhits_origin_SV0_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitPixhits_origin_SV0_inB = new TH2F("trk_splitPixhits_origin_SV0_inB","trk_splitPixhits_origin_SV0_inB",12,0.,12.,5,-1,4);
-     hist_trk_nSCThits_origin_SV0_inB = new TH2F("trk_nSCThits_origin_SV0_inB","trk_nSCThits_origin_SV0_inB",24,0.,24.,5,-1,4);
-     hist_trk_sharedSCThits_origin_SV0_inB = new TH2F("trk_sharedSCThits_origin_SV0_inB","trk_sharedSCThits_origin_SV0_inB",24,0.,24.,5,-1,4);
+     hist_trk_d0sig_SV0_B = new TH1F("trk_d0sig_SV0_B","trk_d0sig_SV0_B",300,-15.,15.);
+     hist_trk_z0sinthsig_SV0_B = new TH1F("trk_z0sinthsig_SV0_B","trk_z0sinthsig_SV0_B",300,-15.,15.);
+     hist_trk_d0sig_origin_SV0_B = new TH2F("trk_d0sig_origin_SV0_B","trk_d0sig_origin_SV0_B",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_SV0_B = new TH2F("trk_z0sinthsig_origin_SV0_B","trk_z0sinthsig_origin_SV0_B",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_SV0_B = new TH2F("trk_logpTfrac_origin_SV0_B","trk_logpTfrac_origin_SV0_B",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_SV0_B = new TH2F("trk_logDR_origin_SV0_B","trk_logDR_origin_SV0_B",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_SV0_B = new TH2F("trk_IBLhits_origin_SV0_B","trk_IBLhits_origin_SV0_B",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_SV0_B = new TH2F("trk_NextToIBLhits_origin_SV0_B","trk_NextToIBLhits_origin_SV0_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_SV0_B = new TH2F("trk_sharedIBLhits_origin_SV0_B","trk_sharedIBLhits_origin_SV0_B",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_SV0_B = new TH2F("trk_splitIBLhits_origin_SV0_B","trk_splitIBLhits_origin_SV0_B",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_SV0_B = new TH2F("trk_nPixhits_origin_SV0_B","trk_nPixhits_origin_SV0_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_SV0_B = new TH2F("trk_sharedPixhits_origin_SV0_B","trk_sharedPixhits_origin_SV0_B",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_SV0_B = new TH2F("trk_splitPixhits_origin_SV0_B","trk_splitPixhits_origin_SV0_B",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_SV0_B = new TH2F("trk_nSCThits_origin_SV0_B","trk_nSCThits_origin_SV0_B",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_SV0_B = new TH2F("trk_sharedSCThits_origin_SV0_B","trk_sharedSCThits_origin_SV0_B",24,0.,24.,5,-1,4);
 
-     hist_trk_d0sig_IP3D_inB = new TH1F("trk_d0sig_IP3D_inB","trk_d0sig_IP3D_inB",300,-15.,15.);
-     hist_trk_z0sinthsig_IP3D_inB = new TH1F("trk_z0sinthsig_IP3D_inB","trk_z0sinthsig_IP3D_inB",300,-15.,15.);
-     hist_trk_d0sig_origin_IP3D_inB = new TH2F("trk_d0sig_origin_IP3D_inB","trk_d0sig_origin_IP3D_inB",300,-15.,15.,5,-1,4);
-     hist_trk_z0sinthsig_origin_IP3D_inB = new TH2F("trk_z0sinthsig_origin_IP3D_inB","trk_z0sinthsig_origin_IP3D_inB",300,-15.,15.,5,-1,4);
-     hist_trk_logpTfrac_origin_IP3D_inB = new TH2F("trk_logpTfrac_origin_IP3D_inB","trk_logpTfrac_origin_IP3D_inB",300,-10.,2,5,-1,4);
-     hist_trk_logDR_origin_IP3D_inB = new TH2F("trk_logDR_origin_IP3D_inB","trk_logDR_origin_IP3D_inB",200,-10.,2.,5,-1,4);
-     hist_trk_IBLhits_origin_IP3D_inB = new TH2F("trk_IBLhits_origin_IP3D_inB","trk_IBLhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
-     hist_trk_NextToIBLhits_origin_IP3D_inB = new TH2F("trk_NextToIBLhits_origin_IP3D_inB","trk_NextToIBLhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedIBLhits_origin_IP3D_inB = new TH2F("trk_sharedIBLhits_origin_IP3D_inB","trk_sharedIBLhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitIBLhits_origin_IP3D_inB = new TH2F("trk_splitIBLhits_origin_IP3D_inB","trk_splitIBLhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
-     hist_trk_nPixhits_origin_IP3D_inB = new TH2F("trk_nPixhits_origin_IP3D_inB","trk_nPixhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedPixhits_origin_IP3D_inB = new TH2F("trk_sharedPixhits_origin_IP3D_inB","trk_sharedPixhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitPixhits_origin_IP3D_inB = new TH2F("trk_splitPixhits_origin_IP3D_inB","trk_splitPixhits_origin_IP3D_inB",12,0.,12.,5,-1,4);
-     hist_trk_nSCThits_origin_IP3D_inB = new TH2F("trk_nSCThits_origin_IP3D_inB","trk_nSCThits_origin_IP3D_inB",24,0.,24.,5,-1,4);
-     hist_trk_sharedSCThits_origin_IP3D_inB = new TH2F("trk_sharedSCThits_origin_IP3D_inB","trk_sharedSCThits_origin_IP3D_inB",24,0.,24.,5,-1,4);
+     hist_trk_d0sig_IP3D_B = new TH1F("trk_d0sig_IP3D_B","trk_d0sig_IP3D_B",300,-15.,15.);
+     hist_trk_z0sinthsig_IP3D_B = new TH1F("trk_z0sinthsig_IP3D_B","trk_z0sinthsig_IP3D_B",300,-15.,15.);
+     hist_trk_d0sig_origin_IP3D_B = new TH2F("trk_d0sig_origin_IP3D_B","trk_d0sig_origin_IP3D_B",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_IP3D_B = new TH2F("trk_z0sinthsig_origin_IP3D_B","trk_z0sinthsig_origin_IP3D_B",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_IP3D_B = new TH2F("trk_logpTfrac_origin_IP3D_B","trk_logpTfrac_origin_IP3D_B",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_IP3D_B = new TH2F("trk_logDR_origin_IP3D_B","trk_logDR_origin_IP3D_B",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_IP3D_B = new TH2F("trk_IBLhits_origin_IP3D_B","trk_IBLhits_origin_IP3D_B",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_IP3D_B = new TH2F("trk_NextToIBLhits_origin_IP3D_B","trk_NextToIBLhits_origin_IP3D_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_IP3D_B = new TH2F("trk_sharedIBLhits_origin_IP3D_B","trk_sharedIBLhits_origin_IP3D_B",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_IP3D_B = new TH2F("trk_splitIBLhits_origin_IP3D_B","trk_splitIBLhits_origin_IP3D_B",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_IP3D_B = new TH2F("trk_nPixhits_origin_IP3D_B","trk_nPixhits_origin_IP3D_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_IP3D_B = new TH2F("trk_sharedPixhits_origin_IP3D_B","trk_sharedPixhits_origin_IP3D_B",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_IP3D_B = new TH2F("trk_splitPixhits_origin_IP3D_B","trk_splitPixhits_origin_IP3D_B",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_IP3D_B = new TH2F("trk_nSCThits_origin_IP3D_B","trk_nSCThits_origin_IP3D_B",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_IP3D_B = new TH2F("trk_sharedSCThits_origin_IP3D_B","trk_sharedSCThits_origin_IP3D_B",24,0.,24.,5,-1,4);
 
-     hist_trk_d0sig_IP2D_inB = new TH1F("trk_d0sig_IP2D_inB","trk_d0sig_IP2D_inB",300,-15.,15.);
-     hist_trk_z0sinthsig_IP2D_inB = new TH1F("trk_z0sinthsig_IP2D_inB","trk_z0sinthsig_IP2D_inB",300,-15.,15.);
-     hist_trk_d0sig_origin_IP2D_inB = new TH2F("trk_d0sig_origin_IP2D_inB","trk_d0sig_origin_IP2D_inB",300,-15.,15.,5,-1,4);
-     hist_trk_z0sinthsig_origin_IP2D_inB = new TH2F("trk_z0sinthsig_origin_IP2D_inB","trk_z0sinthsig_origin_IP2D_inB",300,-15.,15.,5,-1,4);
-     hist_trk_logpTfrac_origin_IP2D_inB = new TH2F("trk_logpTfrac_origin_IP2D_inB","trk_logpTfrac_origin_IP2D_inB",300,-10.,2,5,-1,4);
-     hist_trk_logDR_origin_IP2D_inB = new TH2F("trk_logDR_origin_IP2D_inB","trk_logDR_origin_IP2D_inB",200,-10.,2.,5,-1,4);
-     hist_trk_IBLhits_origin_IP2D_inB = new TH2F("trk_IBLhits_origin_IP2D_inB","trk_IBLhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
-     hist_trk_NextToIBLhits_origin_IP2D_inB = new TH2F("trk_NextToIBLhits_origin_IP2D_inB","trk_NextToIBLhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedIBLhits_origin_IP2D_inB = new TH2F("trk_sharedIBLhits_origin_IP2D_inB","trk_sharedIBLhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitIBLhits_origin_IP2D_inB = new TH2F("trk_splitIBLhits_origin_IP2D_inB","trk_splitIBLhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
-     hist_trk_nPixhits_origin_IP2D_inB = new TH2F("trk_nPixhits_origin_IP2D_inB","trk_nPixhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
-     hist_trk_sharedPixhits_origin_IP2D_inB = new TH2F("trk_sharedPixhits_origin_IP2D_inB","trk_sharedPixhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
-     hist_trk_splitPixhits_origin_IP2D_inB = new TH2F("trk_splitPixhits_origin_IP2D_inB","trk_splitPixhits_origin_IP2D_inB",12,0.,12.,5,-1,4);
-     hist_trk_nSCThits_origin_IP2D_inB = new TH2F("trk_nSCThits_origin_IP2D_inB","trk_nSCThits_origin_IP2D_inB",24,0.,24.,5,-1,4);
-     hist_trk_sharedSCThits_origin_IP2D_inB = new TH2F("trk_sharedSCThits_origin_IP2D_inB","trk_sharedSCThits_origin_IP2D_inB",24,0.,24.,5,-1,4);
+     hist_trk_d0sig_IP2D_B = new TH1F("trk_d0sig_IP2D_B","trk_d0sig_IP2D_B",300,-15.,15.);
+     hist_trk_z0sinthsig_IP2D_B = new TH1F("trk_z0sinthsig_IP2D_B","trk_z0sinthsig_IP2D_B",300,-15.,15.);
+     hist_trk_d0sig_origin_IP2D_B = new TH2F("trk_d0sig_origin_IP2D_B","trk_d0sig_origin_IP2D_B",300,-15.,15.,5,-1,4);
+     hist_trk_z0sinthsig_origin_IP2D_B = new TH2F("trk_z0sinthsig_origin_IP2D_B","trk_z0sinthsig_origin_IP2D_B",300,-15.,15.,5,-1,4);
+     hist_trk_logpTfrac_origin_IP2D_B = new TH2F("trk_logpTfrac_origin_IP2D_B","trk_logpTfrac_origin_IP2D_B",300,-10.,2,5,-1,4);
+     hist_trk_logDR_origin_IP2D_B = new TH2F("trk_logDR_origin_IP2D_B","trk_logDR_origin_IP2D_B",200,-10.,2.,5,-1,4);
+     hist_trk_IBLhits_origin_IP2D_B = new TH2F("trk_IBLhits_origin_IP2D_B","trk_IBLhits_origin_IP2D_B",12,0.,12.,5,-1,4);
+     hist_trk_NextToIBLhits_origin_IP2D_B = new TH2F("trk_NextToIBLhits_origin_IP2D_B","trk_NextToIBLhits_origin_IP2D_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedIBLhits_origin_IP2D_B = new TH2F("trk_sharedIBLhits_origin_IP2D_B","trk_sharedIBLhits_origin_IP2D_B",12,0.,12.,5,-1,4);
+     hist_trk_splitIBLhits_origin_IP2D_B = new TH2F("trk_splitIBLhits_origin_IP2D_B","trk_splitIBLhits_origin_IP2D_B",12,0.,12.,5,-1,4);
+     hist_trk_nPixhits_origin_IP2D_B = new TH2F("trk_nPixhits_origin_IP2D_B","trk_nPixhits_origin_IP2D_B",12,0.,12.,5,-1,4);
+     hist_trk_sharedPixhits_origin_IP2D_B = new TH2F("trk_sharedPixhits_origin_IP2D_B","trk_sharedPixhits_origin_IP2D_B",12,0.,12.,5,-1,4);
+     hist_trk_splitPixhits_origin_IP2D_B = new TH2F("trk_splitPixhits_origin_IP2D_B","trk_splitPixhits_origin_IP2D_B",12,0.,12.,5,-1,4);
+     hist_trk_nSCThits_origin_IP2D_B = new TH2F("trk_nSCThits_origin_IP2D_B","trk_nSCThits_origin_IP2D_B",24,0.,24.,5,-1,4);
+     hist_trk_sharedSCThits_origin_IP2D_B = new TH2F("trk_sharedSCThits_origin_IP2D_B","trk_sharedSCThits_origin_IP2D_B",24,0.,24.,5,-1,4);
 
-     hist_trk_d0_PUinB = new TH1F("trk_d0_PUinB","trk_d0_PUinB",300,-15.,15.);
-     hist_trk_d0_BinB = new TH1F("trk_d0_BinB","trk_d0_BinB",300,-15.,15.);
-     hist_trk_d0_CinB = new TH1F("trk_d0_CinB","trk_d0_CinB",300,-15.,15.);
-     hist_trk_d0_FRAGinB = new TH1F("trk_d0_FRAGinB","trk_d0_FRAGinB",300,-15.,15.);
-     hist_trk_d0_GEANTinB = new TH1F("trk_d0_GEANTinB","trk_d0_GEANTinB",300,-15.,15.);
+     hist_trk_d0_PUB = new TH1F("trk_d0_PUB","trk_d0_PUB",300,-15.,15.);
+     hist_trk_d0_BB = new TH1F("trk_d0_BB","trk_d0_BB",300,-15.,15.);
+     hist_trk_d0_CB = new TH1F("trk_d0_CB","trk_d0_CB",300,-15.,15.);
+     hist_trk_d0_FRAGB = new TH1F("trk_d0_FRAGB","trk_d0_FRAGB",300,-15.,15.);
+     hist_trk_d0_GEANTB = new TH1F("trk_d0_GEANTB","trk_d0_GEANTB",300,-15.,15.);
 
-     hist_child_pT_inB = new TH1F("child_pT_inB", "child_pT_inB", 300, 0., 150.);
-     hist_child_eta_inB = new TH1F("child_eta_inB","child_eta_inB",260,-2.6,2.6);
-     hist_child_phi_inB = new TH1F("child_phi_inB","child_phi_inB",200,-4.,4.);
-     hist_child_Deta_inB = new TH1F("child_Deta_inB","child_Deta_inB",200,-1.,1.);
-     hist_child_Dphi_inB = new TH1F("child_Dphi_inB","child_Dphi_inB",200,-1.,1.);
-     hist_child_Dphi_Deta_inB = new TH2F("child_Dphi_Deta","child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
-     hist_child_DR_inB = new TH1F("child_DR_inB","child_DR_inB",200,0.,2.);
-     hist_child_pT_DR_inB = new TH2F("child_pT_DR_inB","child_pT_DR_inB",300,0.,150.,200,0.,2.);
-     hist_child_pT_jet_DR_inB = new TH2F("child_pT_jet_DR_inB","child_pT_jet_DR_inB",1000,0.,500.,200,0.,2.);
-     hist_child_pdgID_inB = new TH1F("child_pdgID_inB","child_pdgID_inB",200000,-100000,100000);
+     hist_child_pT_B = new TH1F("child_pT_B", "child_pT_B", 300, 0., 150.);
+     hist_child_eta_B = new TH1F("child_eta_B","child_eta_B",260,-2.6,2.6);
+     hist_child_phi_B = new TH1F("child_phi_B","child_phi_B",200,-4.,4.);
+     hist_child_Deta_B = new TH1F("child_Deta_B","child_Deta_B",200,-1.,1.);
+     hist_child_Dphi_B = new TH1F("child_Dphi_B","child_Dphi_B",200,-1.,1.);
+     hist_child_Dphi_Deta_B = new TH2F("child_Dphi_Deta","child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
+     hist_child_DR_B = new TH1F("child_DR_B","child_DR_B",200,0.,2.);
+     hist_child_pT_DR_B = new TH2F("child_pT_DR_B","child_pT_DR_B",300,0.,150.,200,0.,2.);
+     hist_child_pT_jet_DR_B = new TH2F("child_pT_jet_DR_B","child_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
+     hist_child_pdgID_B = new TH1F("child_pdgID_B","child_pdgID_B",200000,-100000,100000);
 
-     hist_child_pi_notD = new TH1F("child_pi_pT_notD_inB", "child_pi_pT_notD_inB", 300, 0., 150.);
-     hist_child_K_notD = new TH1F("child_K_pT_notD_inB", "child_K_pT_notD_inB", 300, 0., 150.);
-     hist_child_pi = new TH1F("child_pi_pT_inB", "child_pi_pT_inB", 300, 0., 150.);
-     hist_child_pi_Lxy_inB = new TH1F("child_pi_Lxy_inB","child_pi_Lxy_inB",1000,0.,1000.);
-     hist_child_pi_Lxyz_inB = new TH1F("child_pi_Lxyz_inB","child_pi_Lxyz_inB",1000,0.,1000.);
-     hist_child_pi_d0_truth_inB = new TH1F("child_pi_d0_truth_inB","child_pi_d0_truth_inB",300,-15.,15.);
-     hist_child_pi_z0_truth_inB = new TH1F("child_pi_z0_truth_inB","child_pi_z0_truth_inB",1000,-1000.,1000.);
-     hist_child_K = new TH1F("child_K_pT_inB", "child_K_pT_inB", 300, 0., 150.);
-     hist_child_K_Lxy_inB = new TH1F("child_K_Lxy_inB","child_K_Lxy_inB",1000,0.,1000.);
-     hist_child_K_Lxyz_inB = new TH1F("child_K_Lxyz_inB","child_K_Lxyz_inB",1000,0.,1000.);
-     hist_child_K_d0_truth_inB = new TH1F("child_K_d0_truth_inB","child_K_d0_truth_inB",300,-15.,15.);
-     hist_child_K_z0_truth_inB = new TH1F("child_K_z0_truth_inB","child_K_z0_truth_inB",1000,-1000.,1000.);
-     hist_child_mu = new TH1F("child_mu_pT_inB", "child_mu_pT_inB", 300, 0., 150.);
-     hist_child_mu_Lxy_inB = new TH1F("child_mu_Lxy_inB","child_mu_Lxy_inB",1000,0.,1000.);
-     hist_child_mu_Lxyz_inB = new TH1F("child_mu_Lxyz_inB","child_mu_Lxyz_inB",1000,0.,1000.);
-     hist_child_mu_d0_truth_inB = new TH1F("child_mu_d0_truth_inB","child_mu_d0_truth_inB",300,-15.,15.);
-     hist_child_mu_z0_truth_inB = new TH1F("child_mu_z0_truth_inB","child_mu_z0_truth_inB",1000,-1000.,1000.);
-     hist_child_p = new TH1F("child_p_pT_inB", "child_p_pT_inB", 300, 0., 150.);
-     hist_child_p_Lxy_inB = new TH1F("child_p_Lxy_inB","child_p_Lxy_inB",1000,0.,1000.);
-     hist_child_p_Lxyz_inB = new TH1F("child_p_Lxyz_inB","child_p_Lxyz_inB",1000,0.,1000.);
-     hist_child_p_d0_truth_inB = new TH1F("child_p_d0_truth_inB","child_p_d0_truth_inB",300,-15.,15.);
-     hist_child_p_z0_truth_inB = new TH1F("child_p_z0_truth_inB","child_p_z0_truth_inB",1000,-1000.,1000.);
-     hist_child_e = new TH1F("child_e_pT_inB", "child_e_pT_inB", 300, 0., 150.);
-     hist_child_e_Lxy_inB = new TH1F("child_e_Lxy_inB","child_e_Lxy_inB",1000,0.,1000.);
-     hist_child_e_Lxyz_inB = new TH1F("child_e_Lxyz_inB","child_e_Lxyz_inB",1000,0.,1000.);
-     hist_child_e_d0_truth_inB = new TH1F("child_e_d0_truth_inB","child_e_d0_truth_inB",300,-15.,15.);
-     hist_child_e_z0_truth_inB = new TH1F("child_e_z0_truth_inB","child_e_z0_truth_inB",1000,-1000.,1000.);
+     hist_child_pi_notD = new TH1F("child_pi_pT_notD_B", "child_pi_pT_notD_B", 300, 0., 150.);
+     hist_child_K_notD = new TH1F("child_K_pT_notD_B", "child_K_pT_notD_B", 300, 0., 150.);
+     hist_child_pi = new TH1F("child_pi_pT_B", "child_pi_pT_B", 300, 0., 150.);
+     hist_child_pi_Lxy_B = new TH1F("child_pi_Lxy_B","child_pi_Lxy_B",1000,0.,1000.);
+     hist_child_pi_Lxyz_B = new TH1F("child_pi_Lxyz_B","child_pi_Lxyz_B",1000,0.,1000.);
+     hist_child_pi_d0_truth_B = new TH1F("child_pi_d0_truth_B","child_pi_d0_truth_B",300,-15.,15.);
+     hist_child_pi_z0_truth_B = new TH1F("child_pi_z0_truth_B","child_pi_z0_truth_B",1000,-1000.,1000.);
+     hist_child_K = new TH1F("child_K_pT_B", "child_K_pT_B", 300, 0., 150.);
+     hist_child_K_Lxy_B = new TH1F("child_K_Lxy_B","child_K_Lxy_B",1000,0.,1000.);
+     hist_child_K_Lxyz_B = new TH1F("child_K_Lxyz_B","child_K_Lxyz_B",1000,0.,1000.);
+     hist_child_K_d0_truth_B = new TH1F("child_K_d0_truth_B","child_K_d0_truth_B",300,-15.,15.);
+     hist_child_K_z0_truth_B = new TH1F("child_K_z0_truth_B","child_K_z0_truth_B",1000,-1000.,1000.);
+     hist_child_mu = new TH1F("child_mu_pT_B", "child_mu_pT_B", 300, 0., 150.);
+     hist_child_mu_Lxy_B = new TH1F("child_mu_Lxy_B","child_mu_Lxy_B",1000,0.,1000.);
+     hist_child_mu_Lxyz_B = new TH1F("child_mu_Lxyz_B","child_mu_Lxyz_B",1000,0.,1000.);
+     hist_child_mu_d0_truth_B = new TH1F("child_mu_d0_truth_B","child_mu_d0_truth_B",300,-15.,15.);
+     hist_child_mu_z0_truth_B = new TH1F("child_mu_z0_truth_B","child_mu_z0_truth_B",1000,-1000.,1000.);
+     hist_child_p = new TH1F("child_p_pT_B", "child_p_pT_B", 300, 0., 150.);
+     hist_child_p_Lxy_B = new TH1F("child_p_Lxy_B","child_p_Lxy_B",1000,0.,1000.);
+     hist_child_p_Lxyz_B = new TH1F("child_p_Lxyz_B","child_p_Lxyz_B",1000,0.,1000.);
+     hist_child_p_d0_truth_B = new TH1F("child_p_d0_truth_B","child_p_d0_truth_B",300,-15.,15.);
+     hist_child_p_z0_truth_B = new TH1F("child_p_z0_truth_B","child_p_z0_truth_B",1000,-1000.,1000.);
+     hist_child_e = new TH1F("child_e_pT_B", "child_e_pT_B", 300, 0., 150.);
+     hist_child_e_Lxy_B = new TH1F("child_e_Lxy_B","child_e_Lxy_B",1000,0.,1000.);
+     hist_child_e_Lxyz_B = new TH1F("child_e_Lxyz_B","child_e_Lxyz_B",1000,0.,1000.);
+     hist_child_e_d0_truth_B = new TH1F("child_e_d0_truth_B","child_e_d0_truth_B",300,-15.,15.);
+     hist_child_e_z0_truth_B = new TH1F("child_e_z0_truth_B","child_e_z0_truth_B",1000,-1000.,1000.);
 
-     hist_child_Lxy_inB = new TH1F("child_Lxy_inB","child_Lxy_inB",1000,0.,1000.);
-     hist_child_Lxyz_inB = new TH1F("child_Lxyz_inB","child_Lxyz_inB",1000,0.,1000.);
-//     hist_child_decay_IP = new TH1F("child_decay_IP_inB","child_decay_IP_inB",300,-15.,15.);
-//     hist_child_nodecay_IP = new TH1F("child_nodecay_IP_inB","child_nodecay_IP_inB",300,-15.,15.);
-//     hist_child_linear_IP = new TH1F("child_linear_IP_inB","child_linear_IP_inB",300,-15.,15.);
-     hist_child_d0_truth = new TH1F("child_d0_truth_inB","child_d0_truth_inB",300,-15.,15.);
-     hist_child_d0 = new TH1F("child_d0_inB","child_d0_inB",300,-15.,15.);
-     hist_child_d0_pT = new TH2F("child_d0_pT_inB","child_pT_d0_inB",300,-15.,15.,300,0.,150.);
-     hist_child_z0sinth_inB = new TH1F("child_z0sinth_inB","child_z0sinth_inB",300,-150.,150.);
-     hist_pT_vs_R0_ratio_inB = new TH1F("child_pT_vs_R0_ratio_inB","child_pT_vs_R0_ratio_inB",300,-1.2,2.4);
+     hist_child_Lxy_B = new TH1F("child_Lxy_B","child_Lxy_B",1000,0.,1000.);
+     hist_child_Lxyz_B = new TH1F("child_Lxyz_B","child_Lxyz_B",1000,0.,1000.);
+//     hist_child_decay_IP = new TH1F("child_decay_IP_B","child_decay_IP_B",300,-15.,15.);
+//     hist_child_nodecay_IP = new TH1F("child_nodecay_IP_B","child_nodecay_IP_B",300,-15.,15.);
+//     hist_child_linear_IP = new TH1F("child_linear_IP_B","child_linear_IP_B",300,-15.,15.);
+     hist_child_d0_truth = new TH1F("child_d0_truth_B","child_d0_truth_B",300,-15.,15.);
+     hist_child_d0 = new TH1F("child_d0_B","child_d0_B",300,-15.,15.);
+     hist_child_d0_pT = new TH2F("child_d0_pT_B","child_pT_d0_B",300,-15.,15.,300,0.,150.);
+     hist_child_z0sinth_B = new TH1F("child_z0sinth_B","child_z0sinth_B",300,-150.,150.);
+     hist_pT_vs_R0_ratio_B = new TH1F("child_pT_vs_R0_ratio_B","child_pT_vs_R0_ratio_B",300,-1.2,2.4);
 
      if(origin_selection){
 
-       hist_matched_origin_pT_inB = new TH1F("matched_origin_trk_pT_inB","matched_origin_trk_pT_inB", 300, 0., 150.);
-       hist_matched_origin_eta_inB = new TH1F("matched_origin_trk_eta_inB","matched_origin_trk_eta_inB",260,-2.6,2.6);
-       hist_matched_origin_phi_inB = new TH1F("matched_origin_trk_phi_inB","matched_origin_trk_phi_inB",200,-4.,4.);
-       hist_matched_origin_Deta_inB = new TH1F("matched_origin_trk_Deta_inB","matched_origin_trk_Deta_inB",200,-1.,1.);
-       hist_matched_origin_Dphi_inB = new TH1F("matched_origin_trk_Dphi_inB","matched_origin_trk_Dphi_inB",200,-1.,1.);
-       hist_matched_origin_Dphi_Deta_inB = new TH2F("matched_origin_trk_Dphi_Deta","matched_origin_trk_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
-       hist_matched_origin_DR_inB = new TH1F("matched_origin_trk_DR_inB","matched_origin_trk_DR_inB",200,0.,2.);
-       hist_matched_origin_pT_DR_inB = new TH2F("matched_origin_trk_pT_DR_inB","matched_origin_trk_pT_DR_inB",300,0.,150.,200,0.,2.);
-       hist_matched_origin_pT_jet_DR_inB = new TH2F("matched_origin_trk_pT_jet_DR_inB","matched_origin_trk_pT_jet_DR_inB",1000,0.,500.,200,0.,2.);
-       hist_matched_origin_pdgId_inB = new TH1F("matched_origin_trk_pdgId_inB","matched_origin_trk_pdgId_inB",200000,-100000,100000);
-       hist_matched_origin_origin_inB = new TH1F("matched_origin_trk_origin_inB","matched_origin_trk_origin_inB",7,-2,5);
-       hist_matched_origin_d0_inB = new TH1F("matched_origin_trk_d0_inB","matched_origin_trk_d0_inB",300,-15.,15.);
-//       hist_matched_origin_Lxy_inB = new TH1F("matched_origin_trk_Lxy_inB","matched_origin_trk_Lxy_inB",300,0.,1000.);
-//       hist_matched_origin_Lxyz_inB = new TH1F("matched_origin_trk_Lxyz_inB","matched_origin_trk_Lxyz_inB",300,0.,1000.);
+       hist_matched_origin_pT_B = new TH1F("matched_origin_trk_pT_B","matched_origin_trk_pT_B", 300, 0., 150.);
+       hist_matched_origin_eta_B = new TH1F("matched_origin_trk_eta_B","matched_origin_trk_eta_B",260,-2.6,2.6);
+       hist_matched_origin_phi_B = new TH1F("matched_origin_trk_phi_B","matched_origin_trk_phi_B",200,-4.,4.);
+       hist_matched_origin_Deta_B = new TH1F("matched_origin_trk_Deta_B","matched_origin_trk_Deta_B",200,-1.,1.);
+       hist_matched_origin_Dphi_B = new TH1F("matched_origin_trk_Dphi_B","matched_origin_trk_Dphi_B",200,-1.,1.);
+       hist_matched_origin_Dphi_Deta_B = new TH2F("matched_origin_trk_Dphi_Deta","matched_origin_trk_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
+       hist_matched_origin_DR_B = new TH1F("matched_origin_trk_DR_B","matched_origin_trk_DR_B",200,0.,2.);
+       hist_matched_origin_pT_DR_B = new TH2F("matched_origin_trk_pT_DR_B","matched_origin_trk_pT_DR_B",300,0.,150.,200,0.,2.);
+       hist_matched_origin_pT_jet_DR_B = new TH2F("matched_origin_trk_pT_jet_DR_B","matched_origin_trk_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
+       hist_matched_origin_pdgId_B = new TH1F("matched_origin_trk_pdgId_B","matched_origin_trk_pdgId_B",200000,-100000,100000);
+       hist_matched_origin_origin_B = new TH1F("matched_origin_trk_origin_B","matched_origin_trk_origin_B",7,-2,5);
+       hist_matched_origin_d0_B = new TH1F("matched_origin_trk_d0_B","matched_origin_trk_d0_B",300,-15.,15.);
+//       hist_matched_origin_Lxy_B = new TH1F("matched_origin_trk_Lxy_B","matched_origin_trk_Lxy_B",300,0.,1000.);
+//       hist_matched_origin_Lxyz_B = new TH1F("matched_origin_trk_Lxyz_B","matched_origin_trk_Lxyz_B",300,0.,1000.);
      }
 
      if(geometric_selection){
 
-       hist_matched_pT_inB = new TH1F("matched_child_pT_inB","matched_child_pT_inB", 300, 0., 150.);
-       hist_matched_eta_inB = new TH1F("matched_child_eta_inB","matched_child_eta_inB",260,-2.6,2.6);
-       hist_matched_phi_inB = new TH1F("matched_child_phi_inB","matched_child_phi_inB",200,-4.,4.);
-       hist_matched_Deta_inB = new TH1F("matched_child_Deta_inB","matched_child_Deta_inB",200,-1.,1.);
-       hist_matched_Dphi_inB = new TH1F("matched_child_Dphi_inB","matched_child_Dphi_inB",200,-1.,1.);
-       hist_matched_Dphi_Deta_inB = new TH2F("matched_child_Dphi_Deta","matched_child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
-       hist_matched_DR_inB = new TH1F("matched_child_DR_inB","matched_child_DR_inB",200,0.,2.);
-       hist_matched_pT_DR_inB = new TH2F("matched_child_pT_DR_inB","matched_child_pT_DR_inB",300,0.,150.,200,0.,2.);
-       hist_matched_pT_jet_DR_inB = new TH2F("matched_child_pT_jet_DR_inB","matched_child_pT_jet_DR_inB",1000,0.,500.,200,0.,2.);
-       hist_matched_pdgId_inB = new TH1F("matched_child_pdgId_inB","matched_child_pdgId_inB",200000,-100000,100000);
+       hist_matched_pT_B = new TH1F("matched_child_pT_B","matched_child_pT_B", 300, 0., 150.);
+       hist_matched_eta_B = new TH1F("matched_child_eta_B","matched_child_eta_B",260,-2.6,2.6);
+       hist_matched_phi_B = new TH1F("matched_child_phi_B","matched_child_phi_B",200,-4.,4.);
+       hist_matched_Deta_B = new TH1F("matched_child_Deta_B","matched_child_Deta_B",200,-1.,1.);
+       hist_matched_Dphi_B = new TH1F("matched_child_Dphi_B","matched_child_Dphi_B",200,-1.,1.);
+       hist_matched_Dphi_Deta_B = new TH2F("matched_child_Dphi_Deta","matched_child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
+       hist_matched_DR_B = new TH1F("matched_child_DR_B","matched_child_DR_B",200,0.,2.);
+       hist_matched_pT_DR_B = new TH2F("matched_child_pT_DR_B","matched_child_pT_DR_B",300,0.,150.,200,0.,2.);
+       hist_matched_pT_jet_DR_B = new TH2F("matched_child_pT_jet_DR_B","matched_child_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
+       hist_matched_pdgId_B = new TH1F("matched_child_pdgId_B","matched_child_pdgId_B",200000,-100000,100000);
 
-       hist_matched_child_pi_notD = new TH1F("matched_child_pi_pT_notD_inB", "matched_child_pi_pT_notD_inB", 300, 0., 150.);
-       hist_matched_child_K_notD = new TH1F("matched_child_K_pT_notD_inB", "matched_child_K_pT_notD_inB", 300, 0., 150.);
-       hist_matched_child_pi = new TH1F("matched_child_pi_pT_inB", "matched_child_pi_pT_inB", 300, 0., 150.);
-       hist_matched_child_pi_Lxy_inB = new TH1F("matched_child_pi_Lxy_inB","matched_child_pi_Lxy_inB",1000,0.,1000.);
-       hist_matched_child_pi_Lxyz_inB = new TH1F("matched_child_pi_Lxyz_inB","matched_child_pi_Lxyz_inB",1000,0.,1000.);
-       hist_matched_child_pi_d0_truth_inB = new TH1F("matched_child_pi_d0_truth_inB","matched_child_pi_d0_truth_inB",300,-15.,15.);
-       hist_matched_child_pi_z0_truth_inB = new TH1F("matched_child_pi_z0_truth_inB","matched_child_pi_z0_truth_inB",1000,-1000.,1000.);
-       hist_matched_child_K = new TH1F("matched_child_K_pT_inB", "matched_child_K_pT_inB", 300, 0., 150.);
-       hist_matched_child_K_Lxy_inB = new TH1F("matched_child_K_Lxy_inB","matched_child_K_Lxy_inB",1000,0.,1000.);
-       hist_matched_child_K_Lxyz_inB = new TH1F("matched_child_K_Lxyz_inB","matched_child_K_Lxyz_inB",1000,0.,1000.);
-       hist_matched_child_K_d0_truth_inB = new TH1F("matched_child_K_d0_truth_inB","matched_child_K_d0_truth_inB",300,-15.,15.);
-       hist_matched_child_K_z0_truth_inB = new TH1F("matched_child_K_z0_truth_inB","matched_child_K_z0_truth_inB",1000,-1000.,1000.);
-       hist_matched_child_mu = new TH1F("matched_child_mu_pT_inB", "matched_child_mu_pT_inB", 300, 0., 150.);
-       hist_matched_child_mu_Lxy_inB = new TH1F("matched_child_mu_Lxy_inB","matched_child_mu_Lxy_inB",1000,0.,1000.);
-       hist_matched_child_mu_Lxyz_inB = new TH1F("matched_child_mu_Lxyz_inB","matched_child_mu_Lxyz_inB",1000,0.,1000.);
-       hist_matched_child_mu_d0_truth_inB = new TH1F("matched_child_mu_d0_truth_inB","matched_child_mu_d0_truth_inB",300,-15.,15.);
-       hist_matched_child_mu_z0_truth_inB = new TH1F("matched_child_mu_z0_truth_inB","matched_child_mu_z0_truth_inB",1000,-1000.,1000.);
-       hist_matched_child_p = new TH1F("matched_child_p_pT_inB", "matched_child_p_pT_inB", 300, 0., 150.);
-       hist_matched_child_p_Lxy_inB = new TH1F("matched_child_p_Lxy_inB","matched_child_p_Lxy_inB",1000,0.,1000.);
-       hist_matched_child_p_Lxyz_inB = new TH1F("matched_child_p_Lxyz_inB","matched_child_p_Lxyz_inB",1000,0.,1000.);
-       hist_matched_child_p_d0_truth_inB = new TH1F("matched_child_p_d0_truth_inB","matched_child_p_d0_truth_inB",300,-15.,15.);
-       hist_matched_child_p_z0_truth_inB = new TH1F("matched_child_p_z0_truth_inB","matched_child_p_z0_truth_inB",1000,-1000.,1000.);
-       hist_matched_child_e = new TH1F("matched_child_e_pT_inB", "matched_child_e_pT_inB", 300, 0., 150.);
-       hist_matched_child_e_Lxy_inB = new TH1F("matched_child_e_Lxy_inB","matched_child_e_Lxy_inB",1000,0.,1000.);
-       hist_matched_child_e_Lxyz_inB = new TH1F("matched_child_e_Lxyz_inB","matched_child_e_Lxyz_inB",1000,0.,1000.);
-       hist_matched_child_e_d0_truth_inB = new TH1F("matched_child_e_d0_truth_inB","matched_child_e_d0_truth_inB",300,-15.,15.);
-       hist_matched_child_e_z0_truth_inB = new TH1F("matched_child_e_z0_truth_inB","matched_child_e_z0_truth_inB",1000,-1000.,1000.);
+       hist_matched_child_pi_notD = new TH1F("matched_child_pi_pT_notD_B", "matched_child_pi_pT_notD_B", 300, 0., 150.);
+       hist_matched_child_K_notD = new TH1F("matched_child_K_pT_notD_B", "matched_child_K_pT_notD_B", 300, 0., 150.);
+       hist_matched_child_pi = new TH1F("matched_child_pi_pT_B", "matched_child_pi_pT_B", 300, 0., 150.);
+       hist_matched_child_pi_Lxy_B = new TH1F("matched_child_pi_Lxy_B","matched_child_pi_Lxy_B",1000,0.,1000.);
+       hist_matched_child_pi_Lxyz_B = new TH1F("matched_child_pi_Lxyz_B","matched_child_pi_Lxyz_B",1000,0.,1000.);
+       hist_matched_child_pi_d0_truth_B = new TH1F("matched_child_pi_d0_truth_B","matched_child_pi_d0_truth_B",300,-15.,15.);
+       hist_matched_child_pi_z0_truth_B = new TH1F("matched_child_pi_z0_truth_B","matched_child_pi_z0_truth_B",1000,-1000.,1000.);
+       hist_matched_child_K = new TH1F("matched_child_K_pT_B", "matched_child_K_pT_B", 300, 0., 150.);
+       hist_matched_child_K_Lxy_B = new TH1F("matched_child_K_Lxy_B","matched_child_K_Lxy_B",1000,0.,1000.);
+       hist_matched_child_K_Lxyz_B = new TH1F("matched_child_K_Lxyz_B","matched_child_K_Lxyz_B",1000,0.,1000.);
+       hist_matched_child_K_d0_truth_B = new TH1F("matched_child_K_d0_truth_B","matched_child_K_d0_truth_B",300,-15.,15.);
+       hist_matched_child_K_z0_truth_B = new TH1F("matched_child_K_z0_truth_B","matched_child_K_z0_truth_B",1000,-1000.,1000.);
+       hist_matched_child_mu = new TH1F("matched_child_mu_pT_B", "matched_child_mu_pT_B", 300, 0., 150.);
+       hist_matched_child_mu_Lxy_B = new TH1F("matched_child_mu_Lxy_B","matched_child_mu_Lxy_B",1000,0.,1000.);
+       hist_matched_child_mu_Lxyz_B = new TH1F("matched_child_mu_Lxyz_B","matched_child_mu_Lxyz_B",1000,0.,1000.);
+       hist_matched_child_mu_d0_truth_B = new TH1F("matched_child_mu_d0_truth_B","matched_child_mu_d0_truth_B",300,-15.,15.);
+       hist_matched_child_mu_z0_truth_B = new TH1F("matched_child_mu_z0_truth_B","matched_child_mu_z0_truth_B",1000,-1000.,1000.);
+       hist_matched_child_p = new TH1F("matched_child_p_pT_B", "matched_child_p_pT_B", 300, 0., 150.);
+       hist_matched_child_p_Lxy_B = new TH1F("matched_child_p_Lxy_B","matched_child_p_Lxy_B",1000,0.,1000.);
+       hist_matched_child_p_Lxyz_B = new TH1F("matched_child_p_Lxyz_B","matched_child_p_Lxyz_B",1000,0.,1000.);
+       hist_matched_child_p_d0_truth_B = new TH1F("matched_child_p_d0_truth_B","matched_child_p_d0_truth_B",300,-15.,15.);
+       hist_matched_child_p_z0_truth_B = new TH1F("matched_child_p_z0_truth_B","matched_child_p_z0_truth_B",1000,-1000.,1000.);
+       hist_matched_child_e = new TH1F("matched_child_e_pT_B", "matched_child_e_pT_B", 300, 0., 150.);
+       hist_matched_child_e_Lxy_B = new TH1F("matched_child_e_Lxy_B","matched_child_e_Lxy_B",1000,0.,1000.);
+       hist_matched_child_e_Lxyz_B = new TH1F("matched_child_e_Lxyz_B","matched_child_e_Lxyz_B",1000,0.,1000.);
+       hist_matched_child_e_d0_truth_B = new TH1F("matched_child_e_d0_truth_B","matched_child_e_d0_truth_B",300,-15.,15.);
+       hist_matched_child_e_z0_truth_B = new TH1F("matched_child_e_z0_truth_B","matched_child_e_z0_truth_B",1000,-1000.,1000.);
 
 
-       hist_matched_origin_inB = new TH1F("matched_trk_origin_inB","matched_trk_origin_inB",7,-2,5);
-       hist_matched_pT_child_pTfraction_inB = new TH2F("matched_pT_child_pTfraction_inB","matched_pT_child_vs_DpT/pT_child_inB",300,0.,150.,500,-1.,10.);
-       hist_matched_DR_trk_inB = new TH1F("matched_DR_trk_inB","matched_DR_trk_inB_inB",500,0.,1.);
-       hist_matched_DR_trk_pTfraction = new TH2F("matched_DR_trk_pTfraction_inB","matched_DR_trk_pTfraction_inB",500,0.,1.,500,-1.,10.);
-       hist_matched_d0_inB = new TH1F("matched_child_d0_inB","matched_child_d0_inB",300,-15.,15.);
-       hist_matched_Lxy_inB = new TH1F("matched_child_Lxy_inB","matched_child_Lxy_inB",1000,0.,1000.);
-       hist_matched_Lxyz_inB = new TH1F("matched_child_Lxyz_inB","matched_child_Lxyz_inB",1000,0.,1000.);
+       hist_matched_origin_B = new TH1F("matched_trk_origin_B","matched_trk_origin_B",7,-2,5);
+       hist_matched_pT_child_pTfraction_B = new TH2F("matched_pT_child_pTfraction_B","matched_pT_child_vs_DpT/pT_child_B",300,0.,150.,500,-1.,10.);
+       hist_matched_DR_trk_B = new TH1F("matched_DR_trk_B","matched_DR_trk_B_B",500,0.,1.);
+       hist_matched_DR_trk_pTfraction = new TH2F("matched_DR_trk_pTfraction_B","matched_DR_trk_pTfraction_B",500,0.,1.,500,-1.,10.);
+       hist_matched_d0_B = new TH1F("matched_child_d0_B","matched_child_d0_B",300,-15.,15.);
+       hist_matched_Lxy_B = new TH1F("matched_child_Lxy_B","matched_child_Lxy_B",1000,0.,1000.);
+       hist_matched_Lxyz_B = new TH1F("matched_child_Lxyz_B","matched_child_Lxyz_B",1000,0.,1000.);
   /*
-       hist_nomatched_pT_inB = new TH1F("nomatched_child_pT_inB", "nomatched_child_pT_inB", 500, 0., 150.);
-       hist_nomatched_eta_inB = new TH1F("nomatched_child_eta_inB","nomatched_child_eta_inB",500,-2.6,2.6);
-       hist_nomatched_phi_inB = new TH1F("nomatched_child_phi_inB","nomatched_child_phi_inB",500,-4.,4.);
-       hist_nomatched_Deta_inB = new TH1F("nomatched_child_Deta_inB","nomatched_child_Deta_inB",500,-1.,1.);
-       hist_nomatched_Dphi_inB = new TH1F("nomatched_child_Dphi_inB","nomatched_child_Dphi_inB",500,-1.,1.);
-       hist_nomatched_Dphi_Deta_inB = new TH2F("nomatched_child_Dphi_Deta","nomatched_child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
-       hist_nomatched_DR_inB = new TH1F("nomatched_child_DR_inB","nomatched_child_DR_inB",500,-0.1,2.);
-       hist_nomatched_pT_DR_inB = new TH2F("nomatched_child_pT_DR_inB","nomatched_child_pT_DR_inB",80,0.,150.,80,0.,0.6);
-       hist_nomatched_pT_jet_DR_inB = new TH2F("nomatched_child_pT_jet_DR_inB","nomatched_child_pT_jet_DR_inB",100,0.,500.,100,0.,2.);
-       hist_nomatched_pdgId_inB = new TH1F("nomatched_child_pdgId_inB","nomatched_child_pdgId_inB",2000,-1000,1000);
+       hist_nomatched_pT_B = new TH1F("nomatched_child_pT_B", "nomatched_child_pT_B", 500, 0., 150.);
+       hist_nomatched_eta_B = new TH1F("nomatched_child_eta_B","nomatched_child_eta_B",500,-2.6,2.6);
+       hist_nomatched_phi_B = new TH1F("nomatched_child_phi_B","nomatched_child_phi_B",500,-4.,4.);
+       hist_nomatched_Deta_B = new TH1F("nomatched_child_Deta_B","nomatched_child_Deta_B",500,-1.,1.);
+       hist_nomatched_Dphi_B = new TH1F("nomatched_child_Dphi_B","nomatched_child_Dphi_B",500,-1.,1.);
+       hist_nomatched_Dphi_Deta_B = new TH2F("nomatched_child_Dphi_Deta","nomatched_child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
+       hist_nomatched_DR_B = new TH1F("nomatched_child_DR_B","nomatched_child_DR_B",500,-0.1,2.);
+       hist_nomatched_pT_DR_B = new TH2F("nomatched_child_pT_DR_B","nomatched_child_pT_DR_B",80,0.,150.,80,0.,0.6);
+       hist_nomatched_pT_jet_DR_B = new TH2F("nomatched_child_pT_jet_DR_B","nomatched_child_pT_jet_DR_B",100,0.,500.,100,0.,2.);
+       hist_nomatched_pdgId_B = new TH1F("nomatched_child_pdgId_B","nomatched_child_pdgId_B",2000,-1000,1000);
   */
   /*
-       hist_single_matched_pT_inB = new TH1F("single_matched_pT_inB","single_matched_pT_inB", 500, 0., 150.);
-       hist_single_matched_eta_inB = new TH1F("single_matched_child_eta_inB","single_matched_child_eta_inB",500,-2.6,2.6);
-       hist_single_matched_phi_inB = new TH1F("single_matched_child_phi_inB","single_matched_child_phi_inB",500,-4.,4.);
-       hist_single_matched_Deta_inB = new TH1F("single_matched_child_Deta_inB","single_matched_child_Deta_inB",500,-1.,1.);
-       hist_single_matched_Dphi_inB = new TH1F("single_matched_child_Dphi_inB","single_matched_child_Dphi_inB",500,-1.,1.);
-       hist_single_matched_Dphi_Deta_inB = new TH2F("single_matched_child_Dphi_Deta","single_matched_child_Dphi_Deta", 100, -1.,1., 100, -1.1,1.);
-       hist_single_matched_DR_inB = new TH1F("single_matched_DR_inB","single_matched_DR_inB",500,-0.1,2.);
-       hist_single_matched_pT_DR_inB = new TH2F("single_matched_pT_DR_inB","single_matched_pT_DR_inB",80,0.,150.,80,0.,0.6);
-       hist_single_matched_pT_jet_DR_inB = new TH2F("single_matched_child_pT_jet_DR_inB","single_matched_child_pT_jet_DR_inB",100,0.,500.,100,0.,2.);
-       hist_single_matched_pdgId_inB = new TH1F("single_matched_child_pdgId_inB","single_matched_child_pdgId_inB",2000,-1000,1000);
-       hist_single_matched_origin_inB = new TH1F("single_matched_trk_origin_inB","single_matched_trk_origin_inB",7,-2,5);
-       hist_single_matched_pT_child_pTfraction_inB = new TH2F("single_matched_pT_child_pTfraction_inB","single_matched_pT_child_vs_DpT/pT_child_inB",500,0.,150.,500,-1.1,10.);
-       hist_single_matched_DR_trk_inB = new TH1F("single_matched_DR_trk_inB","single_matched_DR_trk_inB", 500, 0., 1.);
-       hist_single_matched_DR_trk_pTfraction = new TH2F("single_matched_DR_trk_pTfraction_inB","single_matched_DR_trk_pTfraction_inB",500,0.,1.,500,-1.1,10.);
-       hist_single_matched_d0_inB = new TH1F("single_matched_child_d0_inB","single_matched_child_d0_inB",300,-15.,15.);
+       hist_single_matched_pT_B = new TH1F("single_matched_pT_B","single_matched_pT_B", 500, 0., 150.);
+       hist_single_matched_eta_B = new TH1F("single_matched_child_eta_B","single_matched_child_eta_B",500,-2.6,2.6);
+       hist_single_matched_phi_B = new TH1F("single_matched_child_phi_B","single_matched_child_phi_B",500,-4.,4.);
+       hist_single_matched_Deta_B = new TH1F("single_matched_child_Deta_B","single_matched_child_Deta_B",500,-1.,1.);
+       hist_single_matched_Dphi_B = new TH1F("single_matched_child_Dphi_B","single_matched_child_Dphi_B",500,-1.,1.);
+       hist_single_matched_Dphi_Deta_B = new TH2F("single_matched_child_Dphi_Deta","single_matched_child_Dphi_Deta", 100, -1.,1., 100, -1.1,1.);
+       hist_single_matched_DR_B = new TH1F("single_matched_DR_B","single_matched_DR_B",500,-0.1,2.);
+       hist_single_matched_pT_DR_B = new TH2F("single_matched_pT_DR_B","single_matched_pT_DR_B",80,0.,150.,80,0.,0.6);
+       hist_single_matched_pT_jet_DR_B = new TH2F("single_matched_child_pT_jet_DR_B","single_matched_child_pT_jet_DR_B",100,0.,500.,100,0.,2.);
+       hist_single_matched_pdgId_B = new TH1F("single_matched_child_pdgId_B","single_matched_child_pdgId_B",2000,-1000,1000);
+       hist_single_matched_origin_B = new TH1F("single_matched_trk_origin_B","single_matched_trk_origin_B",7,-2,5);
+       hist_single_matched_pT_child_pTfraction_B = new TH2F("single_matched_pT_child_pTfraction_B","single_matched_pT_child_vs_DpT/pT_child_B",500,0.,150.,500,-1.1,10.);
+       hist_single_matched_DR_trk_B = new TH1F("single_matched_DR_trk_B","single_matched_DR_trk_B", 500, 0., 1.);
+       hist_single_matched_DR_trk_pTfraction = new TH2F("single_matched_DR_trk_pTfraction_B","single_matched_DR_trk_pTfraction_B",500,0.,1.,500,-1.1,10.);
+       hist_single_matched_d0_B = new TH1F("single_matched_child_d0_B","single_matched_child_d0_B",300,-15.,15.);
   */
      }
    }
@@ -2338,7 +2350,7 @@ void DAOD_selector::initCounters()
 
   m_noB=0,m_bb=0,m_b=0,m_bc_overlap=0,m_sc=0,m_sc2=0,m_sc3=0,m_match=0,m_nomatch=0,m_match_overlap=0,m_match_notoverlap=0,n_trk_pT_cut=0,n_trk_PU_pT_cut=0,n_trk_FRAG_pT_cut=0,n_trk_GEANT_pT_cut=0,n_trk_B=0,n_trk_C=0;
 
-  m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0;
+  m_qc=0,m_qj=0,q=0,a=0,b=0,sc=0,sgn=0,sgn_d0=0,sgn_z0=0;
   m_den=0; // some denominator
 
   // Number of jets, jets with at least 1 B hadron, al least 1 C hadron, otherwise light (in general and after the jet selection [variables with _2] )
@@ -2365,7 +2377,7 @@ void DAOD_selector::initCounters()
   return;
 }
 
-   // jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), exclusive samples
+   // jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
 void DAOD_selector::getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck)
 {
 
