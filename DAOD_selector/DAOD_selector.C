@@ -578,6 +578,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(idx==4) {
                    JF_ntrk=JF_ntrk+p;
                    if(p==1){
+                     hist_trk_origin_JF_B->Fill(jet_trk_orig[*it].at(i));
                      hist_trk_d0sig_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_JF_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
                      hist_trk_d0sig_origin_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
@@ -598,6 +599,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(idx==3) {
                    SV1_ntrk=SV1_ntrk+p;
                    if(p==1){
+                     hist_trk_origin_SV1_B->Fill(jet_trk_orig[*it].at(i));
                      hist_trk_d0sig_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_SV1_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
                      hist_trk_d0sig_origin_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
@@ -618,6 +620,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(idx==2) {
                    SV0_ntrk=SV0_ntrk+p;
                    if(p==1){
+                     hist_trk_origin_SV0_B->Fill(jet_trk_orig[*it].at(i));
                      hist_trk_d0sig_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_SV0_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
                      hist_trk_d0sig_origin_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
@@ -638,6 +641,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(idx==1) {
                    IP3D_ntrk=IP3D_ntrk+p;
                    if(p==1){
+                     hist_trk_origin_IP3D_B->Fill(jet_trk_orig[*it].at(i));
                      hist_trk_d0sig_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_IP3D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
                      hist_trk_d0sig_origin_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
@@ -658,6 +662,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(idx==0) {
                    IP2D_ntrk=IP2D_ntrk+p;
                    if(p==1){
+                     hist_trk_origin_IP2D_B->Fill(jet_trk_orig[*it].at(i));
                      hist_trk_d0sig_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_IP2D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
                      hist_trk_d0sig_origin_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
@@ -1344,7 +1349,7 @@ void DAOD_selector::Terminate()
    // the results graphically or save the results to file.
 
    if(selections){
-
+/*
      hist_pt_1->Write();
      hist_eta_1->Write();
      hist_phi_1->Write();
@@ -1374,7 +1379,7 @@ void DAOD_selector::Terminate()
      hist_eta_4->Write();
      hist_phi_4->Write();
      hist_E_4->Write();
-
+*/
      hist_pt_B->Write();
      hist_eta_B->Write();
      hist_phi_B->Write();
@@ -1482,6 +1487,7 @@ void DAOD_selector::Terminate()
       hist_trk_nSCThits_origin_B->Write();
       hist_trk_sharedSCThits_origin_B->Write();
 
+      hist_trk_origin_JF_B->Write();
       hist_trk_d0sig_JF_B->Write();
       hist_trk_z0sinthsig_JF_B->Write();
       hist_trk_d0sig_origin_JF_B->Write();
@@ -1498,6 +1504,7 @@ void DAOD_selector::Terminate()
       hist_trk_nSCThits_origin_JF_B->Write();
       hist_trk_sharedSCThits_origin_JF_B->Write();
 
+      hist_trk_origin_SV1_B->Write();
       hist_trk_d0sig_SV1_B->Write();
       hist_trk_z0sinthsig_SV1_B->Write();
       hist_trk_d0sig_origin_SV1_B->Write();
@@ -1514,6 +1521,7 @@ void DAOD_selector::Terminate()
       hist_trk_nSCThits_origin_SV1_B->Write();
       hist_trk_sharedSCThits_origin_SV1_B->Write();
 
+      hist_trk_origin_SV0_B->Write();
       hist_trk_d0sig_SV0_B->Write();
       hist_trk_z0sinthsig_SV0_B->Write();
       hist_trk_d0sig_origin_SV0_B->Write();
@@ -1530,6 +1538,7 @@ void DAOD_selector::Terminate()
       hist_trk_nSCThits_origin_SV0_B->Write();
       hist_trk_sharedSCThits_origin_SV0_B->Write();
 
+      hist_trk_origin_IP3D_B->Write();
       hist_trk_d0sig_IP3D_B->Write();
       hist_trk_z0sinthsig_IP3D_B->Write();
       hist_trk_d0sig_origin_IP3D_B->Write();
@@ -1546,6 +1555,7 @@ void DAOD_selector::Terminate()
       hist_trk_nSCThits_origin_IP3D_B->Write();
       hist_trk_sharedSCThits_origin_IP3D_B->Write();
 
+      hist_trk_origin_IP2D_B->Write();
       hist_trk_d0sig_IP2D_B->Write();
       hist_trk_z0sinthsig_IP2D_B->Write();
       hist_trk_d0sig_origin_IP2D_B->Write();
@@ -1946,7 +1956,7 @@ void DAOD_selector::openOutputFile(std::string fileNameStringID)
 void DAOD_selector::bookHistosForSelections()
 {
    if(selections){
-
+/*
      hist_pt_1 = new TH1F("pT_1", "n1==1", 100, 0., 1000.);
      hist_eta_1 = new TH1F("eta_1", "n1==1", 100, -5., 5.);
      hist_phi_1 = new TH1F("phi_1", "n1==1", 100, -4.,4.);
@@ -1971,7 +1981,7 @@ void DAOD_selector::bookHistosForSelections()
      hist_eta_4 = new TH1F("eta_4", "n1==4", 100, -5., 5.);
      hist_phi_4 = new TH1F("phi_4", "n1==4", 100,  -4.,4.);
      hist_E_4 = new TH1F("E_4", "n1==4", 100, 0., 10e5);
-
+*/
      hist_pt_B = new TH1F("pT_B", "B", 100, 0., 1000.);
      hist_eta_B = new TH1F("eta_B", "B", 100, -5., 5.);
      hist_phi_B = new TH1F("phi_B", "B", 100, -4.,4.);
@@ -2083,6 +2093,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
      hist_trk_nSCThits_origin_B = new TH2F("trk_nSCThits_origin_B","trk_nSCThits_origin_B",24,0.,24.,5,-1,4);
      hist_trk_sharedSCThits_origin_B = new TH2F("trk_sharedSCThits_origin_B","trk_sharedSCThits_origin_B",24,0.,24.,5,-1,4);
 
+     hist_trk_origin_JF_B = new TH1F("trk_JF_origin_B","trk_JF_origin_B",5,-1,4);
      hist_trk_d0sig_JF_B = new TH1F("trk_d0sig_JF_B","trk_d0sig_JF_B",300,-15.,15.);
      hist_trk_z0sinthsig_JF_B = new TH1F("trk_z0sinthsig_JF_B","trk_z0sinthsig_JF_B",300,-15.,15.);
      hist_trk_d0sig_origin_JF_B = new TH2F("trk_d0sig_origin_JF_B","trk_d0sig_origin_JF_B",300,-15.,15.,5,-1,4);
@@ -2099,6 +2110,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
      hist_trk_nSCThits_origin_JF_B = new TH2F("trk_nSCThits_origin_JF_B","trk_nSCThits_origin_JF_B",24,0.,24.,5,-1,4);
      hist_trk_sharedSCThits_origin_JF_B = new TH2F("trk_sharedSCThits_origin_JF_B","trk_sharedSCThits_origin_JF_B",24,0.,24.,5,-1,4);
 
+     hist_trk_origin_SV1_B = new TH1F("trk_SV1_origin_B","trk_SV1_origin_B",5,-1,4);
      hist_trk_d0sig_SV1_B = new TH1F("trk_d0sig_SV1_B","trk_d0sig_SV1_B",300,-15.,15.);
      hist_trk_z0sinthsig_SV1_B = new TH1F("trk_z0sinthsig_SV1_B","trk_z0sinthsig_SV1_B",300,-15.,15.);
      hist_trk_d0sig_origin_SV1_B = new TH2F("trk_d0sig_origin_SV1_B","trk_d0sig_origin_SV1_B",300,-15.,15.,5,-1,4);
@@ -2115,6 +2127,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
      hist_trk_nSCThits_origin_SV1_B = new TH2F("trk_nSCThits_origin_SV1_B","trk_nSCThits_origin_SV1_B",24,0.,24.,5,-1,4);
      hist_trk_sharedSCThits_origin_SV1_B = new TH2F("trk_sharedSCThits_origin_SV1_B","trk_sharedSCThits_origin_SV1_B",24,0.,24.,5,-1,4);
 
+     hist_trk_origin_SV0_B = new TH1F("trk_SV0_origin_B","trk_SV0_origin_B",5,-1,4);
      hist_trk_d0sig_SV0_B = new TH1F("trk_d0sig_SV0_B","trk_d0sig_SV0_B",300,-15.,15.);
      hist_trk_z0sinthsig_SV0_B = new TH1F("trk_z0sinthsig_SV0_B","trk_z0sinthsig_SV0_B",300,-15.,15.);
      hist_trk_d0sig_origin_SV0_B = new TH2F("trk_d0sig_origin_SV0_B","trk_d0sig_origin_SV0_B",300,-15.,15.,5,-1,4);
@@ -2131,6 +2144,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
      hist_trk_nSCThits_origin_SV0_B = new TH2F("trk_nSCThits_origin_SV0_B","trk_nSCThits_origin_SV0_B",24,0.,24.,5,-1,4);
      hist_trk_sharedSCThits_origin_SV0_B = new TH2F("trk_sharedSCThits_origin_SV0_B","trk_sharedSCThits_origin_SV0_B",24,0.,24.,5,-1,4);
 
+     hist_trk_origin_IP3D_B = new TH1F("trk_IP3D_origin_B","trk_IP3D_origin_B",5,-1,4);
      hist_trk_d0sig_IP3D_B = new TH1F("trk_d0sig_IP3D_B","trk_d0sig_IP3D_B",300,-15.,15.);
      hist_trk_z0sinthsig_IP3D_B = new TH1F("trk_z0sinthsig_IP3D_B","trk_z0sinthsig_IP3D_B",300,-15.,15.);
      hist_trk_d0sig_origin_IP3D_B = new TH2F("trk_d0sig_origin_IP3D_B","trk_d0sig_origin_IP3D_B",300,-15.,15.,5,-1,4);
@@ -2147,6 +2161,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
      hist_trk_nSCThits_origin_IP3D_B = new TH2F("trk_nSCThits_origin_IP3D_B","trk_nSCThits_origin_IP3D_B",24,0.,24.,5,-1,4);
      hist_trk_sharedSCThits_origin_IP3D_B = new TH2F("trk_sharedSCThits_origin_IP3D_B","trk_sharedSCThits_origin_IP3D_B",24,0.,24.,5,-1,4);
 
+     hist_trk_origin_IP2D_B = new TH1F("trk_IP2D_origin_B","trk_IP2D_origin_B",5,-1,4);
      hist_trk_d0sig_IP2D_B = new TH1F("trk_d0sig_IP2D_B","trk_d0sig_IP2D_B",300,-15.,15.);
      hist_trk_z0sinthsig_IP2D_B = new TH1F("trk_z0sinthsig_IP2D_B","trk_z0sinthsig_IP2D_B",300,-15.,15.);
      hist_trk_d0sig_origin_IP2D_B = new TH2F("trk_d0sig_origin_IP2D_B","trk_d0sig_origin_IP2D_B",300,-15.,15.,5,-1,4);

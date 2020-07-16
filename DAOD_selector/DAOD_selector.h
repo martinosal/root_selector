@@ -545,6 +545,7 @@ public :
      TH2F *hist_trk_nSCThits_origin_B;
      TH2F *hist_trk_sharedSCThits_origin_B;
 
+     TH1F *hist_trk_origin_JF_B;
      TH1F *hist_trk_d0sig_JF_B;
      TH1F *hist_trk_z0sinthsig_JF_B;
      TH2F *hist_trk_d0sig_origin_JF_B;
@@ -561,6 +562,7 @@ public :
      TH2F *hist_trk_nSCThits_origin_JF_B;
      TH2F *hist_trk_sharedSCThits_origin_JF_B;
 
+     TH1F *hist_trk_origin_SV1_B;
      TH1F *hist_trk_d0sig_SV1_B;
      TH1F *hist_trk_z0sinthsig_SV1_B;
      TH2F *hist_trk_d0sig_origin_SV1_B;
@@ -577,6 +579,7 @@ public :
      TH2F *hist_trk_nSCThits_origin_SV1_B;
      TH2F *hist_trk_sharedSCThits_origin_SV1_B;
 
+     TH1F *hist_trk_origin_SV0_B;
      TH1F *hist_trk_d0sig_SV0_B;
      TH1F *hist_trk_z0sinthsig_SV0_B;
      TH2F *hist_trk_d0sig_origin_SV0_B;
@@ -593,6 +596,7 @@ public :
      TH2F *hist_trk_nSCThits_origin_SV0_B;
      TH2F *hist_trk_sharedSCThits_origin_SV0_B;
 
+     TH1F *hist_trk_origin_IP3D_B;
      TH1F *hist_trk_d0sig_IP3D_B;
      TH1F *hist_trk_z0sinthsig_IP3D_B;
      TH2F *hist_trk_d0sig_origin_IP3D_B;
@@ -609,6 +613,7 @@ public :
      TH2F *hist_trk_nSCThits_origin_IP3D_B;
      TH2F *hist_trk_sharedSCThits_origin_IP3D_B;
 
+     TH1F *hist_trk_origin_IP2D_B;
      TH1F *hist_trk_d0sig_IP2D_B;
      TH1F *hist_trk_z0sinthsig_IP2D_B;
      TH2F *hist_trk_d0sig_origin_IP2D_B;
