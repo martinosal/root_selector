@@ -2037,9 +2037,9 @@ void DAOD_selector::bookHistosForDiscriminants()
      hist_jf_llr_B = new TH1F("jf_llr_B", "jf_llr_B", 280., -20., 50.);
      hist_jf_llr_C = new TH1F("jf_llr_C", "jf_llr_C", 280., -20., 50.);
 
-     hist_dl1_l = new TH1F("DL1_light","DL1_light",260,-8.,18.);
-     hist_dl1_C = new TH1F("DL1_C","DL1_C",260,-8.,18.);
-     hist_dl1_B = new TH1F("DL1_B","DL1_B",260,-8.,18.);
+     hist_dl1_l = new TH1F("DL1_light","DL1_light",280,-8.,18.);
+     hist_dl1_C = new TH1F("DL1_C","DL1_C",280,-8.,18.);
+     hist_dl1_B = new TH1F("DL1_B","DL1_B",280,-8.,18.);
 
    }
 
@@ -2424,10 +2424,10 @@ void DAOD_selector::getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<
              n++;
          }
        }
-     if(!decay_mode.compare("leptonic"))
-       if(n==0)  continue;//with n==0 we select only "leptonic" b-jets (b hadrons decaying leptonically)
-     if(!decay_mode.compare("hadronic"))
-       if(n>0)   continue;//with n>0 we select only "hadronic" b-jets (b hadrons decaying only hadronically)
+       if(!decay_mode.compare("leptonic"))
+          if(n==0)  continue;//with n==0 we select only "leptonic" b-jets (b hadrons decaying leptonically)
+        if(!decay_mode.compare("hadronic"))
+          if(n>0)   continue;//with n>0 we select only "hadronic" b-jets (b hadrons decaying only hadronically)
      }
      if(jet_nBHadr[*it]>0){
        for(unsigned i=0;i<jet_bH_pt[*it].size();i++){
