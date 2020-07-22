@@ -350,7 +350,7 @@ public :
    DAOD_selector(TTree * /*tree*/ =0) { }
    virtual ~DAOD_selector() { }
    virtual Int_t   Version() const { return 2; }
-   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool);
+   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, string);
    virtual void    setCuts(float, float, float, float, float, float, float, float, float);
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
@@ -384,6 +384,7 @@ public :
 
      // Flags selectong the running mode
      bool selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retagT,debug,lxplus;
+     string decay_mode;
 
      // selection cuts
      float jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,m_pT_bcH_truth_cut,m_DR_bcH_truth_cut;

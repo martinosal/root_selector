@@ -23,7 +23,7 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
     h2->GetXaxis()->SetRangeUser(0., x2);
   }
   if(x2==0){
-    if(hist=="z0sig" || hist=="d0sig")
+    if(hist=="z0sinthsig" || hist=="d0sig")
       h2->GetXaxis()->SetRangeUser(-x_d0sig, x_d0sig);
   }
   h2->GetXaxis()->SetTitle((hist).c_str());
@@ -54,8 +54,8 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
       h1_proj->GetXaxis()->SetRangeUser(0., x2);
     }
     if(x2==0){
-      if(hist=="z0sig" || hist=="d0sig")
-        h2->GetXaxis()->SetRangeUser(-x_d0sig, x_d0sig);
+      if(hist=="z0sinthsig" || hist=="d0sig")
+        h1_proj->GetXaxis()->SetRangeUser(-x_d0sig, x_d0sig);
     }
 
     if(hist=="d0sig"|| hist=="z0sinthsig" || hist=="logpTfrac"|| hist=="logDR"){
@@ -133,8 +133,8 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
       h1_proj->GetXaxis()->SetRangeUser(0., x2);
     }
     if(x2==0){
-      if(hist=="z0sig" || hist=="d0sig")
-        h2->GetXaxis()->SetRangeUser(-x_d0sig, x_d0sig);
+      if(hist=="z0sinthsig" || hist=="d0sig")
+        h1_proj->GetXaxis()->SetRangeUser(-x_d0sig, x_d0sig);
     }
 
     if(hist=="d0sig"|| hist=="z0sinthsig" || hist=="logpTfrac"|| hist=="logDR"){

@@ -19,6 +19,7 @@ void launch_selector()
   bool geometric_selection=true;
   bool cut=false;
   bool retagT=false;
+  string decay_mode="leptonic";//can be "leptonic" or "hadronic", set "false" or any other value for decay_mode=false
 
   float jet_pT_infcut=20*1e3,jet_pT_supcut=1000*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
   //float jet_pT_infcut=20*1e3,jet_pT_supcut=300*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
@@ -40,7 +41,7 @@ void launch_selector()
 
   DAOD_selector a;
 
-  a.setFlags(lxplus,debug,selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retagT);
+  a.setFlags(lxplus,debug,selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retagT,decay_mode);
   a.setCuts(jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,DR_bcH_cut,pT_bcH_cut,trk_pT_cut,trk_eta_cut,trk_d0_cut);
 
   f->Process(&a);

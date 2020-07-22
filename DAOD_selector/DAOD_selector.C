@@ -29,7 +29,7 @@
 #include <TStyle.h>
 
 
-void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retagT_flag)
+void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retagT_flag, string decay_mode_flag)
 {
    std::cout<<"\n In DAOD_selector::setFlags"<<std::endl;
 
@@ -43,6 +43,7 @@ void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_
    geometric_selection=geometric_selection_flag;
    cut=cut_flag;
    retagT=retagT_flag;
+   decay_mode=decay_mode_flag;
    return;
 }
 
@@ -528,6 +529,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  D_phi=jet_trk_phi[*it].at(i)-jet_phi[*it];
                }
                DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+               float origin=jet_trk_orig[*it].at(i);
+
                hist_trk_pT_B->Fill(1e-3*jet_trk_pt[*it].at(i));
                hist_trk_eta_B->Fill(jet_trk_eta[*it].at(i));
                hist_trk_phi_B->Fill(jet_trk_phi[*it].at(i));
@@ -538,7 +541,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                hist_trk_pT_DR_B->Fill(1e-3*jet_trk_pt[*it].at(i),DR);
                hist_trk_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
                hist_trk_pdgId_B->Fill(jet_trk_pdg_id[*it].at(i));
-               hist_trk_origin_B->Fill(jet_trk_orig[*it].at(i));
+               hist_trk_origin_B->Fill(origin);
 
                A=sin(jet_phi[*it]-jet_trk_phi[*it].at(i))*jet_trk_d0[*it].at(i);
                sgn_d0=A/abs(A);
@@ -546,6 +549,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                sgn_z0=A/abs(A);
                d0=sgn_d0*abs(jet_trk_d0[*it].at(i));
                z0=sgn_z0*abs(jet_trk_z0[*it].at(i));
+
                hist_trk_d0_B->Fill(d0);
                hist_trk_sigd0_B->Fill(jet_trk_d0sig[*it].at(i));
                hist_trk_z0_B->Fill(z0);
@@ -553,19 +557,19 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                hist_trk_z0sinth_B->Fill(z0*sin(jet_trk_theta[*it].at(i)));
                hist_trk_d0sig_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                hist_trk_z0sinthsig_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-               hist_trk_d0sig_origin_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_z0sinthsig_origin_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_logpTfrac_origin_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-               hist_trk_logDR_origin_B->Fill(log(DR),jet_trk_orig[*it].at(i));
-               hist_trk_IBLhits_origin_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_NextToIBLhits_origin_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_sharedIBLhits_origin_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_splitIBLhits_origin_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-               hist_trk_nPixhits_origin_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_sharedPixhits_origin_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_splitPixhits_origin_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_nSCThits_origin_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-               hist_trk_sharedSCThits_origin_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+               hist_trk_d0sig_origin_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
+               hist_trk_z0sinthsig_origin_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+               hist_trk_logpTfrac_origin_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
+               hist_trk_logDR_origin_B->Fill(log(DR),origin);
+               hist_trk_IBLhits_origin_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
+               hist_trk_NextToIBLhits_origin_B->Fill(jet_trk_nNextToInnHits[*it].at(i),origin);
+               hist_trk_sharedIBLhits_origin_B->Fill(jet_trk_nsharedBLHits[*it].at(i),origin);
+               hist_trk_splitIBLhits_origin_B->Fill(jet_trk_nsplitBLHits[*it].at(i),origin);//jet_trk_nsplitPixHits
+               hist_trk_nPixhits_origin_B->Fill(jet_trk_nPixHits[*it].at(i),origin);
+               hist_trk_sharedPixhits_origin_B->Fill(jet_trk_nsharedPixHits[*it].at(i),origin);
+               hist_trk_splitPixhits_origin_B->Fill(jet_trk_nsplitPixHits[*it].at(i),origin);
+               hist_trk_nSCThits_origin_B->Fill(jet_trk_nSCTHits[*it].at(i),origin);
+               hist_trk_sharedSCThits_origin_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),origin);
 
 //               std::cout<<jet_trk_algo[*it].at(i)<<"\n";
                std::vector<int> bin_alg(5);
@@ -578,106 +582,106 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  if(idx==4) {
                    JF_ntrk=JF_ntrk+p;
                    if(p==1){
-                     hist_trk_origin_JF_B->Fill(jet_trk_orig[*it].at(i));
+                     hist_trk_origin_JF_B->Fill(origin);
                      hist_trk_d0sig_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_JF_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_JF_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_JF_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_JF_B->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_JF_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_JF_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_JF_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_JF_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_JF_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_JF_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_JF_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_JF_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_JF_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_origin_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_JF_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_logpTfrac_origin_JF_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
+                     hist_trk_logDR_origin_JF_B->Fill(log(DR),origin);
+                     hist_trk_IBLhits_origin_JF_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
+                     hist_trk_NextToIBLhits_origin_JF_B->Fill(jet_trk_nNextToInnHits[*it].at(i),origin);
+                     hist_trk_sharedIBLhits_origin_JF_B->Fill(jet_trk_nsharedBLHits[*it].at(i),origin);
+                     hist_trk_splitIBLhits_origin_JF_B->Fill(jet_trk_nsplitBLHits[*it].at(i),origin);//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_JF_B->Fill(jet_trk_nPixHits[*it].at(i),origin);
+                     hist_trk_sharedPixhits_origin_JF_B->Fill(jet_trk_nsharedPixHits[*it].at(i),origin);
+                     hist_trk_splitPixhits_origin_JF_B->Fill(jet_trk_nsplitPixHits[*it].at(i),origin);
+                     hist_trk_nSCThits_origin_JF_B->Fill(jet_trk_nSCTHits[*it].at(i),origin);
+                     hist_trk_sharedSCThits_origin_JF_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),origin);
                    }
                  }
                  if(idx==3) {
                    SV1_ntrk=SV1_ntrk+p;
                    if(p==1){
-                     hist_trk_origin_SV1_B->Fill(jet_trk_orig[*it].at(i));
+                     hist_trk_origin_SV1_B->Fill(origin);
                      hist_trk_d0sig_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_SV1_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_SV1_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_SV1_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_SV1_B->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_SV1_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_SV1_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_SV1_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_SV1_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_SV1_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_SV1_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_SV1_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_SV1_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_SV1_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_origin_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_SV1_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_logpTfrac_origin_SV1_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
+                     hist_trk_logDR_origin_SV1_B->Fill(log(DR),origin);
+                     hist_trk_IBLhits_origin_SV1_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
+                     hist_trk_NextToIBLhits_origin_SV1_B->Fill(jet_trk_nNextToInnHits[*it].at(i),origin);
+                     hist_trk_sharedIBLhits_origin_SV1_B->Fill(jet_trk_nsharedBLHits[*it].at(i),origin);
+                     hist_trk_splitIBLhits_origin_SV1_B->Fill(jet_trk_nsplitBLHits[*it].at(i),origin);//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_SV1_B->Fill(jet_trk_nPixHits[*it].at(i),origin);
+                     hist_trk_sharedPixhits_origin_SV1_B->Fill(jet_trk_nsharedPixHits[*it].at(i),origin);
+                     hist_trk_splitPixhits_origin_SV1_B->Fill(jet_trk_nsplitPixHits[*it].at(i),origin);
+                     hist_trk_nSCThits_origin_SV1_B->Fill(jet_trk_nSCTHits[*it].at(i),origin);
+                     hist_trk_sharedSCThits_origin_SV1_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),origin);
                    }
                  }
                  if(idx==2) {
                    SV0_ntrk=SV0_ntrk+p;
                    if(p==1){
-                     hist_trk_origin_SV0_B->Fill(jet_trk_orig[*it].at(i));
+                     hist_trk_origin_SV0_B->Fill(origin);
                      hist_trk_d0sig_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_SV0_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_SV0_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_SV0_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_SV0_B->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_SV0_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_SV0_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_SV0_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_SV0_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_SV0_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_SV0_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_SV0_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_SV0_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_SV0_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_origin_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_SV0_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_logpTfrac_origin_SV0_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
+                     hist_trk_logDR_origin_SV0_B->Fill(log(DR),origin);
+                     hist_trk_IBLhits_origin_SV0_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
+                     hist_trk_NextToIBLhits_origin_SV0_B->Fill(jet_trk_nNextToInnHits[*it].at(i),origin);
+                     hist_trk_sharedIBLhits_origin_SV0_B->Fill(jet_trk_nsharedBLHits[*it].at(i),origin);
+                     hist_trk_splitIBLhits_origin_SV0_B->Fill(jet_trk_nsplitBLHits[*it].at(i),origin);//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_SV0_B->Fill(jet_trk_nPixHits[*it].at(i),origin);
+                     hist_trk_sharedPixhits_origin_SV0_B->Fill(jet_trk_nsharedPixHits[*it].at(i),origin);
+                     hist_trk_splitPixhits_origin_SV0_B->Fill(jet_trk_nsplitPixHits[*it].at(i),origin);
+                     hist_trk_nSCThits_origin_SV0_B->Fill(jet_trk_nSCTHits[*it].at(i),origin);
+                     hist_trk_sharedSCThits_origin_SV0_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),origin);
                    }
                  }
                  if(idx==1) {
                    IP3D_ntrk=IP3D_ntrk+p;
                    if(p==1){
-                     hist_trk_origin_IP3D_B->Fill(jet_trk_orig[*it].at(i));
+                     hist_trk_origin_IP3D_B->Fill(origin);
                      hist_trk_d0sig_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_IP3D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_IP3D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_IP3D_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_IP3D_B->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_IP3D_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_IP3D_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_IP3D_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_IP3D_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_IP3D_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_IP3D_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_IP3D_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_IP3D_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_IP3D_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_origin_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_IP3D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_logpTfrac_origin_IP3D_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
+                     hist_trk_logDR_origin_IP3D_B->Fill(log(DR),origin);
+                     hist_trk_IBLhits_origin_IP3D_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
+                     hist_trk_NextToIBLhits_origin_IP3D_B->Fill(jet_trk_nNextToInnHits[*it].at(i),origin);
+                     hist_trk_sharedIBLhits_origin_IP3D_B->Fill(jet_trk_nsharedBLHits[*it].at(i),origin);
+                     hist_trk_splitIBLhits_origin_IP3D_B->Fill(jet_trk_nsplitBLHits[*it].at(i),origin);//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_IP3D_B->Fill(jet_trk_nPixHits[*it].at(i),origin);
+                     hist_trk_sharedPixhits_origin_IP3D_B->Fill(jet_trk_nsharedPixHits[*it].at(i),origin);
+                     hist_trk_splitPixhits_origin_IP3D_B->Fill(jet_trk_nsplitPixHits[*it].at(i),origin);
+                     hist_trk_nSCThits_origin_IP3D_B->Fill(jet_trk_nSCTHits[*it].at(i),origin);
+                     hist_trk_sharedSCThits_origin_IP3D_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),origin);
                    }
                  }
                  if(idx==0) {
                    IP2D_ntrk=IP2D_ntrk+p;
                    if(p==1){
-                     hist_trk_origin_IP2D_B->Fill(jet_trk_orig[*it].at(i));
+                     hist_trk_origin_IP2D_B->Fill(origin);
                      hist_trk_d0sig_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i));
                      hist_trk_z0sinthsig_IP2D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_z0sinthsig_origin_IP2D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_logpTfrac_origin_IP2D_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),jet_trk_orig[*it].at(i));
-                     hist_trk_logDR_origin_IP2D_B->Fill(log(DR),jet_trk_orig[*it].at(i));
-                     hist_trk_IBLhits_origin_IP2D_B->Fill(jet_trk_nInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_NextToIBLhits_origin_IP2D_B->Fill(jet_trk_nNextToInnHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedIBLhits_origin_IP2D_B->Fill(jet_trk_nsharedBLHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitIBLhits_origin_IP2D_B->Fill(jet_trk_nsplitBLHits[*it].at(i),jet_trk_orig[*it].at(i));//jet_trk_nsplitPixHits
-                     hist_trk_nPixhits_origin_IP2D_B->Fill(jet_trk_nPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedPixhits_origin_IP2D_B->Fill(jet_trk_nsharedPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_splitPixhits_origin_IP2D_B->Fill(jet_trk_nsplitPixHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_nSCThits_origin_IP2D_B->Fill(jet_trk_nSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
-                     hist_trk_sharedSCThits_origin_IP2D_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),jet_trk_orig[*it].at(i));
+                     hist_trk_d0sig_origin_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_IP2D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_logpTfrac_origin_IP2D_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
+                     hist_trk_logDR_origin_IP2D_B->Fill(log(DR),origin);
+                     hist_trk_IBLhits_origin_IP2D_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
+                     hist_trk_NextToIBLhits_origin_IP2D_B->Fill(jet_trk_nNextToInnHits[*it].at(i),origin);
+                     hist_trk_sharedIBLhits_origin_IP2D_B->Fill(jet_trk_nsharedBLHits[*it].at(i),origin);
+                     hist_trk_splitIBLhits_origin_IP2D_B->Fill(jet_trk_nsplitBLHits[*it].at(i),origin);//jet_trk_nsplitPixHits
+                     hist_trk_nPixhits_origin_IP2D_B->Fill(jet_trk_nPixHits[*it].at(i),origin);
+                     hist_trk_sharedPixhits_origin_IP2D_B->Fill(jet_trk_nsharedPixHits[*it].at(i),origin);
+                     hist_trk_splitPixhits_origin_IP2D_B->Fill(jet_trk_nsplitPixHits[*it].at(i),origin);
+                     hist_trk_nSCThits_origin_IP2D_B->Fill(jet_trk_nSCTHits[*it].at(i),origin);
+                     hist_trk_sharedSCThits_origin_IP2D_B->Fill(jet_trk_nsharedSCTHits[*it].at(i),origin);
                    }
                  }
                  x=x/2;
@@ -694,29 +698,29 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                std::cout<<")";
 */
 
-               if(jet_trk_orig[*it].at(i)==-1){
+               if(origin==-1){
                  hist_trk_d0_PUB->Fill(d0);
                  n_trk_PU_pT_cut++;
                }
-               if(jet_trk_orig[*it].at(i)==0){
+               if(origin==0){
                  hist_trk_d0_BB->Fill(d0);
                  n_trk_B++;
                }
-               if(jet_trk_orig[*it].at(i)==1){
+               if(origin==1){
                  hist_trk_d0_CB->Fill(d0);
                  n_trk_C++;
                }
-               if(jet_trk_orig[*it].at(i)==2){
+               if(origin==2){
                  hist_trk_d0_FRAGB->Fill(d0);
                  n_trk_FRAG_pT_cut++;
                }
-               if(jet_trk_orig[*it].at(i)==3){
+               if(origin==3){
                  hist_trk_d0_GEANTB->Fill(d0);
                  n_trk_GEANT_pT_cut++;
                }
 
                if(origin_selection){
-                 if(jet_trk_orig[*it].at(i)==0 || jet_trk_orig[*it].at(i)==1){
+                 if(origin==0 || origin==1){
                    origin_trk.push_back(i);
 
                    hist_matched_origin_pT_B->Fill(1e-3*jet_trk_pt[*it].at(i));
@@ -729,7 +733,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    hist_matched_origin_pT_DR_B->Fill(1e-3*jet_trk_pt[*it].at(i),DR);
                    hist_matched_origin_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
                    hist_matched_origin_pdgId_B->Fill(jet_trk_pdg_id[*it].at(i));
-                   hist_matched_origin_origin_B->Fill(jet_trk_orig[*it].at(i));
+                   hist_matched_origin_origin_B->Fill(origin);
                    hist_matched_origin_d0_B->Fill(d0);
 //                   hist_matched_origin_Lxy_B->Fill();
 //                   hist_matched_origin_Lxyz_B->Fill();
@@ -1849,6 +1853,9 @@ void DAOD_selector::Terminate()
 
 
       std::cout<<"\nB-C HADRONS CUTS\n"<<"b-c Hadr pT > "<<1e-3*m_pT_bcH_truth_cut<<" GeV\n"<<"b-c Hadr DR < "<<m_DR_bcH_truth_cut<<"\n";
+      if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic")){
+        std::cout<<"\n"<<decay_mode<<" mode:";
+      }
       std::cout<<"\nb jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << ", light jets "<<m_nlcheck<<"\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
       std::cout<<"\nTRACK CUTS\ntrk pT > "<<1e-3*trk_pT_cut<<" GeV\n"<<"trk |eta| < "<<trk_eta_cut<<"\n"<<"trk |d0| < "<<trk_d0_cut<<" mm"<<"\n";
       std::cout<<"\n(JF_ntrk, SV1_ntrk, SV0_ntrk, IP2D_ntrk, IP3D_ntrk)\n"<<JF_ntrk<<", \t"<<SV1_ntrk<<", \t"<<SV0_ntrk<<", \t"<<IP2D_ntrk<<", \t"<<IP3D_ntrk<<"\n";
@@ -1922,7 +1929,10 @@ void DAOD_selector::openOutputFile(std::string fileNameStringID)
    }
    if(debug){
      std::cout<<"DEBUG MODE"<<std::endl;
-     file = new TFile(("debug_output"+fileNameStringID+".root").c_str(),"RECREATE");
+     if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic"))
+       file = new TFile(("debug_"+decay_mode+fileNameStringID+".root").c_str(),"RECREATE");
+     else
+       file = new TFile(("debug_"+fileNameStringID+".root").c_str(),"RECREATE");
    }
    if(!lxplus && !debug){
      if(retagT){
@@ -2401,10 +2411,24 @@ void DAOD_selector::getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<
   islcheck.clear();
 
   bool jet_labelled = false;
+  int n=0;
   double D_eta = 0.,D_phi = 0.;
   double DeltaR=0.,pt=0.;
    for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
      jet_labelled=false;
+
+     if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic")){
+       for(unsigned k=0;k<jet_trk_pt[*it].size();k++){
+         if(jet_trk_orig[*it].at(k)==0){
+           if(abs(jet_trk_pdg_id[*it].at(k))==11 || abs(jet_trk_pdg_id[*it].at(k))==13)
+             n++;
+         }
+       }
+     if(!decay_mode.compare("leptonic"))
+       if(n==0)  continue;//with n==0 we select only "leptonic" b-jets (b hadrons decaying leptonically)
+     if(!decay_mode.compare("hadronic"))
+       if(n>0)   continue;//with n>0 we select only "hadronic" b-jets (b hadrons decaying only hadronically)
+     }
      if(jet_nBHadr[*it]>0){
        for(unsigned i=0;i<jet_bH_pt[*it].size();i++){
          D_eta=jet_bH_eta[*it].at(i)-jet_eta[*it];
