@@ -2017,30 +2017,30 @@ void DAOD_selector::bookHistosForDiscriminants()
 
    if(discriminants){
 
-     hist_ip2d_llr_l = new TH1F("ip2d_llr_l","ip2d_llr_l",280., -20., 50.);
-     hist_ip2d_llr_B = new TH1F("ip2d_llr_B", "ip2d_llr_B", 280., -20., 50.);
-     hist_ip2d_llr_C = new TH1F("ip2d_llr_C", "ip2d_llr_C", 280., -20., 50.);
+     int nbin=1000;
+     hist_ip2d_llr_l = new TH1F("ip2d_llr_l","ip2d_llr_l",nbin, -20., 50.);
+     hist_ip2d_llr_B = new TH1F("ip2d_llr_B", "ip2d_llr_B", nbin, -20., 50.);
+     hist_ip2d_llr_C = new TH1F("ip2d_llr_C", "ip2d_llr_C", nbin, -20., 50.);
 
-     hist_ip3d_llr_l = new TH1F("ip3d_llr_l","ip3d_llr_l",280., -20., 50.);
-     hist_ip3d_llr_B = new TH1F("ip3d_llr_B", "ip3d_llr_B", 280., -20., 50.);
-     hist_ip3d_llr_C = new TH1F("ip3d_llr_C", "ip3d_llr_C", 280., -20., 50.);
+     hist_ip3d_llr_l = new TH1F("ip3d_llr_l","ip3d_llr_l",nbin, -20., 50.);
+     hist_ip3d_llr_B = new TH1F("ip3d_llr_B", "ip3d_llr_B", nbin, -20., 50.);
+     hist_ip3d_llr_C = new TH1F("ip3d_llr_C", "ip3d_llr_C", nbin, -20., 50.);
 
-     hist_rnnip_llr_l = new TH1F("rnnip_llr_l","rnnip_llr_l",280., -20., 50.);
-     hist_rnnip_llr_B = new TH1F("rnnip_llr_B", "rnnip_llr_B", 280., -20., 50.);
-     hist_rnnip_llr_C = new TH1F("rnnip_llr_C", "rnnip_llr_C", 280., -20., 50.);
+     hist_rnnip_llr_l = new TH1F("rnnip_llr_l","rnnip_llr_l",nbin, -20., 50.);
+     hist_rnnip_llr_B = new TH1F("rnnip_llr_B", "rnnip_llr_B", nbin, -20., 50.);
+     hist_rnnip_llr_C = new TH1F("rnnip_llr_C", "rnnip_llr_C", nbin, -20., 50.);
 
-     hist_sv1_llr_l = new TH1F("sv1_llr_l","sv1_llr_l",280., -20., 50.);
-     hist_sv1_llr_B = new TH1F("sv1_llr_B", "sv1_llr_B", 280., -20., 50.);
-     hist_sv1_llr_C = new TH1F("sv1_llr_C", "sv1_llr_C", 280., -20., 50.);
+     hist_sv1_llr_l = new TH1F("sv1_llr_l","sv1_llr_l",nbin, -20., 50.);
+     hist_sv1_llr_B = new TH1F("sv1_llr_B", "sv1_llr_B", nbin, -20., 50.);
+     hist_sv1_llr_C = new TH1F("sv1_llr_C", "sv1_llr_C", nbin, -20., 50.);
 
-     hist_jf_llr_l = new TH1F("jf_llr_l","jf_llr_l",280., -20., 50.);
-     hist_jf_llr_B = new TH1F("jf_llr_B", "jf_llr_B", 280., -20., 50.);
-     hist_jf_llr_C = new TH1F("jf_llr_C", "jf_llr_C", 280., -20., 50.);
+     hist_jf_llr_l = new TH1F("jf_llr_l","jf_llr_l",nbin, -20., 50.);
+     hist_jf_llr_B = new TH1F("jf_llr_B", "jf_llr_B", nbin, -20., 50.);
+     hist_jf_llr_C = new TH1F("jf_llr_C", "jf_llr_C", nbin, -20., 50.);
 
-     hist_dl1_l = new TH1F("DL1_light","DL1_light",280,-8.,18.);
-     hist_dl1_C = new TH1F("DL1_C","DL1_C",280,-8.,18.);
-     hist_dl1_B = new TH1F("DL1_B","DL1_B",280,-8.,18.);
-
+     hist_dl1_l = new TH1F("DL1_light","DL1_light",nbin,-8.,18.);
+     hist_dl1_C = new TH1F("DL1_C","DL1_C",nbin,-8.,18.);
+     hist_dl1_B = new TH1F("DL1_B","DL1_B",nbin,-8.,18.);
    }
 
 }
