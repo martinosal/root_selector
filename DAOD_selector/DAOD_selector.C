@@ -2406,36 +2406,39 @@ void DAOD_selector::initCounters()
 void DAOD_selector::getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck)
 {
 
-  isBcheck.clear();
-  isCcheck.clear();
-  islcheck.clear();
+   isBcheck.clear();
+   isCcheck.clear();
+   islcheck.clear();
 
-  bool jet_labelled = false;
-  int n=0;
-  double D_eta = 0.,D_phi = 0.;
-  double DeltaR=0.,pt=0.;
+   bool jet_labelled = false;
+   int n=0;
+   double D_eta = 0.,D_phi = 0.;
+   double DeltaR=0.,pt=0.;
    for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
      jet_labelled=false;
 
-     if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic")){
-       for(unsigned k=0;k<jet_bH_child_E[*it].size();k++){
-         if(abs(jet_bH_child_pdg_id[*it].at(k))==11 || abs(jet_bH_child_pdg_id[*it].at(k))==13)
-           n++;
-       }
-/*
-       for(unsigned k=0;k<jet_trk_pt[*it].size();k++){
-         if(jet_trk_orig[*it].at(k)==0 || jet_trk_orig[*it].at(k)==1){
-           if(abs(jet_trk_pdg_id[*it].at(k))==11 || abs(jet_trk_pdg_id[*it].at(k))==13)
-             n++;
-         }
-       }
-*/
-       if(!decay_mode.compare("leptonic"))
-          if(n==0)  continue;//with n==0 we select only "leptonic" b-jets (b hadrons decaying leptonically)
-        if(!decay_mode.compare("hadronic"))
-          if(n>0)   continue;//with n>0 we select only "hadronic" b-jets (b hadrons decaying only hadronically)
-     }
      if(jet_nBHadr[*it]>0){
+       if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic")){
+
+         for(unsigned k=0;k<jet_bH_child_E[*it].size();k++){
+           if(abs(jet_bH_child_pdg_id[*it].at(k))==11 || abs(jet_bH_child_pdg_id[*it].at(k))==13)
+            n++;
+         }
+
+/*
+         for(unsigned k=0;k<jet_trk_pt[*it].size();k++){
+           if(jet_trk_orig[*it].at(k)==0 || jet_trk_orig[*it].at(k)==1){
+             if(abs(jet_trk_pdg_id[*it].at(k))==11 || abs(jet_trk_pdg_id[*it].at(k))==13)
+               n++;
+           }
+         }
+*/
+         if(!decay_mode.compare("leptonic"))
+           if(n==0)  continue;//with n==0 we select only "leptonic" b-jets (b hadrons decaying leptonically)
+         if(!decay_mode.compare("hadronic"))
+           if(n>0)   continue;//with n>0 we select only "hadronic" b-jets (b hadrons decaying only hadronically)
+       }
+
        for(unsigned i=0;i<jet_bH_pt[*it].size();i++){
          D_eta=jet_bH_eta[*it].at(i)-jet_eta[*it];
          if(abs(jet_bH_phi[*it].at(i)-jet_phi[*it])>M_PI){
