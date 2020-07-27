@@ -2418,12 +2418,18 @@ void DAOD_selector::getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<
      jet_labelled=false;
 
      if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic")){
+       for(unsigned k=0;k<jet_bH_child_E[*it].size();k++){
+         if(abs(jet_bH_child_pdg_id[*it].at(k))==11 || abs(jet_bH_child_pdg_id[*it].at(k))==13)
+           n++;
+       }
+/*
        for(unsigned k=0;k<jet_trk_pt[*it].size();k++){
-         if(jet_trk_orig[*it].at(k)==0){
+         if(jet_trk_orig[*it].at(k)==0 || jet_trk_orig[*it].at(k)==1){
            if(abs(jet_trk_pdg_id[*it].at(k))==11 || abs(jet_trk_pdg_id[*it].at(k))==13)
              n++;
          }
        }
+*/
        if(!decay_mode.compare("leptonic"))
           if(n==0)  continue;//with n==0 we select only "leptonic" b-jets (b hadrons decaying leptonically)
         if(!decay_mode.compare("hadronic"))
