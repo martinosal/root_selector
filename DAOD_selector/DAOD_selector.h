@@ -350,7 +350,7 @@ public :
    DAOD_selector(TTree * /*tree*/ =0) { }
    virtual ~DAOD_selector() { }
    virtual Int_t   Version() const { return 2; }
-   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, string);
+   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, double, double, double, string);
    virtual void    setCuts(float, float, float, float, float, float, float, float, float);
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
@@ -383,7 +383,8 @@ public :
    private:
 
      // Flags selectong the running mode
-     bool selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retagT,debug,lxplus;
+     bool selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,debug,lxplus;
+     double m_p1,m_p2,m_p3;
      string decay_mode;
 
      // selection cuts
@@ -764,7 +765,21 @@ public :
      TH1F *hist_nomatched_DR_B;
      TH2F *hist_nomatched_pT_DR_B;
      TH2F *hist_nomatched_pT_jet_DR_B;
+     TH1F *hist_nomatchedIN_pT_B;
+     TH1F *hist_nomatchedIN_eta_B;
+     TH1F *hist_nomatchedIN_phi_B;
+     TH1F *hist_nomatchedIN_DR_B;
+     TH2F *hist_nomatchedIN_pT_jet_DR_B;
+     TH1F *hist_nomatchedIN_d0_B;
+     TH1F *hist_nomatchedIN_z0sinth_B;
+     TH1F *hist_nomatchedOUT_pT_B;
+     TH1F *hist_nomatchedOUT_eta_B;
+     TH1F *hist_nomatchedOUT_phi_B;
+     TH1F *hist_nomatchedOUT_DR_B;
+     TH2F *hist_nomatchedOUT_pT_jet_DR_B;
      TH1F *hist_nomatched_pdgId_B;
+     TH1F *hist_nomatchedOUT_d0_B;
+     TH1F *hist_nomatchedOUT_z0sinth_B;
 
      TH1F *hist_single_matched_pT_B;
      TH1F *hist_single_matched_eta_B;

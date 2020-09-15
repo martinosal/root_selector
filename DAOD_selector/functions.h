@@ -10,3 +10,10 @@ int overlap(std::vector<int> x1, std::vector<int> x2){
   }
   return n;
 }
+
+
+double shrinking_cone_DR(double pT, double m_p1, double m_p2, double m_p3){//pT in GeV !
+
+  double y = m_p1+exp(m_p2 + m_p3 * pT);
+  return y;
+}

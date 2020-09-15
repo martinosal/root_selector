@@ -29,7 +29,7 @@
 #include <TStyle.h>
 
 
-void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retagT_flag, string decay_mode_flag)
+void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retag_flag, double p1, double p2, double p3, string decay_mode_flag)
 {
    std::cout<<"\n In DAOD_selector::setFlags"<<std::endl;
 
@@ -42,7 +42,17 @@ void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_
    origin_selection=origin_selection_flag;
    geometric_selection=geometric_selection_flag;
    cut=cut_flag;
-   retagT=retagT_flag;
+   retag=retag_flag;
+   if(retag==false){
+     m_p1=0.239;
+     m_p2=-1.220;
+     m_p3=-1.64*1e-2;
+   }
+   if(retag==true){
+     m_p1=p1;
+     m_p2=p2;
+     m_p3=p3;
+   }
    decay_mode=decay_mode_flag;
    return;
 }
@@ -137,7 +147,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
    m_Ntot++;
 
-   double D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxy=0,Lxyz=0,Dxy_1=0.,x0=0.,y0=0.,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0.,d0=0.,z0=0.;
+   double D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxy=0,Lxyz=0,Dxy_1=0.,x0=0.,y0=0.,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0.,d0=0.,sigd0=0,z0=0.,sigz0sinth=0;
 
    double D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
    double tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.;
@@ -762,7 +772,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              child_Eta.push_back(v.Eta());
              child_Phi.push_back(v.Phi());
 
-//             float z0sinth=(jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j));
+//             float z0sinth=sigz0sinth;
 
 
              if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut && abs(jet_bH_child_d0[*it].at(j))<trk_d0_cut ){//CHILD SELECTION CRITERIA && abs(z0sinth)<1.5
@@ -868,11 +878,12 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
                A=sin(jet_phi[*it]-child_Phi.at(j))*jet_bH_child_d0[*it].at(j);
                sgn=A/abs(A);
-
-               hist_child_d0_truth->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+               sigd0=sgn*abs(jet_bH_child_d0[*it].at(j));
+               sigz0sinth=(jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j));
+               hist_child_d0_truth->Fill(sigd0);
                if(jet_bH_child_theta[*it].at(j)==-99)
                std::cout<<"W\n";
-               hist_child_z0sinth_B->Fill((jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j)));//*sqrt(px*px+py*py)/sqrt(px*px+py*py+pz*pz)
+               hist_child_z0sinth_B->Fill(sigz0sinth);//*sqrt(px*px+py*py)/sqrt(px*px+py*py+pz*pz)
 
                D_eta=child_Eta[j]-jet_eta[*it];
                if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
@@ -897,35 +908,35 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  hist_child_pi->Fill(1e-3*child_Pt[j]);
                  hist_child_pi_Lxy_B->Fill(Lxy);
                  hist_child_pi_Lxyz_B->Fill(Lxyz);//CHECK
-                 hist_child_pi_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_pi_d0_truth_B->Fill(sigd0);
                  hist_child_pi_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==321){
                  hist_child_K->Fill(1e-3*child_Pt[j]);
                  hist_child_K_Lxy_B->Fill(Lxy);
                  hist_child_K_Lxyz_B->Fill(Lxyz);
-                 hist_child_K_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_K_d0_truth_B->Fill(sigd0);
                  hist_child_K_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==13){
                  hist_child_mu->Fill(1e-3*child_Pt[j]);
                  hist_child_mu_Lxy_B->Fill(Lxy);
                  hist_child_mu_Lxyz_B->Fill(Lxyz);
-                 hist_child_mu_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_mu_d0_truth_B->Fill(sigd0);
                  hist_child_mu_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==2212){
                  hist_child_p->Fill(1e-3*child_Pt[j]);
                  hist_child_p_Lxy_B->Fill(Lxy);
                  hist_child_p_Lxyz_B->Fill(Lxyz);
-                 hist_child_p_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_p_d0_truth_B->Fill(sigd0);
                  hist_child_p_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==11){
                  hist_child_e->Fill(1e-3*child_Pt[j]);
                  hist_child_e_Lxy_B->Fill(Lxy);
                  hist_child_e_Lxyz_B->Fill(Lxyz);
-                 hist_child_e_d0_truth_B->Fill(sgn*abs(jet_bH_child_d0[*it].at(j)));
+                 hist_child_e_d0_truth_B->Fill(sigd0);
                  hist_child_e_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
              }
@@ -1231,8 +1242,9 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              }
 
              m_nomatch+=child_idx.size();
-  /*
+
              int j=0;
+             double DR_shrink;
              for(unsigned l=0;l<child_idx.size();l++){
                j=child_idx.at(l);
                //CINEMATICA RISPETTO AL JET
@@ -1245,6 +1257,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    D_phi=child_Phi.at(j)-jet_phi[*it];
                  }
                  DR=sqrt(D_eta*D_eta+D_phi*D_phi);
+                 /*
                  hist_nomatched_pT_B->Fill(1e-3*child_Pt.at(j));
                  hist_nomatched_eta_B->Fill(child_Eta.at(j));
                  hist_nomatched_phi_B->Fill(child_Phi.at(j));
@@ -1253,11 +1266,32 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  hist_nomatched_Dphi_Deta_B->Fill(D_phi,D_eta);
                  hist_nomatched_DR_B->Fill(DR);
                  hist_nomatched_pT_DR_B->Fill(1e-3*child_Pt.at(j),DR);
+                 */
                  hist_nomatched_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
-                 hist_nomatched_pdgId_B->Fill(jet_bH_child_pdg_id[*it].at(j));
+//                 hist_nomatched_pdgId_B->Fill(jet_bH_child_pdg_id[*it].at(j));
+
+                 DR_shrink=shrinking_cone_DR(1e-3*jet_pt[*it],m_p1,m_p2,m_p3);
+                 if(DR<=DR_shrink){
+                   hist_nomatchedIN_pT_B->Fill(1e-3*child_Pt.at(j));
+                   hist_nomatchedIN_eta_B->Fill(child_Eta.at(j));
+                   hist_nomatchedIN_phi_B->Fill(child_Phi.at(j));
+                   hist_nomatchedIN_DR_B->Fill(DR);
+                   hist_nomatchedIN_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
+                   hist_nomatchedIN_d0_B->Fill(sigd0);
+                   hist_nomatchedIN_z0sinth_B->Fill(sigz0sinth);
+                 }
+                 if(DR>DR_shrink){
+                   hist_nomatchedOUT_pT_B->Fill(1e-3*child_Pt.at(j));
+                   hist_nomatchedOUT_eta_B->Fill(child_Eta.at(j));
+                   hist_nomatchedOUT_phi_B->Fill(child_Phi.at(j));
+                   hist_nomatchedOUT_DR_B->Fill(DR);
+                   hist_nomatchedOUT_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
+                   hist_nomatchedOUT_d0_B->Fill(sigd0);
+                   hist_nomatchedOUT_z0sinth_B->Fill(sigz0sinth);
+                 }
                }
              }
-  */
+
 
     //std::cout<<"event:\t"<<m_Ntot<< "\tn of matched tracks:\t"<< match << "\tn of child tracks(denominator):\t" << den << "\tratio:\t" <<(float) match/den<<"\t";
              m_match+=match;
@@ -1713,9 +1747,24 @@ void DAOD_selector::Terminate()
         hist_nomatched_Dphi_Deta_B->Write();
         hist_nomatched_DR_B->Write();
         hist_nomatched_pT_DR_B->Write();
+        */
         hist_nomatched_pT_jet_DR_B->Write();
-        hist_nomatched_pdgId_B->Write();
-  */
+        hist_nomatchedIN_pT_B->Write();
+        hist_nomatchedIN_eta_B->Write();
+        hist_nomatchedIN_phi_B->Write();
+        hist_nomatchedIN_DR_B->Write();
+        hist_nomatchedIN_pT_jet_DR_B->Write();
+        hist_nomatchedIN_d0_B->Write();
+        hist_nomatchedIN_z0sinth_B->Write();
+        hist_nomatchedOUT_pT_B->Write();
+        hist_nomatchedOUT_eta_B->Write();
+        hist_nomatchedOUT_phi_B->Write();
+        hist_nomatchedOUT_DR_B->Write();
+        hist_nomatchedOUT_pT_jet_DR_B->Write();
+        hist_nomatchedOUT_d0_B->Write();
+        hist_nomatchedOUT_z0sinth_B->Write();
+//        hist_nomatched_pdgId_B->Write();
+
   /*
         hist_single_matched_pT_B->Write();
         hist_single_matched_eta_B->Write();
@@ -1904,18 +1953,18 @@ void DAOD_selector::openOutputFile(std::string fileNameStringID)
 {
    std::cout<<"\n In DAOD_selector::openOutputFile"<<std::endl;
    if(lxplus && !debug){
-     if(retagT){
+     if(retag){
        std::cout<<"RETAG TRUE\n";
        if(cut){
          std::cout<<"CUT\n";
-         file = new TFile(("../output_files/lxplus_output_doRetagT_cut"+fileNameStringID+".root").c_str(),"RECREATE");
+         file = new TFile(("../output_files/lxplus_output_doretag_cut"+fileNameStringID+".root").c_str(),"RECREATE");
        }
        if(!cut){
          std::cout<<"NO CUT\n";
-         file = new TFile(("../output_files/lxplus_output_doRetagT_nocut"+fileNameStringID+".root").c_str(),"RECREATE");
+         file = new TFile(("../output_files/lxplus_output_doretag_nocut"+fileNameStringID+".root").c_str(),"RECREATE");
        }
      }
-     if(!retagT){
+     if(!retag){
        std::cout<<"RETAG FALSE\n";
        if(cut){
          std::cout<<"CUT\n";
@@ -1935,18 +1984,18 @@ void DAOD_selector::openOutputFile(std::string fileNameStringID)
        file = new TFile(("debug_"+fileNameStringID+".root").c_str(),"RECREATE");
    }
    if(!lxplus && !debug){
-     if(retagT){
+     if(retag){
        std::cout<<"RETAG TRUE\n";
        if(cut){
          std::cout<<"CUT\n";
-         file = new TFile(("../output_files/output_doRetagT_cut"+fileNameStringID+".root").c_str(),"RECREATE");
+         file = new TFile(("../output_files/output_doretag_cut"+fileNameStringID+".root").c_str(),"RECREATE");
        }
        if(!cut){
          std::cout<<"NO CUT\n";
-         file = new TFile(("../output_files/output_doRetagT_nocut"+fileNameStringID+".root").c_str(),"RECREATE");
+         file = new TFile(("../output_files/output_doretag_nocut"+fileNameStringID+".root").c_str(),"RECREATE");
        }
      }
-     if(!retagT){
+     if(!retag){
        std::cout<<"RETAG FALSE\n";
        if(cut){
          std::cout<<"CUT\n";
@@ -2320,9 +2369,24 @@ void DAOD_selector::bookHistosForSelectionAlgos()
        hist_nomatched_Dphi_Deta_B = new TH2F("nomatched_child_Dphi_Deta","nomatched_child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
        hist_nomatched_DR_B = new TH1F("nomatched_child_DR_B","nomatched_child_DR_B",500,-0.1,2.);
        hist_nomatched_pT_DR_B = new TH2F("nomatched_child_pT_DR_B","nomatched_child_pT_DR_B",80,0.,150.,80,0.,0.6);
-       hist_nomatched_pT_jet_DR_B = new TH2F("nomatched_child_pT_jet_DR_B","nomatched_child_pT_jet_DR_B",100,0.,500.,100,0.,2.);
-       hist_nomatched_pdgId_B = new TH1F("nomatched_child_pdgId_B","nomatched_child_pdgId_B",2000,-1000,1000);
-  */
+       */
+       hist_nomatched_pT_jet_DR_B = new TH2F("nomatched_child_pT_jet_DR_B","nomatched_child_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
+       hist_nomatchedIN_pT_B = new TH1F("nomatchedIN_child_pT_B", "nomatchedIN_child_pT_B", 500, 0., 150.);
+       hist_nomatchedIN_eta_B = new TH1F("nomatchedIN_child_eta_B","nomatchedIN_child_eta_B",500,-2.6,2.6);
+       hist_nomatchedIN_phi_B = new TH1F("nomatchedIN_child_phi_B","nomatchedIN_child_phi_B",500,-4.,4.);
+       hist_nomatchedIN_DR_B = new TH1F("nomatchedIN_child_DR_B","nomatchedIN_child_DR_B",500,-0.1,2.);
+       hist_nomatchedIN_pT_jet_DR_B = new TH2F("nomatchedIN_child_pT_jet_DR_B","nomatchedIN_child_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
+       hist_nomatchedIN_d0_B = new TH1F("nomatchedIN_child_d0_truth_B","nomatchedIN_child_d0_truth_B",300,-15.,15.);
+       hist_nomatchedIN_z0sinth_B = new TH1F("nomatchedIN_child_z0sinth_B","nomatchedIN_child_z0sinth_B",300,-150.,150.);
+       hist_nomatchedOUT_pT_B = new TH1F("nomatchedOUT_child_pT_B", "nomatchedOUT_child_pT_B", 500, 0., 150.);
+       hist_nomatchedOUT_eta_B = new TH1F("nomatchedOUT_child_eta_B","nomatchedOUT_child_eta_B",500,-2.6,2.6);
+       hist_nomatchedOUT_phi_B = new TH1F("nomatchedOUT_child_phi_B","nomatchedOUT_child_phi_B",500,-4.,4.);
+       hist_nomatchedOUT_DR_B = new TH1F("nomatchedOUT_child_DR_B","nomatchedOUT_child_DR_B",500,-0.1,2.);
+       hist_nomatchedOUT_pT_jet_DR_B = new TH2F("nomatchedOUT_child_pT_jet_DR_B","nomatchedOUT_child_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
+       hist_nomatchedOUT_d0_B = new TH1F("nomatchedOUT_child_d0_truth_B","nomatchedOUT_child_d0_truth_B",300,-15.,15.);
+       hist_nomatchedOUT_z0sinth_B = new TH1F("nomatchedOUT_child_z0sinth_B","nomatchedOUT_child_z0sinth_B",300,-150.,150.);
+//       hist_nomatched_pdgId_B = new TH1F("nomatched_child_pdgId_B","nomatched_child_pdgId_B",2000,-1000,1000);
+
   /*
        hist_single_matched_pT_B = new TH1F("single_matched_pT_B","single_matched_pT_B", 500, 0., 150.);
        hist_single_matched_eta_B = new TH1F("single_matched_child_eta_B","single_matched_child_eta_B",500,-2.6,2.6);
