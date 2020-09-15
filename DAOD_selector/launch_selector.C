@@ -19,7 +19,7 @@ void launch_selector()
   bool geometric_selection=true;
   bool cut=false;
   bool retagT=false;
-  string decay_mode="leptonic";//can be "leptonic" or "hadronic", set "false" or any other value for decay_mode=false
+  string decay_mode="false";//can be "leptonic" or "hadronic", set "false" or any other value for decay_mode=false
 
   float jet_pT_infcut=20*1e3,jet_pT_supcut=1000*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
   //float jet_pT_infcut=20*1e3,jet_pT_supcut=300*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
@@ -27,8 +27,8 @@ void launch_selector()
   float trk_pT_cut=0.4*1e3,trk_eta_cut=2.4,trk_d0_cut=1e3;
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
 
-  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
-//  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
+//  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
 //  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
 
   std::cout<<"\nJet Collection: " << jetcollection << "\n";
