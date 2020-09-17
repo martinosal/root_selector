@@ -57,7 +57,7 @@ void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool selections_
    return;
 }
 
-void DAOD_selector::setCuts(float m_jet_pT_infcut, float m_jet_pT_supcut, float m_jet_eta_cut, float m_jet_JVT_cut, float m_DR_bcH_cut, float m_pT_bcH_cut, float m_trk_pT_cut, float m_trk_eta_cut, float m_trk_d0_cut)
+void DAOD_selector::setCuts(float m_jet_pT_infcut, float m_jet_pT_supcut, float m_jet_eta_cut, float m_jet_JVT_cut, float m_DR_bcH_cut, float m_pT_bcH_cut, float m_trk_pT_cut, float m_trk_eta_cut, float m_trk_d0_cut, float m_trk_z0sinth_cut)
 {
    std::cout<<"\n In DAOD_selector::setCuts"<<std::endl;
    jet_pT_infcut=m_jet_pT_infcut;
@@ -69,6 +69,7 @@ void DAOD_selector::setCuts(float m_jet_pT_infcut, float m_jet_pT_supcut, float 
    trk_pT_cut=m_trk_pT_cut;
    trk_eta_cut=m_trk_eta_cut;
    trk_d0_cut=m_trk_d0_cut;
+   trk_z0sinth_cut=m_trk_z0sinth_cut;
    return;
 }
 
@@ -147,7 +148,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
    m_Ntot++;
 
-   double D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxy=0,Lxyz=0,Dxy_1=0.,x0=0.,y0=0.,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0.,d0=0.,sigd0=0,z0=0.,sigz0sinth=0;
+   double D_phi=0.,D_eta=0.,DR=0.,px=0.,py=0.,pz=0.,Dx_1=0.,Dy_1=0.,Dz_1=0.,Dx_2=0.,Dy_2=0.,Dz_2=0,Lxy=0,Lxyz=0,Dxy_1=0.,x0=0.,y0=0.,Dx_3=0.,Dy_3=0.,Dxy_3=0.,rand_n=0.,R0=0.,child_z0=0.,trk_d0_signed=0.,child_d0_signed=0,trk_z0_signed=0.,child_z0_signed=0.,trk_z0sinth_signed=0.,child_z0sinth_signed=0;
 
    double D_phi_trk=0.,D_eta_trk=0.,DR_trk=0.,DpT_trk=0.;
    double tmp_pTfraction=0.,tmp_DR=0.,tmp_min_pTfraction=1.,tmp_min_DR=1.;
@@ -527,7 +528,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 	         int den=0;
            for(unsigned i=0;i<size_jet;i++){
-             if(abs(jet_trk_eta[*it].at(i))<trk_eta_cut && jet_trk_pt[*it].at(i)>trk_pT_cut && abs(jet_trk_d0[*it].at(i))<trk_d0_cut ){// && abs(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)))<1.5
+             if(abs(jet_trk_eta[*it].at(i))<trk_eta_cut && jet_trk_pt[*it].at(i)>trk_pT_cut && abs(jet_trk_d0[*it].at(i))<trk_d0_cut && abs(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)))<trk_z0sinth_cut){//
 
                n_trk_pT_cut++;
 
@@ -557,18 +558,19 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                sgn_d0=A/abs(A);
                A=(jet_eta[*it]-jet_trk_eta[*it].at(i))*jet_trk_z0[*it].at(i);
                sgn_z0=A/abs(A);
-               d0=sgn_d0*abs(jet_trk_d0[*it].at(i));
-               z0=sgn_z0*abs(jet_trk_z0[*it].at(i));
+               trk_d0_signed=sgn_d0*abs(jet_trk_d0[*it].at(i));
+               trk_z0_signed=sgn_z0*abs(jet_trk_z0[*it].at(i));
+               trk_z0sinth_signed=trk_z0_signed*sin(jet_trk_theta[*it].at(i));
 
-               hist_trk_d0_B->Fill(d0);
+               hist_trk_d0_B->Fill(trk_d0_signed);
                hist_trk_sigd0_B->Fill(jet_trk_d0sig[*it].at(i));
-               hist_trk_z0_B->Fill(z0);
+               hist_trk_z0_B->Fill(trk_z0_signed);
                hist_trk_sigz0_B->Fill(jet_trk_z0sig[*it].at(i));
-               hist_trk_z0sinth_B->Fill(z0*sin(jet_trk_theta[*it].at(i)));
-               hist_trk_d0sig_B->Fill(d0/jet_trk_d0sig[*it].at(i));
-               hist_trk_z0sinthsig_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-               hist_trk_d0sig_origin_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
-               hist_trk_z0sinthsig_origin_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+               hist_trk_z0sinth_B->Fill(trk_z0sinth_signed);
+               hist_trk_d0sig_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i));
+               hist_trk_z0sinthsig_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i));
+               hist_trk_d0sig_origin_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i),origin);
+               hist_trk_z0sinthsig_origin_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i),origin);
                hist_trk_logpTfrac_origin_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
                hist_trk_logDR_origin_B->Fill(log(DR),origin);
                hist_trk_IBLhits_origin_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
@@ -593,10 +595,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    JF_ntrk=JF_ntrk+p;
                    if(p==1){
                      hist_trk_origin_JF_B->Fill(origin);
-                     hist_trk_d0sig_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_JF_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_JF_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
-                     hist_trk_z0sinthsig_origin_JF_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_d0sig_JF_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_JF_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_JF_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_JF_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i),origin);
                      hist_trk_logpTfrac_origin_JF_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
                      hist_trk_logDR_origin_JF_B->Fill(log(DR),origin);
                      hist_trk_IBLhits_origin_JF_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
@@ -614,10 +616,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    SV1_ntrk=SV1_ntrk+p;
                    if(p==1){
                      hist_trk_origin_SV1_B->Fill(origin);
-                     hist_trk_d0sig_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_SV1_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_SV1_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
-                     hist_trk_z0sinthsig_origin_SV1_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_d0sig_SV1_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_SV1_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_SV1_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_SV1_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i),origin);
                      hist_trk_logpTfrac_origin_SV1_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
                      hist_trk_logDR_origin_SV1_B->Fill(log(DR),origin);
                      hist_trk_IBLhits_origin_SV1_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
@@ -635,10 +637,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    SV0_ntrk=SV0_ntrk+p;
                    if(p==1){
                      hist_trk_origin_SV0_B->Fill(origin);
-                     hist_trk_d0sig_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_SV0_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_SV0_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
-                     hist_trk_z0sinthsig_origin_SV0_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_d0sig_SV0_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_SV0_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_SV0_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_SV0_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i),origin);
                      hist_trk_logpTfrac_origin_SV0_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
                      hist_trk_logDR_origin_SV0_B->Fill(log(DR),origin);
                      hist_trk_IBLhits_origin_SV0_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
@@ -656,10 +658,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    IP3D_ntrk=IP3D_ntrk+p;
                    if(p==1){
                      hist_trk_origin_IP3D_B->Fill(origin);
-                     hist_trk_d0sig_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_IP3D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_IP3D_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
-                     hist_trk_z0sinthsig_origin_IP3D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_d0sig_IP3D_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_IP3D_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_IP3D_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_IP3D_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i),origin);
                      hist_trk_logpTfrac_origin_IP3D_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
                      hist_trk_logDR_origin_IP3D_B->Fill(log(DR),origin);
                      hist_trk_IBLhits_origin_IP3D_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
@@ -677,10 +679,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    IP2D_ntrk=IP2D_ntrk+p;
                    if(p==1){
                      hist_trk_origin_IP2D_B->Fill(origin);
-                     hist_trk_d0sig_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i));
-                     hist_trk_z0sinthsig_IP2D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i));
-                     hist_trk_d0sig_origin_IP2D_B->Fill(d0/jet_trk_d0sig[*it].at(i),origin);
-                     hist_trk_z0sinthsig_origin_IP2D_B->Fill(z0*sin(jet_trk_theta[*it].at(i))/jet_trk_z0sig[*it].at(i),origin);
+                     hist_trk_d0sig_IP2D_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i));
+                     hist_trk_z0sinthsig_IP2D_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i));
+                     hist_trk_d0sig_origin_IP2D_B->Fill(trk_d0_signed/jet_trk_d0sig[*it].at(i),origin);
+                     hist_trk_z0sinthsig_origin_IP2D_B->Fill(trk_z0sinth_signed/jet_trk_z0sig[*it].at(i),origin);
                      hist_trk_logpTfrac_origin_IP2D_B->Fill(log(jet_trk_pt[*it].at(i)/jet_pt[*it]),origin);
                      hist_trk_logDR_origin_IP2D_B->Fill(log(DR),origin);
                      hist_trk_IBLhits_origin_IP2D_B->Fill(jet_trk_nInnHits[*it].at(i),origin);
@@ -709,23 +711,23 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 */
 
                if(origin==-1){
-                 hist_trk_d0_PUB->Fill(d0);
+                 hist_trk_d0_PUB->Fill(trk_d0_signed);
                  n_trk_PU_pT_cut++;
                }
                if(origin==0){
-                 hist_trk_d0_BB->Fill(d0);
+                 hist_trk_d0_BB->Fill(trk_d0_signed);
                  n_trk_B++;
                }
                if(origin==1){
-                 hist_trk_d0_CB->Fill(d0);
+                 hist_trk_d0_CB->Fill(trk_d0_signed);
                  n_trk_C++;
                }
                if(origin==2){
-                 hist_trk_d0_FRAGB->Fill(d0);
+                 hist_trk_d0_FRAGB->Fill(trk_d0_signed);
                  n_trk_FRAG_pT_cut++;
                }
                if(origin==3){
-                 hist_trk_d0_GEANTB->Fill(d0);
+                 hist_trk_d0_GEANTB->Fill(trk_d0_signed);
                  n_trk_GEANT_pT_cut++;
                }
 
@@ -744,7 +746,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    hist_matched_origin_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
                    hist_matched_origin_pdgId_B->Fill(jet_trk_pdg_id[*it].at(i));
                    hist_matched_origin_origin_B->Fill(origin);
-                   hist_matched_origin_d0_B->Fill(d0);
+                   hist_matched_origin_d0_B->Fill(trk_d0_signed);
 //                   hist_matched_origin_Lxy_B->Fill();
 //                   hist_matched_origin_Lxyz_B->Fill();
 
@@ -758,7 +760,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
            std::vector<double> child_Pt,child_Eta,child_Phi;
            std::vector<int> child_idx;
 
-           double child_IP[size_child],child_Lxy[size_child],child_Lxyz[size_child];
+           double child_IP[size_child],child_Lxy[size_child],child_Lxyz[size_child],child_z0sinth_signed_v[size_child],child_d0_signed_v[size_child];
            den=0;//n of child_400 per jet
 
            for(unsigned j=0;j<size_child;j++){
@@ -772,10 +774,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              child_Eta.push_back(v.Eta());
              child_Phi.push_back(v.Phi());
 
-//             float z0sinth=sigz0sinth;
-
-
-             if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut && abs(jet_bH_child_d0[*it].at(j))<trk_d0_cut ){//CHILD SELECTION CRITERIA && abs(z0sinth)<1.5
+//             if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut && abs(jet_bH_child_d0[*it].at(j))<trk_d0_cut && abs((jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j)))<trk_z0sinth_cut){//CHILD SELECTION CRITERIA
                if(jet_bH_child_prod_x[*it].size()!=size_child || jet_bH_child_decay_x[*it].size()!=size_child){
                  std::cout<<"WARNING\n";
                }
@@ -871,19 +870,27 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 //                 std::cout<<jet_bH_child_charge[*it].at(j)<<"\t"<<d0/abs(d0)<<"\n";
                }//DECAY CHILD
 
-               d0=jet_bH_child_d0[*it].at(j);
-               hist_child_d0->Fill(d0);
-               hist_child_d0_pT->Fill(d0,1e-3*sqrt(px*px+py*py));
-               child_IP[j]=d0;
+               child_IP[j]=jet_bH_child_d0[*it].at(j);
+               hist_child_d0->Fill(child_IP[j]);
+               hist_child_d0_pT->Fill(child_IP[j],1e-3*sqrt(px*px+py*py));
 
                A=sin(jet_phi[*it]-child_Phi.at(j))*jet_bH_child_d0[*it].at(j);
-               sgn=A/abs(A);
-               sigd0=sgn*abs(jet_bH_child_d0[*it].at(j));
-               sigz0sinth=(jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j));
-               hist_child_d0_truth->Fill(sigd0);
+               sgn_d0=A/abs(A);
+               child_d0_signed=sgn_d0*abs(jet_bH_child_d0[*it].at(j));
+               child_z0=jet_bH_child_z0[*it].at(j)-(*PVz);
+               A=(jet_eta[*it]-child_Eta.at(j))*child_z0;
+               sgn_z0=A/abs(A);
+               child_z0_signed=sgn_z0*abs(child_z0);
+               child_z0sinth_signed=child_z0_signed*sin(jet_bH_child_theta[*it].at(j));
+
+               child_d0_signed_v[j]=child_d0_signed;
+               child_z0sinth_signed_v[j]=child_z0sinth_signed;
+
+               hist_child_z0->Fill(child_z0_signed);
+               hist_child_d0_truth->Fill(child_d0_signed);
                if(jet_bH_child_theta[*it].at(j)==-99)
                std::cout<<"W\n";
-               hist_child_z0sinth_B->Fill(sigz0sinth);//*sqrt(px*px+py*py)/sqrt(px*px+py*py+pz*pz)
+               hist_child_z0sinth_B->Fill(child_z0sinth_signed);
 
                D_eta=child_Eta[j]-jet_eta[*it];
                if(abs(child_Phi[j]-jet_phi[*it])>M_PI){
@@ -908,38 +915,38 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  hist_child_pi->Fill(1e-3*child_Pt[j]);
                  hist_child_pi_Lxy_B->Fill(Lxy);
                  hist_child_pi_Lxyz_B->Fill(Lxyz);//CHECK
-                 hist_child_pi_d0_truth_B->Fill(sigd0);
+                 hist_child_pi_d0_truth_B->Fill(child_d0_signed);
                  hist_child_pi_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==321){
                  hist_child_K->Fill(1e-3*child_Pt[j]);
                  hist_child_K_Lxy_B->Fill(Lxy);
                  hist_child_K_Lxyz_B->Fill(Lxyz);
-                 hist_child_K_d0_truth_B->Fill(sigd0);
+                 hist_child_K_d0_truth_B->Fill(child_d0_signed);
                  hist_child_K_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==13){
                  hist_child_mu->Fill(1e-3*child_Pt[j]);
                  hist_child_mu_Lxy_B->Fill(Lxy);
                  hist_child_mu_Lxyz_B->Fill(Lxyz);
-                 hist_child_mu_d0_truth_B->Fill(sigd0);
+                 hist_child_mu_d0_truth_B->Fill(child_d0_signed);
                  hist_child_mu_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==2212){
                  hist_child_p->Fill(1e-3*child_Pt[j]);
                  hist_child_p_Lxy_B->Fill(Lxy);
                  hist_child_p_Lxyz_B->Fill(Lxyz);
-                 hist_child_p_d0_truth_B->Fill(sigd0);
+                 hist_child_p_d0_truth_B->Fill(child_d0_signed);
                  hist_child_p_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
                if(abs(jet_bH_child_pdg_id[*it].at(j))==11){
                  hist_child_e->Fill(1e-3*child_Pt[j]);
                  hist_child_e_Lxy_B->Fill(Lxy);
                  hist_child_e_Lxyz_B->Fill(Lxyz);
-                 hist_child_e_d0_truth_B->Fill(sigd0);
+                 hist_child_e_d0_truth_B->Fill(child_d0_signed);
                  hist_child_e_z0_truth_B->Fill(jet_bH_child_z0[*it].at(j));
                }
-             }
+//             }
            }
 
 
@@ -958,13 +965,12 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              }
 
              for(unsigned j=0;j<size_child;j++){
-//               float sintheta=child_Pt.at(j)/sqrt(child_Pt.at(j)*child_Pt.at(j)+jet_bH_child_pz[*it].at(j)*jet_bH_child_pz[*it].at(j));
-               if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut && abs(jet_bH_child_d0[*it].at(j))<trk_d0_cut){// && abs(jet_bH_child_z0[*it].at(j)*sintheta)<1.5
+//               if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut && abs(jet_bH_child_d0[*it].at(j))<trk_d0_cut && abs((jet_bH_child_z0[*it].at(j)-(*PVz))*sin(jet_bH_child_theta[*it].at(j)))<trk_z0sinth_cut){//
                  if(jet_bH_child_charge[*it].at(j)==0){
                    std::cout<<"CHARGE 0\n";
                  }
                  for(unsigned i=0;i<size_jet;i++){
-                   if(abs(jet_trk_eta[*it].at(i))<trk_eta_cut && jet_trk_pt[*it].at(i)>trk_pT_cut && abs(jet_trk_d0[*it].at(i))<trk_d0_cut){// && abs(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)))<1.5
+                   if(abs(jet_trk_eta[*it].at(i))<trk_eta_cut && jet_trk_pt[*it].at(i)>trk_pT_cut && abs(jet_trk_d0[*it].at(i))<trk_d0_cut && abs(jet_trk_z0[*it].at(i)*sin(jet_trk_theta[*it].at(i)))<trk_z0sinth_cut){//
                      if( (jet_trk_parent_pdgid[*it].at(i)-jet_bH_child_parent_pdg_id[*it].at(j))==0 && abs(jet_trk_parent_pdgid[*it].at(i))!=999 ){
                        if( (jet_trk_pdg_id[*it].at(i)-jet_bH_child_pdg_id[*it].at(j))==0 && abs(jet_trk_pdg_id[*it].at(i))!=999 ){
   //                       std::cout<<"("<<i<<","<<j<<") ";
@@ -973,7 +979,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                      }
                    }
                  }
-               }
+//               }
              }
 
 
@@ -1169,7 +1175,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                  }
 
                  hist_matched_origin_B->Fill(jet_trk_orig[*it].at(a));
-                 hist_matched_d0_B->Fill(child_IP[b]);
+                 hist_matched_d0_B->Fill(child_d0_signed);
                  hist_matched_Lxy_B->Fill(child_Lxy[b]);
                  hist_matched_Lxyz_B->Fill(child_Lxyz[b]);
 
@@ -1248,7 +1254,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
              for(unsigned l=0;l<child_idx.size();l++){
                j=child_idx.at(l);
                //CINEMATICA RISPETTO AL JET
-               if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut){
+//               if(abs(child_Eta.at(j))<trk_eta_cut && child_Pt.at(j)>trk_pT_cut){
                  D_eta=child_Eta.at(j)-jet_eta[*it];
                  if(abs(child_Phi.at(j)-jet_phi[*it])>M_PI){
                    D_phi=2*M_PI-abs(child_Phi.at(j)-jet_phi[*it]);
@@ -1277,8 +1283,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    hist_nomatchedIN_phi_B->Fill(child_Phi.at(j));
                    hist_nomatchedIN_DR_B->Fill(DR);
                    hist_nomatchedIN_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
-                   hist_nomatchedIN_d0_B->Fill(sigd0);
-                   hist_nomatchedIN_z0sinth_B->Fill(sigz0sinth);
+                   hist_nomatchedIN_d0_B->Fill(child_d0_signed_v[j]);
+                   hist_nomatchedIN_z0sinth_B->Fill(child_z0sinth_signed_v[j]);
                  }
                  if(DR>DR_shrink){
                    hist_nomatchedOUT_pT_B->Fill(1e-3*child_Pt.at(j));
@@ -1286,10 +1292,10 @@ Bool_t DAOD_selector::Process(Long64_t entry)
                    hist_nomatchedOUT_phi_B->Fill(child_Phi.at(j));
                    hist_nomatchedOUT_DR_B->Fill(DR);
                    hist_nomatchedOUT_pT_jet_DR_B->Fill(1e-3*jet_pt[*it],DR);
-                   hist_nomatchedOUT_d0_B->Fill(sigd0);
-                   hist_nomatchedOUT_z0sinth_B->Fill(sigz0sinth);
+                   hist_nomatchedOUT_d0_B->Fill(child_d0_signed_v[j]);
+                   hist_nomatchedOUT_z0sinth_B->Fill(child_z0sinth_signed_v[j]);
                  }
-               }
+//               }
              }
 
 
@@ -1662,6 +1668,7 @@ void DAOD_selector::Terminate()
 //      hist_child_linear_IP->Write();
       hist_child_d0_truth->Write();
       hist_child_d0->Write();
+      hist_child_z0->Write();
       hist_child_d0_pT->Write();
       hist_child_z0sinth_B->Write();
       hist_pT_vs_R0_ratio_B->Write();
@@ -1906,7 +1913,7 @@ void DAOD_selector::Terminate()
         std::cout<<"\n"<<decay_mode<<" mode:";
       }
       std::cout<<"\nb jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << ", light jets "<<m_nlcheck<<"\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
-      std::cout<<"\nTRACK CUTS\ntrk pT > "<<1e-3*trk_pT_cut<<" GeV\n"<<"trk |eta| < "<<trk_eta_cut<<"\n"<<"trk |d0| < "<<trk_d0_cut<<" mm"<<"\n";
+      std::cout<<"\nTRACK CUTS\ntrk pT > "<<1e-3*trk_pT_cut<<" GeV\n"<<"trk |eta| < "<<trk_eta_cut<<"\n"<<"trk |d0| < "<<trk_d0_cut<<" mm"<<"\n"<<"trk |z0*sin(theta)| < "<<trk_z0sinth_cut<<" mm"<<"\n";
       std::cout<<"\n(JF_ntrk, SV1_ntrk, SV0_ntrk, IP2D_ntrk, IP3D_ntrk)\n"<<JF_ntrk<<", \t"<<SV1_ntrk<<", \t"<<SV0_ntrk<<", \t"<<IP2D_ntrk<<", \t"<<IP3D_ntrk<<"\n";
       if(origin_selection){
         std::cout<<"\nORIGIN SELECTION\n";
@@ -2131,13 +2138,13 @@ void DAOD_selector::bookHistosForSelectionAlgos()
      hist_trk_pdgId_B = new TH1F("trk_pdgID_B","trk_pdgID_B",200000,-100000,100000);
      hist_trk_origin_B = new TH1F("trk_origin_B","trk_origin_B",5,-1,4);
 
-     hist_trk_d0_B = new TH1F("trk_d0_B","trk_d0_B",300,-15.,15.);
-     hist_trk_sigd0_B = new TH1F("trk_sigd0_B","trk_sigd0_B",100,0.,10.);
-     hist_trk_z0_B = new TH1F("trk_z0_B","trk_z0_B",300,-15.,15.);
-     hist_trk_sigz0_B = new TH1F("trk_sigz0_B","trk_sigz0_B",100,0.,10.);
-     hist_trk_z0sinth_B = new TH1F("trk_z0sinth_B","trk_z0sinth_B",300,-15.,15.);
-     hist_trk_d0sig_B = new TH1F("trk_d0sig_B","trk_d0sig_B",300,-15.,15.);
-     hist_trk_z0sinthsig_B = new TH1F("trk_z0sinthsig_B","trk_z0sinthsig_B",300,-15.,15.);
+     hist_trk_d0_B = new TH1F("trk_d0_B","trk_d0_B",3000,-15.,15.);
+     hist_trk_sigd0_B = new TH1F("trk_sigd0_B","trk_sigd0_B",1000,0.,10.);
+     hist_trk_z0_B = new TH1F("trk_z0_B","trk_z0_B",3000,-15.,15.);
+     hist_trk_sigz0_B = new TH1F("trk_sigz0_B","trk_sigz0_B",1000,0.,10.);
+     hist_trk_z0sinth_B = new TH1F("trk_z0sinth_B","trk_z0sinth_B",1000,-5.,5.);
+     hist_trk_d0sig_B = new TH1F("trk_d0sig_B","trk_d0sig_B",3000,-15.,15.);
+     hist_trk_z0sinthsig_B = new TH1F("trk_z0sinthsig_B","trk_z0sinthsig_B",3000,-15.,15.);
      hist_trk_d0sig_origin_B = new TH2F("trk_d0sig_origin_B","trk_d0sig_origin_B",300,-15.,15.,5,-1,4);
      hist_trk_z0sinthsig_origin_B = new TH2F("trk_z0sinthsig_origin_B","trk_z0sinthsig_origin_B",300,-15.,15.,5,-1,4);
      hist_trk_logpTfrac_origin_B = new TH2F("trk_logpTfrac_origin_B","trk_logpTfrac_origin_B",300,-10.,2,5,-1,4);
@@ -2287,10 +2294,11 @@ void DAOD_selector::bookHistosForSelectionAlgos()
 //     hist_child_decay_IP = new TH1F("child_decay_IP_B","child_decay_IP_B",300,-15.,15.);
 //     hist_child_nodecay_IP = new TH1F("child_nodecay_IP_B","child_nodecay_IP_B",300,-15.,15.);
 //     hist_child_linear_IP = new TH1F("child_linear_IP_B","child_linear_IP_B",300,-15.,15.);
-     hist_child_d0_truth = new TH1F("child_d0_truth_B","child_d0_truth_B",300,-15.,15.);
-     hist_child_d0 = new TH1F("child_d0_B","child_d0_B",300,-15.,15.);
+     hist_child_d0_truth = new TH1F("child_d0_truth_B","child_d0_truth_B",3000,-15.,15.);
+     hist_child_d0 = new TH1F("child_d0_B","child_d0_B",3000,-15.,15.);
+     hist_child_z0 = new TH1F("child_z0_B","child_z0_B",3000,-15.,15.);
      hist_child_d0_pT = new TH2F("child_d0_pT_B","child_pT_d0_B",300,-15.,15.,300,0.,150.);
-     hist_child_z0sinth_B = new TH1F("child_z0sinth_B","child_z0sinth_B",300,-150.,150.);
+     hist_child_z0sinth_B = new TH1F("child_z0sinth_B","child_z0sinth_B",1000,-5.,5.);
      hist_pT_vs_R0_ratio_B = new TH1F("child_pT_vs_R0_ratio_B","child_pT_vs_R0_ratio_B",300,-1.2,2.4);
 
      if(origin_selection){
@@ -2357,7 +2365,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
        hist_matched_pT_child_pTfraction_B = new TH2F("matched_pT_child_pTfraction_B","matched_pT_child_vs_DpT/pT_child_B",300,0.,150.,500,-1.,10.);
        hist_matched_DR_trk_B = new TH1F("matched_DR_trk_B","matched_DR_trk_B_B",500,0.,1.);
        hist_matched_DR_trk_pTfraction = new TH2F("matched_DR_trk_pTfraction_B","matched_DR_trk_pTfraction_B",500,0.,1.,500,-1.,10.);
-       hist_matched_d0_B = new TH1F("matched_child_d0_B","matched_child_d0_B",300,-15.,15.);
+       hist_matched_d0_B = new TH1F("matched_child_d0_B","matched_child_d0_B",3000,-15.,15.);
        hist_matched_Lxy_B = new TH1F("matched_child_Lxy_B","matched_child_Lxy_B",1000,0.,1000.);
        hist_matched_Lxyz_B = new TH1F("matched_child_Lxyz_B","matched_child_Lxyz_B",1000,0.,1000.);
   /*
@@ -2376,15 +2384,15 @@ void DAOD_selector::bookHistosForSelectionAlgos()
        hist_nomatchedIN_phi_B = new TH1F("nomatchedIN_child_phi_B","nomatchedIN_child_phi_B",500,-4.,4.);
        hist_nomatchedIN_DR_B = new TH1F("nomatchedIN_child_DR_B","nomatchedIN_child_DR_B",500,-0.1,2.);
        hist_nomatchedIN_pT_jet_DR_B = new TH2F("nomatchedIN_child_pT_jet_DR_B","nomatchedIN_child_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
-       hist_nomatchedIN_d0_B = new TH1F("nomatchedIN_child_d0_truth_B","nomatchedIN_child_d0_truth_B",300,-15.,15.);
-       hist_nomatchedIN_z0sinth_B = new TH1F("nomatchedIN_child_z0sinth_B","nomatchedIN_child_z0sinth_B",300,-150.,150.);
+       hist_nomatchedIN_d0_B = new TH1F("nomatchedIN_child_d0_truth_B","nomatchedIN_child_d0_truth_B",3000,-15.,15.);
+       hist_nomatchedIN_z0sinth_B = new TH1F("nomatchedIN_child_z0sinth_B","nomatchedIN_child_z0sinth_B",3000,-15.,15.);
        hist_nomatchedOUT_pT_B = new TH1F("nomatchedOUT_child_pT_B", "nomatchedOUT_child_pT_B", 500, 0., 150.);
        hist_nomatchedOUT_eta_B = new TH1F("nomatchedOUT_child_eta_B","nomatchedOUT_child_eta_B",500,-2.6,2.6);
        hist_nomatchedOUT_phi_B = new TH1F("nomatchedOUT_child_phi_B","nomatchedOUT_child_phi_B",500,-4.,4.);
        hist_nomatchedOUT_DR_B = new TH1F("nomatchedOUT_child_DR_B","nomatchedOUT_child_DR_B",500,-0.1,2.);
        hist_nomatchedOUT_pT_jet_DR_B = new TH2F("nomatchedOUT_child_pT_jet_DR_B","nomatchedOUT_child_pT_jet_DR_B",1000,0.,500.,200,0.,2.);
-       hist_nomatchedOUT_d0_B = new TH1F("nomatchedOUT_child_d0_truth_B","nomatchedOUT_child_d0_truth_B",300,-15.,15.);
-       hist_nomatchedOUT_z0sinth_B = new TH1F("nomatchedOUT_child_z0sinth_B","nomatchedOUT_child_z0sinth_B",300,-150.,150.);
+       hist_nomatchedOUT_d0_B = new TH1F("nomatchedOUT_child_d0_truth_B","nomatchedOUT_child_d0_truth_B",3000,-15.,15.);
+       hist_nomatchedOUT_z0sinth_B = new TH1F("nomatchedOUT_child_z0sinth_B","nomatchedOUT_child_z0sinth_B",3000,-15.,15.);
 //       hist_nomatched_pdgId_B = new TH1F("nomatched_child_pdgId_B","nomatched_child_pdgId_B",2000,-1000,1000);
 
   /*

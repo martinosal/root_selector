@@ -351,7 +351,7 @@ public :
    virtual ~DAOD_selector() { }
    virtual Int_t   Version() const { return 2; }
    virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, double, double, double, string);
-   virtual void    setCuts(float, float, float, float, float, float, float, float, float);
+   virtual void    setCuts(float, float, float, float, float, float, float, float, float, float);
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -389,7 +389,7 @@ public :
 
      // selection cuts
      float jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,m_pT_bcH_truth_cut,m_DR_bcH_truth_cut;
-     float trk_pT_cut,trk_eta_cut,trk_d0_cut;
+     float trk_pT_cut,trk_eta_cut,trk_d0_cut,trk_z0sinth_cut;
 
      // Service variables
      double m_pt_max_shrCone, m_pt_min_shrCone, m_Delta_pt_shrCone;
@@ -684,6 +684,7 @@ public :
   //   TH1F *hist_child_linear_IP;
      TH1F *hist_child_d0_truth;
      TH1F *hist_child_d0;
+     TH1F *hist_child_z0;
      TH2F *hist_child_d0_pT;
      TH1F *hist_child_z0sinth_B;
      TH1F *hist_pT_vs_R0_ratio_B;
