@@ -22,13 +22,14 @@ void launch_selector()
   double m_p1=0.,m_p2=0.,m_p3=0.;
   string decay_mode="false";//can be "leptonic" or "hadronic", set "false" or any other value for decay_mode=false
 
-  float jet_pT_infcut=20*1e3,jet_pT_supcut=1000*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
+  float jet_pT_infcut=20*1e3,jet_pT_supcut=1000*1e4,jet_eta_cut=2.5,jet_JVT_cut=0.2;//was 0.5
   //float jet_pT_infcut=20*1e3,jet_pT_supcut=300*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
   float DR_bcH_cut=0.3,pT_bcH_cut=5*1e3;
-  float trk_pT_cut=1*1e3,trk_eta_cut=2.4,trk_d0_cut=1.,trk_z0sinth_cut=1.5;
+  float trk_pT_cut=0.4*1e3,trk_eta_cut=2.4*1e3,trk_d0_cut=1.*1e3,trk_z0sinth_cut=1.5*1e3;
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
 
   const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+//  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
 //  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
 //  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
 

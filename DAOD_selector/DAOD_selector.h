@@ -170,15 +170,15 @@ public :
    TTreeReaderArray<float> MaxTrkRapidity = {fReader, "MaxTrkRapidity"};//<-JetFitterBranches.cxx
    TTreeReaderArray<float> MinTrkRapidity = {fReader, "MinTrkRapidity"};//<-JetFitterBranches.cxx
    TTreeReaderArray<float> AvgTrkRapidity = {fReader, "AvgTrkRapidity"};//<-JetFitterBranches.cxx
-   TTreeReaderArray<int> jet_sv1_Nvtx = {fReader, "jet_sv1_Nvtx"};//<-SVBranches.cxx
-   TTreeReaderArray<float> jet_sv1_ntrkv = {fReader, "jet_sv1_ntrkv"};//<-SVBranches.cxx
-   TTreeReaderArray<float> jet_sv1_n2t = {fReader, "jet_sv1_n2t"};//<-SVBranches.cxx//number of two-track vertices
-   TTreeReaderArray<float> jet_sv1_m = {fReader, "jet_sv1_m"};//<-SVBranches.cxx//SV mass
-   TTreeReaderArray<float> jet_sv1_efc = {fReader, "jet_sv1_efc"};//<-SVBranches.cxx//SV energy fraction
+   TTreeReaderArray<int> jet_sv1_Nvtx = {fReader, "jet_sv1_Nvtx"};//<-SVBranches.cxx  N of vertices (NVtx)
+   TTreeReaderArray<float> jet_sv1_ntrkv = {fReader, "jet_sv1_ntrkv"};//<-SVBranches.cxx  N of Good tracks in SVx (NGTinSvx)
+   TTreeReaderArray<float> jet_sv1_n2t = {fReader, "jet_sv1_n2t"};//<-SVBranches.cxx//number of two-track vertices (N2Tpair)
+   TTreeReaderArray<float> jet_sv1_m = {fReader, "jet_sv1_m"};//<-SVBranches.cxx//SV mass of vertex  (masssvx)
+   TTreeReaderArray<float> jet_sv1_efc = {fReader, "jet_sv1_efc"};//<-SVBranches.cxx//SV energy fraction  (efracsvx)
    TTreeReaderArray<float> jet_sv1_sig3d = {fReader, "jet_sv1_sig3d"};//<-SVBranches.cxx
    TTreeReaderArray<float> sv1_llr = {fReader, "sv1_llr"};//<-SVBranches.cxx
    TTreeReaderArray<float> jet_sv1_normdist = {fReader, "jet_sv1_normdist"};//<-SVBranches.cxx
-   TTreeReaderArray<float> jet_sv1_deltaR = {fReader, "jet_sv1_deltaR"};//<-SVBranches.cxx
+   TTreeReaderArray<float> jet_sv1_deltaR = {fReader, "jet_sv1_deltaR"};//<-SVBranches.cxx  DR between the SV-PV line and the Jet Axis
    TTreeReaderArray<float> jet_sv1_Lxy = {fReader, "jet_sv1_Lxy"};//<-SVBranches.cxx
    TTreeReaderArray<float> jet_sv1_L3d = {fReader, "jet_sv1_L3d"};//<-SVBranches.cxx
    TTreeReaderArray<vector<float>> jet_sv1_vtx_x = {fReader, "jet_sv1_vtx_x"};//<-SVBranches.cxx
@@ -310,8 +310,8 @@ public :
    TTreeReaderArray<vector<float>> jet_trk_charge = {fReader, "jet_trk_charge"};
    TTreeReaderArray<vector<float>> jet_trk_chi2 = {fReader, "jet_trk_chi2"};
    TTreeReaderArray<vector<float>> jet_trk_ndf = {fReader, "jet_trk_ndf"};
-   TTreeReaderArray<vector<int>> jet_trk_nNextToInnHits = {fReader, "jet_trk_nNextToInnHits"};
-   TTreeReaderArray<vector<int>> jet_trk_nInnHits = {fReader, "jet_trk_nInnHits"};
+   TTreeReaderArray<vector<int>> jet_trk_nNextToInnHits = {fReader, "jet_trk_nNextToInnHits"};//b-layer
+   TTreeReaderArray<vector<int>> jet_trk_nInnHits = {fReader, "jet_trk_nInnHits"};//IBL
    TTreeReaderArray<vector<int>> jet_trk_nBLHits = {fReader, "jet_trk_nBLHits"};
    TTreeReaderArray<vector<int>> jet_trk_nsharedBLHits = {fReader, "jet_trk_nsharedBLHits"};
    TTreeReaderArray<vector<int>> jet_trk_nsplitBLHits = {fReader, "jet_trk_nsplitBLHits"};
@@ -377,7 +377,6 @@ public :
    void getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
 
 
-
    ClassDef(DAOD_selector,0);
 
    private:
@@ -420,6 +419,7 @@ public :
      int m_nBcheck,m_nCcheck,m_nlcheck;
      int m_nJetBCoverlap,m_nJetBCoverlap_postJetSel,ov_check;
      int JF_ntrk,SV1_ntrk,SV0_ntrk,IP2D_ntrk,IP3D_ntrk;
+     int b_cnt,b_trkcut_cnt,trkcut_cnt,SV1input_trks,nSV1jets,nSV1trk,nIPxDtrk,nJFtrk,nSV1outputjets,nIPxDoutputjets,nJFoutputjets;
 
      unsigned m_track_cut;
 
@@ -461,18 +461,32 @@ public :
      TH1F *hist_phi_B;
      TH1F *hist_E_B;
      TH1F *hist_Bjet_origin;
+     TH1F *hist_Bjet_cut_origin;
+     TH2F *hist_Bjet_cut_origin_pT;
+     TH2F *hist_Bjet_cut_origin_jetpT;
 
      TH1F *hist_pt_C;
      TH1F *hist_eta_C;
      TH1F *hist_phi_C;
      TH1F *hist_E_C;
      TH1F *hist_Cjet_origin;
+     TH1F *hist_Cjet_cut_origin;
+     TH2F *hist_Cjet_cut_origin_pT;
+     TH2F *hist_Cjet_cut_origin_jetpT;
 
      TH1F *hist_pt_l;
      TH1F *hist_eta_l;
      TH1F *hist_phi_l;
      TH1F *hist_E_l;
      TH1F *hist_ljet_origin;
+     TH1F *hist_ljet_cut_origin;
+     TH2F *hist_ljet_cut_origin_pT;
+     TH2F *hist_ljet_cut_origin_jetpT;
+
+     TH1F *hist_nBjets;
+     TH1F *hist_nCjets;
+     TH1F *hist_nljets;
+
 
      TH1F *hist_n_tracks;
      TH2F *hist_tracks_DR;
@@ -547,7 +561,14 @@ public :
      TH2F *hist_trk_nSCThits_origin_B;
      TH2F *hist_trk_sharedSCThits_origin_B;
 
+     TH1F *hist_trk_pT_JF_B;
+     TH2F *hist_jet_pT_origin_JF_B;
+     TH1F *hist_jet_pt_JF_B;
+     TH1F *hist_trk_eta_JF_B;
+     TH2F *hist_trk_pT_jet_DR_JF_B;
      TH1F *hist_trk_origin_JF_B;
+     TH1F *hist_trk_d0_JF_B;
+     TH1F *hist_trk_z0sinth_JF_B;
      TH1F *hist_trk_d0sig_JF_B;
      TH1F *hist_trk_z0sinthsig_JF_B;
      TH2F *hist_trk_d0sig_origin_JF_B;
@@ -564,7 +585,14 @@ public :
      TH2F *hist_trk_nSCThits_origin_JF_B;
      TH2F *hist_trk_sharedSCThits_origin_JF_B;
 
+     TH1F *hist_trk_pT_SV1_B;
+     TH2F *hist_jet_pT_origin_SV1_B;
+     TH1F *hist_jet_pt_SV1_B;
+     TH1F *hist_trk_eta_SV1_B;
+     TH2F *hist_trk_pT_jet_DR_SV1_B;
      TH1F *hist_trk_origin_SV1_B;
+     TH1F *hist_trk_d0_SV1_B;
+     TH1F *hist_trk_z0sinth_SV1_B;
      TH1F *hist_trk_d0sig_SV1_B;
      TH1F *hist_trk_z0sinthsig_SV1_B;
      TH2F *hist_trk_d0sig_origin_SV1_B;
@@ -580,8 +608,15 @@ public :
      TH2F *hist_trk_splitPixhits_origin_SV1_B;
      TH2F *hist_trk_nSCThits_origin_SV1_B;
      TH2F *hist_trk_sharedSCThits_origin_SV1_B;
+     TH1F *hist_trk_chi2_SV1_B;
+     TH1F *hist_trk_SV1input_origin_B;
 
+     TH1F *hist_trk_pT_SV0_B;
+     TH1F *hist_trk_eta_SV0_B;
+     TH2F *hist_trk_pT_jet_DR_SV0_B;
      TH1F *hist_trk_origin_SV0_B;
+     TH1F *hist_trk_d0_SV0_B;
+     TH1F *hist_trk_z0sinth_SV0_B;
      TH1F *hist_trk_d0sig_SV0_B;
      TH1F *hist_trk_z0sinthsig_SV0_B;
      TH2F *hist_trk_d0sig_origin_SV0_B;
@@ -598,7 +633,14 @@ public :
      TH2F *hist_trk_nSCThits_origin_SV0_B;
      TH2F *hist_trk_sharedSCThits_origin_SV0_B;
 
+     TH1F *hist_trk_pT_IP3D_B;
+     TH2F *hist_jet_pT_origin_IP3D_B;
+     TH1F *hist_jet_pt_IP3D_B;
+     TH1F *hist_trk_eta_IP3D_B;
+     TH2F *hist_trk_pT_jet_DR_IP3D_B;
      TH1F *hist_trk_origin_IP3D_B;
+     TH1F *hist_trk_d0_IP3D_B;
+     TH1F *hist_trk_z0sinth_IP3D_B;
      TH1F *hist_trk_d0sig_IP3D_B;
      TH1F *hist_trk_z0sinthsig_IP3D_B;
      TH2F *hist_trk_d0sig_origin_IP3D_B;
@@ -615,7 +657,12 @@ public :
      TH2F *hist_trk_nSCThits_origin_IP3D_B;
      TH2F *hist_trk_sharedSCThits_origin_IP3D_B;
 
+     TH1F *hist_trk_pT_IP2D_B;
+     TH1F *hist_trk_eta_IP2D_B;
+     TH2F *hist_trk_pT_jet_DR_IP2D_B;
      TH1F *hist_trk_origin_IP2D_B;
+     TH1F *hist_trk_d0_IP2D_B;
+     TH1F *hist_trk_z0sinth_IP2D_B;
      TH1F *hist_trk_d0sig_IP2D_B;
      TH1F *hist_trk_z0sinthsig_IP2D_B;
      TH2F *hist_trk_d0sig_origin_IP2D_B;
