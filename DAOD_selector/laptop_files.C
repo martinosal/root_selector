@@ -1,13 +1,16 @@
 void laptop_files(TChain *f)
 {
 
-//    f->Add("../input_files/flav_Akt4EMPf_BTagging201903.root");
 //    f->Add("../input_files/flav_ttbarnonallhadrDAODFTAG1_Akt4EMPf_BTagging201903_tmp075.root");
-    f->Add("../input_files/flav_ttbarnonallhadrDAODFTAG1_Akt4EMPf_BTagging201903_sam.root");    
-//      f->Add("../input_files/flav_Akt4EMPf_BTagging201903_retagF_fix.root");
-//      f->Add("../input_files/flav_AktVR30Rmax4Rmin02Tr_BTagging201903.root");
-//      f->Add("../input_files/flav_Akt4EMPf_retagT.root");
+//    f->Add("../input_files/flav_ttbarnonallhadrDAODFTAG1_Akt4EMPf_BTagging201903_sam.root");
+//    f->Add("../input_files/flav_Akt4EMPf_BTagging201903_retagF_fix.root");
+//    f->Add("../input_files/flav_AktVR30Rmax4Rmin02Tr_BTagging201903.root");
+//    f->Add("../input_files/flav_Akt4EMPf_retagT.root");
 
+//    f->Add("../input_files/flav_ttbar_AktVR30Rmax4Rmin02Tr_BTagging201903_norigin.root");
+//    f->Add("../input_files/flav_ttbar_AktVR30Rmax4Rmin02TrackGhostTagJets_norigin.root");
+//    f->Add("../input_files/flav_ttbar_AktVR30Rmax4Rmin02TrackGhostTagJets_derorigin.root");
+    f->Add("../input_files/flav_AktVR30Rmax4Rmin02TrackGhostTagJets.root");
 /*
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetPseudoTrackParticles/flav_Akt4EMPf_001.root");
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetPseudoTrackParticles/flav_Akt4EMPf_002.root");
@@ -109,7 +112,7 @@ f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetPseudoTrackParticles/flav_Akt4
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetPseudoTrackParticles/flav_Akt4EMPf_098.root");
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetPseudoTrackParticles/flav_Akt4EMPf_099.root");
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetPseudoTrackParticles/flav_Akt4EMPf_100.root");
-
+*/
 
 /*
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/flav_Akt4EMPf_001.root");
@@ -213,6 +216,109 @@ f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/flav_Akt4EMPf_09
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/flav_Akt4EMPf_099.root");
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/flav_Akt4EMPf_100.root");
 */
+/*
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_001.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_002.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_003.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_004.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_005.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_006.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_007.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_008.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_009.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_010.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_011.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_012.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_013.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_014.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_015.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_016.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_017.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_018.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_019.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_020.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_021.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_022.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_023.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_024.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_025.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_026.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_027.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_028.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_029.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_030.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_031.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_032.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_033.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_034.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_035.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_036.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_037.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_038.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_039.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_040.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_041.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_042.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_043.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_044.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_045.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_046.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_047.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_048.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_049.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_050.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_051.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_052.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_053.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_054.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_055.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_056.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_057.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_058.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_059.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_060.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_061.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_062.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_063.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_064.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_065.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_066.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_067.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_068.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_069.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_070.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_071.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_072.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_073.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_074.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_075.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_076.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_077.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_078.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_079.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_080.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_081.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_082.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_083.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_084.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_085.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_086.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_087.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_088.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_089.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_090.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_091.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_092.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_093.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_094.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_095.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_096.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_097.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_098.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_099.root");
+f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetTrackParticle/2xShrinkingCone/flav_Akt4EMPf_100.root");
+*/
+
 /*
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetIdealTrackParticle/flav_Akt4EMPf_01.root");
 f->Add("/home/salomon/Private/atlas/FTPF/UCL/InDetIdealTrackParticle/flav_Akt4EMPf_02.root");

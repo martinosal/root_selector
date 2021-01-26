@@ -67,6 +67,9 @@ public :
    TTreeReaderArray<float> jet_E_orig = {fReader, "jet_E_orig"};
    TTreeReaderArray<int> jet_LabDr_HadF = {fReader, "jet_LabDr_HadF"};
    TTreeReaderArray<int> jet_DoubleHadLabel = {fReader, "jet_DoubleHadLabel"};
+   TTreeReaderArray<int> jet_ghostExclExtended_HadLabel = {fReader, "jet_ghostExclExtended_HadLabel"};
+   TTreeReaderArray<int> jet_ghostBHadCount = {fReader, "jet_ghostBHadCount"};
+   TTreeReaderArray<int> jet_ghostCHadCount = {fReader, "jet_ghostCHadCount"};
    TTreeReaderArray<float> jet_JVT = {fReader, "jet_JVT"};
    TTreeReaderArray<float> jet_m = {fReader, "jet_m"};
    TTreeReaderArray<float> jet_nConst = {fReader, "jet_nConst"};
@@ -210,7 +213,6 @@ public :
    TTreeReaderArray<vector<float>> jet_cH_y = {fReader, "jet_cH_y"};
    TTreeReaderArray<vector<float>> jet_cH_z = {fReader, "jet_cH_z"};
    TTreeReaderArray<vector<float>> jet_cH_dRjet = {fReader, "jet_cH_dRjet"};
-   TTreeReaderArray<vector<int>> jet_trk_orig = {fReader, "jet_trk_orig"};
    TTreeReaderArray<vector<float>> jet_bH_prod_x = {fReader, "jet_bH_prod_x"};
    TTreeReaderArray<vector<float>> jet_bH_prod_y = {fReader, "jet_bH_prod_y"};
    TTreeReaderArray<vector<float>> jet_bH_prod_z = {fReader, "jet_bH_prod_z"};
@@ -326,9 +328,9 @@ public :
    TTreeReaderArray<vector<int>> jet_trk_expectInnermostPixelLayerHit = {fReader, "jet_trk_expectInnermostPixelLayerHit"};
    TTreeReaderArray<vector<int>> jet_trk_expectNextToInnermostPixelLayerHit = {fReader, "jet_trk_expectNextToInnermostPixelLayerHit"};
    TTreeReaderArray<vector<float>> jet_trk_d0 = {fReader, "jet_trk_d0"};
-   TTreeReaderArray<vector<float>> jet_trk_d0sig = {fReader, "jet_trk_d0sig"};
+   TTreeReaderArray<vector<float>> jet_trk_d0Err = {fReader, "jet_trk_d0Err"};
    TTreeReaderArray<vector<float>> jet_trk_z0 = {fReader, "jet_trk_z0"};
-   TTreeReaderArray<vector<float>> jet_trk_z0sig = {fReader, "jet_trk_z0sig"};
+   TTreeReaderArray<vector<float>> jet_trk_z0Err = {fReader, "jet_trk_z0Err"};
    TTreeReaderArray<vector<float>> jet_trk_ip3d_d0 = {fReader, "jet_trk_ip3d_d0"};
    TTreeReaderArray<vector<float>> jet_trk_ip3d_d02D = {fReader, "jet_trk_ip3d_d02D"};
    TTreeReaderArray<vector<float>> jet_trk_ip3d_z0 = {fReader, "jet_trk_ip3d_z0"};
@@ -345,12 +347,16 @@ public :
    TTreeReaderArray<int> jet_ip3d_ntrk = {fReader, "jet_ip3d_ntrk"};
    TTreeReaderArray<vector<int>> jet_trk_ip3d_grade = {fReader, "jet_trk_ip3d_grade"};
    TTreeReaderArray<vector<float>> jet_trk_ip3d_llr = {fReader, "jet_trk_ip3d_llr"};
+   TTreeReaderArray<vector<int>> jet_trk_orig = {fReader, "jet_trk_orig"};// old origin
+   TTreeReaderArray<vector<int>> jet_trk_truth_label = {fReader, "jet_trk_truth_label"};// exclusive
+   TTreeReaderArray<vector<int>> jet_trk_truth_origin = {fReader, "jet_trk_truth_origin"};// inclusive - from InDetTool
+   TTreeReaderArray<vector<int>> jet_trk_truth_derivedlabel = {fReader, "jet_trk_truth_derivedlabel"};
 
 
    DAOD_selector(TTree * /*tree*/ =0) { }
    virtual ~DAOD_selector() { }
    virtual Int_t   Version() const { return 2; }
-   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, double, double, double, string);
+   virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, double, double, double, string);
    virtual void    setCuts(float, float, float, float, float, float, float, float, float, float);
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
@@ -374,15 +380,17 @@ public :
    void bookHistosForShrinkingCone();
    void bookHistosForSelectionAlgos();
 
+   void OverlapRemoval(std::vector<int>& isJet, std::vector<int>& isJet_OR);
    void getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
-
+   void getHadronConeFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
+   void getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
 
    ClassDef(DAOD_selector,0);
 
    private:
 
      // Flags selectong the running mode
-     bool selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,debug,lxplus;
+     bool selections,derived_origin,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,debug,lxplus;
      double m_p1,m_p2,m_p3;
      string decay_mode;
 
@@ -392,6 +400,23 @@ public :
 
      // Service variables
      double m_pt_max_shrCone, m_pt_min_shrCone, m_Delta_pt_shrCone;
+
+     //derived origin variables
+     double M[6]={0,0,0,0,0,0};
+     std::vector<int> truthlabel={0,1,2,3,4,5,6,11,12,13,14,15,16,101,102,103,104,105,106,111,112,113,114,115,116};//25 categories
+     std::vector<int> derived_truthlabel={0,1,2,3,4,5};
+     string der_origin[6] = {"PileUp","FAKE","FAKE_b/c","GEANT","FRAG","B/C"};
+
+     std::vector<int> map_0={0};
+     std::vector<int> map_1={2,4,6};
+     std::vector<int> map_2={12,14,16,102,104,106,112,114,116};
+     std::vector<int> map_3={1,11,101,111};
+     std::vector<int> map_4={3,5};
+     std::vector<int> map_5={13,103,113,15,105,115};
+
+     int cnt_13,cnt_103,cnt_113,cnt_15,cnt_105,cnt_115;
+
+     std::vector<std::vector<int>> list;
 
      //float pt_bH,DeltaR_bH,pt_cH,DeltaR_cH;
      double m_cut,m_fc,m_fcRNNIP;
@@ -456,6 +481,8 @@ public :
      TH1F *hist_phi_4;
      TH1F *hist_E_4;
 
+     TH1F *hist_jet_trk_truth_label;
+
      TH1F *hist_pt_B;
      TH1F *hist_eta_B;
      TH1F *hist_phi_B;
@@ -464,6 +491,8 @@ public :
      TH1F *hist_Bjet_cut_origin;
      TH2F *hist_Bjet_cut_origin_pT;
      TH2F *hist_Bjet_cut_origin_jetpT;
+     TH1F *hist_Bjet_cut_origin_truth_label;
+     TH2F *hist_Bjet_cut_origin_truth_label_pT;
 
      TH1F *hist_pt_C;
      TH1F *hist_eta_C;
@@ -473,6 +502,8 @@ public :
      TH1F *hist_Cjet_cut_origin;
      TH2F *hist_Cjet_cut_origin_pT;
      TH2F *hist_Cjet_cut_origin_jetpT;
+     TH1F *hist_Cjet_cut_origin_truth_label;
+     TH2F *hist_Cjet_cut_origin_truth_label_pT;
 
      TH1F *hist_pt_l;
      TH1F *hist_eta_l;
@@ -482,6 +513,8 @@ public :
      TH1F *hist_ljet_cut_origin;
      TH2F *hist_ljet_cut_origin_pT;
      TH2F *hist_ljet_cut_origin_jetpT;
+     TH1F *hist_ljet_cut_origin_truth_label;
+     TH2F *hist_ljet_cut_origin_truth_label_pT;
 
      TH1F *hist_nBjets;
      TH1F *hist_nCjets;
@@ -524,6 +557,16 @@ public :
      TH1F *hist_sv1_llr_C;
      TH1F *hist_jf_llr_C;
 
+     TH1F *hist_jet_sv1_Nvtx_B;
+     TH1F *hist_jet_sv1_ntrkv_B;
+     TH1F *hist_jet_sv1_n2t_B;
+     TH1F *hist_jet_sv1_m_B;
+     TH1F *hist_jet_sv1_efc_B;
+     TH1F *hist_jet_sv1_sig3d_B;
+     TH1F *hist_jet_sv1_deltaR_B;
+     TH1F *hist_jet_sv1_Lxy_B;
+     TH1F *hist_jet_sv1_L3d_B;
+
      TH1F *hist_dl1_l;
      TH1F *hist_dl1_C;
      TH1F *hist_dl1_B;
@@ -539,8 +582,11 @@ public :
      TH2F *hist_trk_pT_jet_DR_B;
      TH1F *hist_trk_pdgId_B;
      TH1F *hist_trk_origin_B;
+     TH1F *hist_trk_origin_truth_label_B;
 
      TH1F *hist_trk_d0_B;
+     TH2F *hist_trk_d0_jet_pT_BC_B;
+     TH2F *hist_trk_DR_jet_pt_BC;
      TH1F *hist_trk_sigd0_B;
      TH1F *hist_trk_z0_B;
      TH1F *hist_trk_sigz0_B;
@@ -548,6 +594,7 @@ public :
      TH1F *hist_trk_d0sig_B;
      TH1F *hist_trk_z0sinthsig_B;
      TH2F *hist_trk_d0sig_origin_B;
+     TH2F *hist_trk_d0sig_truthlabel_B;
      TH2F *hist_trk_z0sinthsig_origin_B;
      TH2F *hist_trk_logpTfrac_origin_B;
      TH2F *hist_trk_logDR_origin_B;
@@ -563,10 +610,12 @@ public :
 
      TH1F *hist_trk_pT_JF_B;
      TH2F *hist_jet_pT_origin_JF_B;
+     TH2F *hist_jet_pT_origin_truth_label_JF_B;
      TH1F *hist_jet_pt_JF_B;
      TH1F *hist_trk_eta_JF_B;
      TH2F *hist_trk_pT_jet_DR_JF_B;
      TH1F *hist_trk_origin_JF_B;
+     TH1F *hist_trk_origin_truth_label_JF_B;
      TH1F *hist_trk_d0_JF_B;
      TH1F *hist_trk_z0sinth_JF_B;
      TH1F *hist_trk_d0sig_JF_B;
@@ -587,10 +636,12 @@ public :
 
      TH1F *hist_trk_pT_SV1_B;
      TH2F *hist_jet_pT_origin_SV1_B;
+     TH2F *hist_jet_pT_origin_truth_label_SV1_B;
      TH1F *hist_jet_pt_SV1_B;
      TH1F *hist_trk_eta_SV1_B;
      TH2F *hist_trk_pT_jet_DR_SV1_B;
      TH1F *hist_trk_origin_SV1_B;
+     TH1F *hist_trk_origin_truth_label_SV1_B;
      TH1F *hist_trk_d0_SV1_B;
      TH1F *hist_trk_z0sinth_SV1_B;
      TH1F *hist_trk_d0sig_SV1_B;
@@ -635,10 +686,12 @@ public :
 
      TH1F *hist_trk_pT_IP3D_B;
      TH2F *hist_jet_pT_origin_IP3D_B;
+     TH2F *hist_jet_pT_origin_truth_label_IP3D_B;
      TH1F *hist_jet_pt_IP3D_B;
      TH1F *hist_trk_eta_IP3D_B;
      TH2F *hist_trk_pT_jet_DR_IP3D_B;
      TH1F *hist_trk_origin_IP3D_B;
+     TH1F *hist_trk_origin_truth_label_IP3D_B;
      TH1F *hist_trk_d0_IP3D_B;
      TH1F *hist_trk_z0sinth_IP3D_B;
      TH1F *hist_trk_d0sig_IP3D_B;
