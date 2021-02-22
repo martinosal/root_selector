@@ -248,8 +248,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 // jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
 //   getTrueJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
-//   getGhostJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
-   getHadronConeFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
+   getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
+//   getHadronConeFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
 
    m_nBcheck+=isBcheck.size();
    m_nCcheck+=isCcheck.size();
@@ -2571,7 +2571,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
      hist_child_Dphi_Deta_B = new TH2F("child_Dphi_Deta","child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
      hist_child_DR_B = new TH1F("child_DR_B","child_DR_B",200,0.,2.);
      hist_child_pT_DR_B = new TH2F("child_pT_DR_B","child_pT_DR_B",300,0.,150.,200,0.,2.);
-     hist_child_pT_jet_DR_B = new TH2F("child_pT_jet_DR_B","child_pT_jet_DR_B",2000,0.,1000.,200,0.,2.);
+     hist_child_pT_jet_DR_B = new TH2F("child_pT_jet_DR_B","child_pT_jet_DR_B",3000, 0., 300.,200,0.,2.);
      hist_child_pdgID_B = new TH1F("child_pdgID_B","child_pdgID_B",200000,-100000,100000);
 
      hist_child_pi_notD = new TH1F("child_pi_pT_notD_B", "child_pi_pT_notD_B", 300, 0., 150.);
@@ -2624,7 +2624,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
        hist_matched_origin_Dphi_Deta_B = new TH2F("matched_origin_trk_Dphi_Deta","matched_origin_trk_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
        hist_matched_origin_DR_B = new TH1F("matched_origin_trk_DR_B","matched_origin_trk_DR_B",200,0.,2.);
        hist_matched_origin_pT_DR_B = new TH2F("matched_origin_trk_pT_DR_B","matched_origin_trk_pT_DR_B",300,0.,150.,200,0.,2.);
-       hist_matched_origin_pT_jet_DR_B = new TH2F("matched_origin_trk_pT_jet_DR_B","matched_origin_trk_pT_jet_DR_B",2000,0.,1000,200,0.,2.);
+       hist_matched_origin_pT_jet_DR_B = new TH2F("matched_origin_trk_pT_jet_DR_B","matched_origin_trk_pT_jet_DR_B",3000, 0., 300.,200,0.,2.);
        hist_matched_origin_pdgId_B = new TH1F("matched_origin_trk_pdgId_B","matched_origin_trk_pdgId_B",200000,-100000,100000);
        hist_matched_origin_origin_B = new TH1F("matched_origin_trk_origin_B","matched_origin_trk_origin_B",7,-2,5);
        hist_matched_origin_d0_B = new TH1F("matched_origin_trk_d0_B","matched_origin_trk_d0_B",300,-15.,15.);
@@ -2642,7 +2642,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
        hist_matched_Dphi_Deta_B = new TH2F("matched_child_Dphi_Deta","matched_child_Dphi_Deta", 100, -1.,1., 100, -1.,1.);
        hist_matched_DR_B = new TH1F("matched_child_DR_B","matched_child_DR_B",200,0.,2.);
        hist_matched_pT_DR_B = new TH2F("matched_child_pT_DR_B","matched_child_pT_DR_B",300,0.,150.,200,0.,2.);
-       hist_matched_pT_jet_DR_B = new TH2F("matched_child_pT_jet_DR_B","matched_child_pT_jet_DR_B",2000,0.,1000,200,0.,2.);
+       hist_matched_pT_jet_DR_B = new TH2F("matched_child_pT_jet_DR_B","matched_child_pT_jet_DR_B",3000, 0., 300.,200,0.,2.);
        hist_matched_pdgId_B = new TH1F("matched_child_pdgId_B","matched_child_pdgId_B",200000,-100000,100000);
 
        hist_matched_child_pi_notD = new TH1F("matched_child_pi_pT_notD_B", "matched_child_pi_pT_notD_B", 300, 0., 150.);
@@ -2696,7 +2696,7 @@ void DAOD_selector::bookHistosForSelectionAlgos()
        hist_nomatchedIN_eta_B = new TH1F("nomatchedIN_child_eta_B","nomatchedIN_child_eta_B",500,-2.6,2.6);
        hist_nomatchedIN_phi_B = new TH1F("nomatchedIN_child_phi_B","nomatchedIN_child_phi_B",500,-4.,4.);
        hist_nomatchedIN_DR_B = new TH1F("nomatchedIN_child_DR_B","nomatchedIN_child_DR_B",500,-0.1,2.);
-       hist_nomatchedIN_pT_jet_DR_B = new TH2F("nomatchedIN_child_pT_jet_DR_B","nomatchedIN_child_pT_jet_DR_B",2000,0.,1000,200,0.,2.);
+       hist_nomatchedIN_pT_jet_DR_B = new TH2F("nomatchedIN_child_pT_jet_DR_B","nomatchedIN_child_pT_jet_DR_B",3000, 0., 300.,200,0.,2.);
        hist_nomatchedIN_d0_B = new TH1F("nomatchedIN_child_d0_truth_B","nomatchedIN_child_d0_truth_B",3000,-15.,15.);
        hist_nomatchedIN_z0sinth_B = new TH1F("nomatchedIN_child_z0sinth_B","nomatchedIN_child_z0sinth_B",3000,-15.,15.);
        hist_nomatchedOUT_pT_B = new TH1F("nomatchedOUT_child_pT_B", "nomatchedOUT_child_pT_B", 500, 0., 150.);

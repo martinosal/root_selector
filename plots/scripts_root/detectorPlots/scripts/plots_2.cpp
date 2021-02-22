@@ -19,7 +19,7 @@ void orig(std::string hist,TFile* fData=_file0){
 
   TH1F* h = (TH1F*)fData->Get(("trk_"+hist+"_origin_B").c_str());
   const Int_t n_bins = h->GetNbinsX();
-  string origin[5] = {"PU","B","C","FRAG","GEANT"};
+  string origin[6] = {"PU","FAKE","FAKE_b/c","GEANT","FRAG","B/C"};
   TCanvas c("c", "canvas", 1300, 900);
 
   gPad->SetLogy();

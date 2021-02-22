@@ -3,7 +3,7 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
   TLegend *leg;
   TH1D *h1_proj;
   TH2D* h1 = (TH2D*)fData->Get(("trk_"+hist+"_origin_B").c_str());
-  string origin[5] = {"PU","B","C","FRAG","GEANT"};
+  string origin[6] = {"PU","FAKE","FAKE_b/c","GEANT","FRAG","B/C"};
   float x_d0sig=10.;
 //  h1->SetTitle(hist.c_str());
 
@@ -27,7 +27,7 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
       h2->GetXaxis()->SetRangeUser(-x_d0sig, x_d0sig);
   }
   h2->GetXaxis()->SetTitle((hist).c_str());
-  for(int i=1;i<=5;i++){
+  for(int i=1;i<=6;i++){
     h2->GetYaxis()->SetBinLabel(i,origin[i-1].c_str());
   }
 
@@ -42,7 +42,7 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
   h1_proj->GetYaxis()->SetRangeUser(0.,0.5);
   std::string idx="projection";
 
-  for(unsigned i=1;i<6;i++){
+  for(unsigned i=1;i<=6;i++){
 
     TColor *col=gROOT->GetColor(i);
     char n=i;
@@ -83,7 +83,7 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
   TLegend *leg;
   TH1D *h1_proj;
   TH2D* h1 = (TH2D*)fData->Get(("trk_"+hist+"_origin_"+alg+"_B").c_str());
-  string origin[5] = {"PU","B","C","FRAG","GEANT"};
+  string origin[6] = {"PU","FAKE","FAKE_b/c","GEANT","FRAG","B/C"};
   float x_d0sig=10.;
 //  h1->SetTitle((hist+" "+alg).c_str());
 
@@ -106,7 +106,7 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
     if(hist=="z0sig" || hist=="d0sig")
       h2->GetXaxis()->SetRangeUser(-x_d0sig, x_d0sig);
   }
-  for(int i=1;i<=5;i++){
+  for(int i=1;i<=6;i++){
     h2->GetYaxis()->SetBinLabel(i,origin[i-1].c_str());
   }
   h2->GetXaxis()->SetTitle((hist).c_str());
@@ -121,7 +121,7 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
   h1_proj->GetYaxis()->SetRangeUser(0.,0.5);
   std::string idx="projection";
   //const char *col[4] = { "KBlue", "KRed", "KOrange", "KYellow" };
-  for(unsigned i=1;i<max_origin+3;i++){
+  for(unsigned i=1;i<=max_origin+3;i++){
 
     TColor *col=gROOT->GetColor(i);
     char n=i;

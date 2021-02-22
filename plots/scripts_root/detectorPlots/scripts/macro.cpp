@@ -1,9 +1,9 @@
 #include "plots.cpp"
 #include "plots_2.cpp"
-#define N_alg 4
+#define N_alg 3
 void macro(TFile* fData=_file0){
 
- std::vector<std::string> alg{"JF","IP2D","SV0","SV1"};
+ std::vector<std::string> alg{"JF","IP3D","SV1"};
  std::vector<std::string> det{"d0sig","z0sinthsig","logpTfrac","logDR","IBLhits","NextToIBLhits","sharedIBLhits","splitIBLhits","nPixhits","sharedPixhits","splitPixhits","nSCThits","sharedSCThits"};
  std::vector<int> n_p{0,0,0,0,3,4,3,3,10,6,7,19,7};
 
