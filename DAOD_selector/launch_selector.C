@@ -18,7 +18,7 @@ void launch_selector()
   bool selection_alg=true;
   bool origin_selection=true;
   bool geometric_selection=true;
-  bool cut=false;
+  bool cut=true;
   bool retag=false;
   double m_p1=0.,m_p2=0.,m_p3=0.;
   string decay_mode="false";//can be "leptonic" or "hadronic", set "false" or any other value for decay_mode=false
