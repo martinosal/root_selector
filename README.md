@@ -16,7 +16,7 @@ Some preprocessed FtagPF files are available under lxplus:/eos/user/m/mcentonz/F
 
 flav_AktVR30Rmax4Rmin02TrackGhostTagJets.root
 
-which is a sample of 10k events produced from a ttbar_nonhalldard DAOD and run on a VR30 ghost associated-jet collection. Let me know if there are any questions.
+which is a sample of 10k events produced from a ttbar_nonhallhadr DAOD and run on a VR30 ghost associated-jet collection. Let me know if there are any questions.
 
 To run on this ntuple, if you are on lxplus just open the lxplus_files.C and add the following line
 
