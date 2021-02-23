@@ -517,8 +517,19 @@ public :
      TH2F *hist_ljet_cut_origin_truth_label_pT;
 
      TH1F *hist_nBjets;
+     TH2F *hist_n_tracks_jetpt_B;
+     TH2F *hist_n_tracks_bHpt_B;
+     TH2F *hist_n_BCtracks_jetpt_B;
+     TH2F *hist_n_BCtracks_bHpt_B;
+
      TH1F *hist_nCjets;
+     TH2F *hist_n_tracks_jetpt_C;
+     TH2F *hist_n_tracks_cHpt_C;
+     TH2F *hist_n_BCtracks_jetpt_C;
+     TH2F *hist_n_BCtracks_cHpt_C;
+
      TH1F *hist_nljets;
+     TH2F *hist_n_tracks_jetpt_l;
 
 
      TH1F *hist_n_tracks;
@@ -560,12 +571,24 @@ public :
      TH2F *hist_jf_llr_jetpt_B;
      TH2F *hist_jf_llr_jetpt_singleB;
      TH1F *hist_ip2d_llr_C;
+     TH2F *hist_ip2d_llr_jetpt_C;
+     TH2F *hist_ip2d_llr_jetpt_singleC;
      TH1F *hist_ip3d_llr_C;
+     TH2F *hist_ip3d_llr_jetpt_C;
+     TH2F *hist_ip3d_llr_jetpt_singleC;
      TH1F *hist_rnnip_llr_C;
+     TH2F *hist_rnnip_llr_jetpt_C;
+     TH2F *hist_rnnip_llr_jetpt_singleC;
      TH1F *hist_sv1_llr_C;
+     TH2F *hist_sv1_llr_jetpt_C;
+     TH2F *hist_sv1_llr_jetpt_singleC;
      TH1F *hist_jf_llr_C;
+     TH2F *hist_jf_llr_jetpt_C;
+     TH2F *hist_jf_llr_jetpt_singleC;
      TH1F *hist_dl1_l;
      TH1F *hist_dl1_C;
+     TH2F *hist_dl1_llr_jetpt_C;
+     TH2F *hist_dl1_llr_jetpt_singleC;
      TH1F *hist_dl1_B;
      TH1F *hist_dl1_pb;
      TH1F *hist_dl1_pc;
@@ -754,7 +777,6 @@ public :
      TH1F *hist_trk_d0_GEANTB;
 
      TH1F *hist_child_pT_B;
-     TH1F *hist_child_jetpT_B;
      TH1F *hist_child_Deta_B;
      TH1F *hist_child_eta_B;
      TH1F *hist_child_Dphi_B;
@@ -764,8 +786,14 @@ public :
      TH2F *hist_child_pT_DR_B;
      TH2F *hist_child_pT_jet_DR_B;
      TH1F *hist_child_pdgID_B;
-     TH2F *hist_child_DR_jetpt_BC;
+
+     TH1F *hist_child_jetpT_B;
+     TH2F *hist_child_DR_jetpt_B;
      TH1F *hist_child_bHpT_B;
+
+     TH1F *hist_child_jetpT_C;
+     TH2F *hist_child_DR_jetpt_C;
+     TH1F *hist_child_cHpT_C;
 
      TH1F *hist_child_pi_notD;
      TH1F *hist_child_K_notD;
@@ -814,7 +842,6 @@ public :
      TH1D *hist_n_match;
 
      TH1F *hist_matched_origin_pT_B;
-     TH1F *hist_matched_origin_jetpT_B;
      TH1F *hist_matched_origin_eta_B;
      TH1F *hist_matched_origin_phi_B;
      TH1F *hist_matched_origin_Deta_B;
@@ -828,8 +855,14 @@ public :
      TH1F *hist_matched_origin_d0_B;
 //     TH1F *hist_matched_origin_Lxy_B;
 //     TH1F *hist_matched_origin_Lxyz_B;
-     TH2F *hist_trk_DR_jetpt_BC;
+
+     TH1F *hist_matched_origin_jetpT_B;
+     TH2F *hist_trk_DR_jetpt_B;
      TH1F *hist_matched_origin_bHpT_B;
+
+     TH1F *hist_matched_origin_jetpT_C;
+     TH2F *hist_trk_DR_jetpt_C;
+     TH1F *hist_matched_origin_cHpT_C;
 
      TH1F *hist_matched_pT_B;
      TH1F *hist_matched_eta_B;
