@@ -6,7 +6,7 @@ git clone https://github.com/martinosal/root_selector.git
 
 cd root_selector/DAOD_selector/
 
-Input files are in .root extension, MUST be produced by the FtagPerformanceFramework tool under my branch mcentonz_UCL_norigin in https://gitlab.cern.ch/mcentonz/FlavourTagPerformanceFramework.git. 
+Input files are in .root extension, MUST be produced by the FtagPerformanceFramework tool under my branch mcentonz_lxplus_norigin in https://gitlab.cern.ch/mcentonz/FlavourTagPerformanceFramework.git. 
 
 So if you need to start from producing these FTagPF files from DAODs, create a new folder and install it
 
