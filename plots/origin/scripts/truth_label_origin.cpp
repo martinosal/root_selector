@@ -115,7 +115,7 @@ void eff_derivedtruthlabel(std::string hist_num,std::string hist_den,TFile* fDat
 //.L ../plots/origin/scripts/truth_label_origin.cpp
 //jet_orig("Bjet_cut_origin_truth_label_pT",_file0,50,250)
 
-void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=1000){
+void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=1000, string flag="jet"){//fractional composition. flag="jet", "bH", "cH"
 
   TH2F* h = (TH2F*)fData->Get(hist.c_str());
   const Int_t n_Xbins = h->GetNbinsX();
@@ -146,7 +146,9 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
     std::string s = std::to_string(k);
     std::string s1 = std::to_string((int) DpT*k);
     std::string s2 = std::to_string((int) DpT*(k+1));
-    px[k]->SetTitle(("origin trk in ["+s1+","+s2+"] Gev jet pT").c_str());
+    if(flag=="jet") px[k]->SetTitle(("origin trk in ["+s1+","+s2+"] Gev jet pT").c_str());
+    if(flag=="bH")  px[k]->SetTitle(("origin trk in ["+s1+","+s2+"] Gev bH pT").c_str());
+    if(flag=="cH")  px[k]->SetTitle(("origin trk in ["+s1+","+s2+"] Gev cH pT").c_str());
 //    px[k]->Draw("hist");
 //    c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"Xproj_"+s+".pdf").c_str());
     for(int i=1;i<=n_Xbins;i++){
@@ -177,7 +179,7 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
   float y=0;
 
   for(int k=0;k<Nbins;k++){
-    std::cout<<"\ntrk in ["<<DpT*k<<","<<DpT*(k+1)<<"] Gev jet pT";
+    std::cout<<"\ntrk in ["<<DpT*k<<","<<DpT*(k+1)<<"] Gev pT";
     for(int i=0;i<list.size();i++){
       y=0;
       std::cout<<"\norigin: "<<i<<"\t";
@@ -208,7 +210,9 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
       py_2[i]->AddBinContent(k+1,M_der[k][i]);
       py_2[i]->SetStats(0);
       py_2[i]->GetYaxis()->SetRangeUser(1e-3, 1.);
-      py_2[i]->GetXaxis()->SetTitle("jet pT [GeV]");
+      if(flag=="jet") py_2[i]->GetXaxis()->SetTitle("jet pT [GeV]");
+      if(flag=="bH") py_2[i]->GetXaxis()->SetTitle("bH pT [GeV]");
+      if(flag=="cH") py_2[i]->GetXaxis()->SetTitle("cH pT [GeV]");
       py_2[i]->GetYaxis()->SetTitle("fraction of tracks");
       py_2[i]->SetLineWidth(2);
       py_2[i]->SetLineColor(colors[i-1]);
@@ -225,15 +229,15 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
     delete h,M,c,px,py_2;
 }
 
-void avtrk_orig(std::string hist,std::string hist_jet_pt,TFile* fData=_file0, int DpT=50, double pt_max=1000){
+void avtrk_orig(std::string hist,std::string hist_pt,TFile* fData=_file0, int DpT=50, double pt_max=1000, string flag="jet"){
 
   TH2F* h = (TH2F*)fData->Get(hist.c_str());
-  TH1F* h_jet = (TH1F*)fData->Get(hist_jet_pt.c_str());
+  TH1F* h_pt = (TH1F*)fData->Get(hist_pt.c_str());
   const Int_t n_Xbins = h->GetNbinsX();
   const Int_t n_Ybins = h->GetNbinsY();
   const Int_t y_max = h->GetYaxis()->GetXmax();
-  const Int_t n_bins_jet = h_jet->GetNbinsX();
-  const double pt_max_jet = h_jet->GetXaxis()->GetXmax();
+  const Int_t n_bins_jet = h_pt->GetNbinsX();
+  const double pt_max_jet = h_pt->GetXaxis()->GetXmax();
 
   if(n_bins_jet!=n_Ybins || y_max!=pt_max_jet)  std::cout<<"ERROR\n";
 
@@ -247,7 +251,7 @@ void avtrk_orig(std::string hist,std::string hist_jet_pt,TFile* fData=_file0, in
   c.SetGrid();
   gPad->SetLogy();
 
-  TH1* jet_pt=h_jet->RebinX(rebin,"jet_pt");
+  TH1* h_pt_reb=h_pt->RebinX(rebin,"h_pt_reb");
 
   double M[Nbins][n_Xbins];
   double M_der[Nbins][7];
@@ -266,7 +270,9 @@ void avtrk_orig(std::string hist,std::string hist_jet_pt,TFile* fData=_file0, in
     std::string s = std::to_string(k);
     std::string s1 = std::to_string((int) DpT*k);
     std::string s2 = std::to_string((int) DpT*(k+1));
-    px[k]->SetTitle(("origin trk in ["+s1+","+s2+"] Gev jet pT").c_str());
+    if(flag=="jet") px[k]->SetTitle(("origin trk in ["+s1+","+s2+"] Gev jet pT").c_str());
+    if(flag=="bH") px[k]->SetTitle(("origin trk in ["+s1+","+s2+"] Gev bH pT").c_str());
+    if(flag=="cH") px[k]->SetTitle(("origin trk in ["+s1+","+s2+"] Gev cH pT").c_str());
 //    px[k]->Draw("hist");
 //    c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"Xproj_"+s+".pdf").c_str());
     for(int i=1;i<=n_Xbins;i++){
@@ -336,27 +342,29 @@ void avtrk_orig(std::string hist,std::string hist_jet_pt,TFile* fData=_file0, in
   }
 */
 //  TH1D *h2 = new TH1D("h","efficiency_vs_jetpT",Nbins,0,pt_max);
-//  h2=(TH1D*)jet_pt->Clone();
+//  h2=(TH1D*)h_pt_reb->Clone();
   TH1D** h2 = new TH1D*[6];
-  double jetpt_bin=0.;
+  double pt_bin=0.;
   double avtrk=0.,error=0.;
 
   for(int i=1;i<=6;i++){
     h2[i]= new TH1D(Form("h2a%d",i),"",Nbins,0,pt_max);
     for(int k=0;k<Nbins;k++){
-      jetpt_bin=(double) jet_pt->GetBinContent(k+1);
-      avtrk= (double) M_der[k][i]/jetpt_bin;
+      pt_bin=(double) h_pt_reb->GetBinContent(k+1);
+      avtrk= (double) M_der[k][i]/pt_bin;
       h2[i]->AddBinContent(k+1,avtrk);
-//      std::cout<<M[k][i]<<"\t"<<jetpt_bin<<"\t"<<avtrk<<"\n";
+//      std::cout<<M[k][i]<<"\t"<<pt_bin<<"\t"<<avtrk<<"\n";
     }
   }
   for(int k=0;k<Nbins;k++){
-    std::cout<<"\ntrk in ["<<DpT*k<<","<<DpT*(k+1)<<"] Gev jet pT";
+    if(flag=="jet") std::cout<<"\ntrk in ["<<DpT*k<<","<<DpT*(k+1)<<"] Gev jet pT";
+    if(flag=="bH") std::cout<<"\ntrk in ["<<DpT*k<<","<<DpT*(k+1)<<"] Gev bH pT";
+    if(flag=="cH") std::cout<<"\ntrk in ["<<DpT*k<<","<<DpT*(k+1)<<"] Gev cH pT";
     for(int i=1;i<=6;i++){
       std::cout<<"\norigin: "<<i<<"\t";
       avtrk=(double) h2[i]->GetBinContent(k+1);
-      jetpt_bin=(double) jet_pt->GetBinContent(k+1);
-      error=(double) abs(1./jetpt_bin-M_der[k][i]/(jetpt_bin*jetpt_bin));
+      pt_bin=(double) h_pt_reb->GetBinContent(k+1);
+      error=(double) abs(1./pt_bin-M_der[k][i]/(pt_bin*pt_bin));
       std::cout<<avtrk<<"   \t+- "<<error;
     }
   }
@@ -365,7 +373,9 @@ void avtrk_orig(std::string hist,std::string hist_jet_pt,TFile* fData=_file0, in
   for(int i=1;i<=6;i++){
     h2[i]->SetStats(0);
     h2[i]->GetYaxis()->SetRangeUser(1e-2, 100);
-    h2[i]->GetXaxis()->SetTitle("jet pT [GeV]");
+    if(flag=="jet") h2[i]->GetXaxis()->SetTitle("jet pT [GeV]");
+    if(flag=="bH") h2[i]->GetXaxis()->SetTitle("bH pT [GeV]");
+    if(flag=="cH") h2[i]->GetXaxis()->SetTitle("cH pT [GeV]");
     h2[i]->GetYaxis()->SetTitle("<trk>");
     h2[i]->SetLineWidth(2);
     h2[i]->SetLineColor(colors[i-1]);
@@ -378,7 +388,7 @@ void avtrk_orig(std::string hist,std::string hist_jet_pt,TFile* fData=_file0, in
   }
 
   leg->Draw();
-  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_"+hist_jet_pt+"_avtracks.pdf").c_str());
+  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_"+hist_pt+"_avtracks.pdf").c_str());
 
   delete h,h2,M,c,px,py_2;
 }

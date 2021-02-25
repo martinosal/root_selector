@@ -484,6 +484,7 @@ public :
      TH1F *hist_jet_trk_truth_label;
 
      TH1F *hist_pt_B;
+     TH1F *hist_bHpt_B;
      TH1F *hist_eta_B;
      TH1F *hist_phi_B;
      TH1F *hist_E_B;
@@ -493,8 +494,10 @@ public :
      TH2F *hist_Bjet_cut_origin_jetpT;
      TH1F *hist_Bjet_cut_origin_truth_label;
      TH2F *hist_Bjet_cut_origin_truth_label_pT;
+     TH2F *hist_Bjet_cut_origin_truth_label_bHpT;
 
      TH1F *hist_pt_C;
+     TH1F *hist_cHpt_C;
      TH1F *hist_eta_C;
      TH1F *hist_phi_C;
      TH1F *hist_E_C;
@@ -504,6 +507,7 @@ public :
      TH2F *hist_Cjet_cut_origin_jetpT;
      TH1F *hist_Cjet_cut_origin_truth_label;
      TH2F *hist_Cjet_cut_origin_truth_label_pT;
+     TH2F *hist_Cjet_cut_origin_truth_label_cHpT;
 
      TH1F *hist_pt_l;
      TH1F *hist_eta_l;
@@ -675,6 +679,7 @@ public :
      TH1F *hist_trk_pT_SV1_B;
      TH2F *hist_jet_pT_origin_SV1_B;
      TH2F *hist_jet_pT_origin_truth_label_SV1_B;
+     TH2F *hist_bH_pT_origin_truth_label_SV1_B;
      TH1F *hist_jet_pt_SV1_B;
      TH1F *hist_trk_eta_SV1_B;
      TH2F *hist_trk_pT_jet_DR_SV1_B;
@@ -725,6 +730,7 @@ public :
      TH1F *hist_trk_pT_IP3D_B;
      TH2F *hist_jet_pT_origin_IP3D_B;
      TH2F *hist_jet_pT_origin_truth_label_IP3D_B;
+     TH2F *hist_bH_pT_origin_truth_label_IP3D_B;
      TH1F *hist_jet_pt_IP3D_B;
      TH1F *hist_trk_eta_IP3D_B;
      TH2F *hist_trk_pT_jet_DR_IP3D_B;
@@ -789,10 +795,12 @@ public :
 
      TH1F *hist_child_jetpT_B;
      TH2F *hist_child_DR_jetpt_B;
+     TH2F *hist_child_DR_bHpt_B;
      TH1F *hist_child_bHpT_B;
 
      TH1F *hist_child_jetpT_C;
      TH2F *hist_child_DR_jetpt_C;
+     TH2F *hist_child_DR_cHpt_C;
      TH1F *hist_child_cHpT_C;
 
      TH1F *hist_child_pi_notD;
@@ -858,10 +866,12 @@ public :
 
      TH1F *hist_matched_origin_jetpT_B;
      TH2F *hist_trk_DR_jetpt_B;
+     TH2F *hist_trk_DR_bHpt_B;
      TH1F *hist_matched_origin_bHpT_B;
 
      TH1F *hist_matched_origin_jetpT_C;
      TH2F *hist_trk_DR_jetpt_C;
+     TH2F *hist_trk_DR_cHpt_C;
      TH1F *hist_matched_origin_cHpT_C;
 
      TH1F *hist_matched_pT_B;

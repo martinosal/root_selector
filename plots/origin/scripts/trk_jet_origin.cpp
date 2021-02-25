@@ -155,7 +155,7 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
     delete h,M,c,px,py_2;
 }
 
-void trk_orig(std::string hist,TFile* fData=_file0, int DpT=50){
+void trk_orig(std::string hist,TFile* fData=_file0, int DpT=50){//fractional composition
 
   TH2F* h = (TH2F*)fData->Get(hist.c_str());
   const Int_t n_Xbins = h->GetNbinsX();
