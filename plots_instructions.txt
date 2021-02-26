@@ -1,0 +1,40 @@
+Section C
+1) All checks to be repeated for ghost vs cone.
+
+2)
+.L ../plots/efficiency/eff.cpp
+eff_pt("jet","b")
+eff_pt("jet","c")
+eff_pt("bH","b")
+eff_pt("cH","c")
+
+eff_DR("jet","b")
+eff_DR("jet","c")
+eff_DR("bH","b")
+eff_DR("cH","c")
+
+3)
+.L ../plots/origin/scripts/truth_label_origin.cpp
+
+jet_orig("Bjet_cut_origin_truth_label_pT",_file0,50,250,"jet")
+jet_orig("Bjet_cut_origin_truth_label_bHpT",_file0,50,250,"bH")
+jet_orig("Cjet_cut_origin_truth_label_pT",_file0,50,250,"jet")
+jet_orig("Cjet_cut_origin_truth_label_cHpT",_file0,50,250,"cH")
+jet_orig("ljet_cut_origin_truth_label_pT",_file0,50,250,"jet")
+
+jet_orig("trk_jet_pT_origin_truth_label_IP3D_B",_file0,50,250,"jet")
+jet_orig("trk_bH_pT_origin_truth_label_IP3D_B",_file0,50,250,"bH")
+jet_orig("trk_jet_pT_origin_truth_label_SV1_B",_file0,50,250,"jet")
+jet_orig("trk_bH_pT_origin_truth_label_SV1_B",_file0,50,250,"bH")
+
+avtrk_orig("Bjet_cut_origin_truth_label_pT","pT_B",_file0,50,250,"jet")
+avtrk_orig("Bjet_cut_origin_truth_label_bHpT","bHpT_B",_file0,50,250,"bH")
+avtrk_orig("Cjet_cut_origin_truth_label_pT","pT_C",_file0,50,250,"jet")
+avtrk_orig("Cjet_cut_origin_truth_label_cHpT","cHpT_C",_file0,50,250,"cH")
+
+L ../plots/origin/scripts/assoc_tracks.cpp
+assoc_tracks("n_tracks_bHpt_B","bHpT_B",_file0,"bH")
+assoc_tracks("n_tracks_cHpt_C","cHpT_C",_file0,"cH")
+assoc_tracks("n_tracks_jetpt_B","pT_B",_file0,"jet")
+assoc_tracks("n_tracks_jetpt_C","pT_C",_file0,"jet")
+assoc_tracks("n_tracks_jetpt_l","pT_l",_file0,"jet")
