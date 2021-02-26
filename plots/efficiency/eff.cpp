@@ -1,3 +1,9 @@
+std::string locForOutputFiles()
+{
+  std::string myPath = "./plots/";
+  return myPath;
+}
+
 void eff_DR(string flag="jet",string flav="b"){
 //TTree* tree = (TTree*) file.Get("treename");
 //TCanvas c1("c1", "canvas", 1300, 900);
@@ -51,7 +57,7 @@ void eff_DR(string flag="jet",string flav="b"){
   }
 
 
-  TCanvas c("c1", "canvas", 1300, 900);
+  TCanvas*  c = new TCanvas("c1", "canvas", 1300, 900);
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
 
@@ -67,8 +73,10 @@ void eff_DR(string flag="jet",string flav="b"){
   h->GetZaxis()->SetRangeUser(0., 1.);
   h->Draw("COLZ");
 
-  std::string path ="/home/salomon/Private/atlas/FTPF/Selector/plots/origin/";
-  c.SaveAs((path+num+den+".pdf").c_str());
+  std::string path =locForOutputFiles();//"/home/salomon/Private/atlas/FTPF/Selector/plots/origin/";
+  std::cout<<" path = "<<path<<std::endl;
+
+  c->SaveAs((path+num+den+".pdf").c_str());
 
 }
 
@@ -107,7 +115,7 @@ void eff_pt(string flag="jet",string flav="b"){
   h_den->Sumw2();
   h->Divide(h_num, h_den, 1., 1., "B");
 
-  TCanvas c("c1", "canvas", 1300, 900);
+  TCanvas* c = new TCanvas("c1", "canvas", 1300, 900);
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
 
@@ -120,7 +128,8 @@ void eff_pt(string flag="jet",string flav="b"){
   h->GetYaxis()->SetRangeUser(0., 1.);
   h->Draw();
 
-  std::string path ="/home/salomon/Private/atlas/FTPF/Selector/plots/origin/";
-  c.SaveAs((path+num+den+".pdf").c_str());
+  std::string path =locForOutputFiles();//"/home/salomon/Private/atlas/FTPF/Selector/plots/origin/";
+  std::cout<<" path = "<<path<<std::endl;
+  c->SaveAs((path+num+den+".pdf").c_str());
 
 }

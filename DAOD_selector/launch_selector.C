@@ -5,9 +5,9 @@
 
 void launch_selector()
 {
-  bool laptop=true;
+  bool laptop=false;
   bool lxplus=false;
-  bool lecce=false;
+  bool lecce=true;
 
 
   bool debug=true;
@@ -30,8 +30,8 @@ void launch_selector()
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
 
 
-  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
-//  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+//  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
+  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
 //  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
 //  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
 
@@ -45,10 +45,13 @@ void launch_selector()
   if(laptop)  {laptop_files(f);}
   if(lxplus)  {lxplus_files(f);}
 
+  
+  
   DAOD_selector a;
 
   a.setFlags(lxplus,debug,derived_origin,selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,m_p1,m_p2,m_p3,decay_mode);
   a.setCuts(jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,DR_bcH_cut,pT_bcH_cut,trk_pT_cut,trk_eta_cut,trk_d0_cut,trk_z0sinth_cut);
+  
 
   f->Process(&a);
 //  f->Process(&a,"",1,100); //for developing

@@ -1,3 +1,9 @@
+// std::string locForOutputFiles()
+// {
+//   std::string myPath = "./plots/";
+//   return myPath;
+// }
+
 
 void assoc_tracks(std::string hist,std::string hist_pt,TFile* fData=_file0, string flag="jet"){
   TH2F* h = (TH2F*)fData->Get(hist.c_str());//truth label origin
@@ -48,6 +54,6 @@ void assoc_tracks(std::string hist,std::string hist_pt,TFile* fData=_file0, stri
 //  h_proj->GetYaxis()->SetRangeUser(0., 0.3);
 
   h2->Draw();
-  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/tmp_QT/"+hist+"_assoctrks.pdf").c_str());
+  c.SaveAs((locForOutputFiles()+hist+"_assoctrks.pdf").c_str());
 
 }

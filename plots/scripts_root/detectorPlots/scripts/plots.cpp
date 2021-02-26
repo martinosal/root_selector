@@ -1,3 +1,9 @@
+
+// std::string locForOutputFiles()
+// {
+//   std::string myPath = "./plots/";
+//   return myPath;
+// }
 void plot(std::string hist,int x2,TFile* fData=_file0)
 {
   TLegend *leg;
@@ -73,7 +79,7 @@ void plot(std::string hist,int x2,TFile* fData=_file0)
   }
 //  leg->SetHeader("The Legend Title");
   leg->Draw();
-  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/scripts_root/detectorPlots/"+hist+".pdf").c_str());
+  c.SaveAs((locForOutputFiles()+hist+".pdf").c_str());
 
   delete h1,h2,c,h1_proj,leg;
 }
@@ -152,7 +158,7 @@ void plot(std::string hist,std::string alg,int x2,TFile* fData=_file0)
   }
 //  leg->SetHeader("The Legend Title");
   leg->Draw();
-  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/scripts_root/detectorPlots/"+hist+"_"+alg+".pdf").c_str());
+  c.SaveAs((locForOutputFiles()+hist+"_"+alg+".pdf").c_str());
 
   delete h1,h2,c,h1_proj,leg;
 }

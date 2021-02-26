@@ -1,3 +1,9 @@
+// std::string locForOutputFiles()
+// {
+//   std::string myPath = "./plots/";
+//   return myPath;
+// }
+
 //Example of usage:
 //.L ../plots/origin/scripts/truth_label_eff.cpp
 //eff_derivedtruthlabel_jetpt("trk_jet_pT_origin_truth_label_JF_B","Bjet_cut_origin_truth_label_pT",_file0,100,400) <--- obsolete!
@@ -181,8 +187,9 @@ void eff_derivedtruthlabel_jetpt(std::string alg,std::string hist_den="Bjet_cut_
         py[i]->Draw("hist p same");
     }
       leg->Draw();
-      c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/eff_"+alg+"_jetpT.pdf").c_str());
-
+      c.SaveAs((locForOutputFiles()+"eff_"+alg+"_jetpT.pdf").c_str());
+      
+      
     }
     std::cout<<"\n\n";
 }

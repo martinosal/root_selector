@@ -1,3 +1,9 @@
+// std::string locForOutputFiles()
+// {
+//   std::string myPath = "./plots/";
+//   return myPath;
+// }
+
 /*
 root [1] .L ../plots/origin/scripts/truth_label_d0_origin.cpp
 root [2] derivedtruthlabel("trk_origin_truth_label_B",_file0)
@@ -8,7 +14,7 @@ void jet_composition(TFile* fData=_file0){
   trk_pT_jet_DR_B->GetYaxis()->SetRangeUser(0, 0.7);
   trk_pT_jet_DR_B->GetXaxis()->SetRangeUser(0, 300.);
   trk_pT_jet_DR_B->Draw("COLZ");
-  c.SaveAs("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/trk_pT_jet_DR_B.pdf");
+  c.SaveAs((locForOutputFiles+"trk_pT_jet_DR_B.pdf").c_str());
 }
 
 void jet_truthlabel_composition(std::string hist, TFile* fData=_file0){

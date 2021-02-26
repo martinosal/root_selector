@@ -3,6 +3,12 @@ root [1] .L ../plots/origin/scripts/truth_label_origin.cpp
 root [2] derivedtruthlabel("trk_origin_truth_label_B",_file0)
 */
 
+// std::string locForOutputFiles()
+// {
+//   std::string myPath = "./plots/";
+//   return myPath;
+// }
+
 void truthlabel(std::string hist,TFile* fData=_file0){
   TH1F* h = (TH1F*)fData->Get(hist.c_str());//truth label origin
   const Int_t nbins = h->GetNbinsX();
@@ -225,7 +231,7 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
       py_2[i]->Draw("hist p same");
   }
     leg->Draw();
-    c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_binN.pdf").c_str());
+    c.SaveAs((locForOutputFiles()+hist+"_binN.pdf").c_str());
     delete h,M,c,px,py_2;
 }
 
@@ -388,7 +394,7 @@ void avtrk_orig(std::string hist,std::string hist_pt,TFile* fData=_file0, int Dp
   }
 
   leg->Draw();
-  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_"+hist_pt+"_avtracks.pdf").c_str());
+  c.SaveAs((locForOutputFiles()+hist+"_"+hist_pt+"_avtracks.pdf").c_str());
 
   delete h,h2,M,c,px,py_2;
 }

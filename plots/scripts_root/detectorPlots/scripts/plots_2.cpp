@@ -1,3 +1,9 @@
+// std::string locForOutputFiles()
+// {
+//   std::string myPath = "./plots/";
+//   return myPath;
+// }
+
 void sig(std::string hist,TFile* fData=_file0){
 
 //  TH1F* h = (TH1F*)fData->Get(hist.c_str());
@@ -11,7 +17,7 @@ void sig(std::string hist,TFile* fData=_file0){
   h->SetTitle((hist).c_str());
   h->Draw("hist");
 
-  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/scripts_root/detectorPlots/"+hist+".pdf").c_str());
+  c.SaveAs((locForOutputFiles()+hist+".pdf").c_str());
   delete h;
 }
 
@@ -36,6 +42,6 @@ void orig(std::string hist,TFile* fData=_file0){
   h->SetTitle((hist).c_str());
   h->Draw("hist TEXT0 min0");
 
-  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/scripts_root/detectorPlots/"+hist+"_origin.pdf").c_str());
+  c.SaveAs((locForOutputFiles()+hist+"_origin.pdf").c_str());
   delete h;
 }

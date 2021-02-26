@@ -160,7 +160,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    int isSV1tagged=0;
    std::vector<int> isJet,isJet_OR,isBcheck,isCcheck,islcheck;
 
-   if (m_Ntot%1000==0) std::cout<<".... in Process ... events processed so far "<<m_Ntot<<"/"<<fReader.GetCurrentEntry()<<"  out of "<<fReader.GetEntries()<<" Run / event nb = "<<*runnb<<"/"<<*eventnb<<std::endl;
+   if (m_Ntot%1000==0) std::cout<<".... in Process ... events processed so far "<<m_Ntot<<"/"<<fReader.GetCurrentEntry()<<"  out of "<<fReader.GetEntries(true)<<" Run / event nb = "<<*runnb<<"/"<<*eventnb<<std::endl;
 
    m_Ntot++;
 

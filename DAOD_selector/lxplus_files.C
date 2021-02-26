@@ -1,6 +1,8 @@
 void lxplus_files(TChain *f)
 {
 
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/flav_AktVR30Rmax4Rmin02TrackGhostTagJets.root");
+  
 //    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/flav_Akt4EMPf_retagT_fix.root");
 //    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/flav_Akt4EMPf_BTagging201903_retagF_fix.root");
 //    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/flav_AktVR30Rmax4Rmin02Tr_BTagging201903.root");

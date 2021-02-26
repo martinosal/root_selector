@@ -1,3 +1,10 @@
+
+// std::string locForOutputFiles()
+// {
+//   std::string myPath = "./plots/";
+//   return myPath;
+// }
+
 void jet_orig_total(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=1000){
 
   TH2F* h = (TH2F*)fData->Get(hist.c_str());
@@ -151,7 +158,7 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
 //    c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_"+origin[i-1]+"_binN.pdf").c_str());
   }
     leg->Draw();
-    c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_binN.pdf").c_str());
+    c.SaveAs((locForOutputFiles()+hist+"_binN.pdf").c_str());
     delete h,M,c,px,py_2;
 }
 
@@ -219,7 +226,7 @@ void trk_orig(std::string hist,TFile* fData=_file0, int DpT=50){//fractional com
 //    c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_"+origin[i-1]+"_binN.pdf").c_str());
   }
     leg->Draw();
-    c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_binN.pdf").c_str());
+    c.SaveAs((locForOutputFiles()+hist+"_binN.pdf").c_str());
     delete h,M,c,px,py_2;
 }
 
@@ -322,6 +329,6 @@ void avtrk_orig(std::string hist,std::string hist_jet_pt,TFile* fData=_file0, in
   }
 
   leg->Draw();
-  c.SaveAs(("/home/salomon/Private/atlas/FTPF/Selector/plots/origin/"+hist+"_"+hist_jet_pt+"_avtracks.pdf").c_str());
+  c.SaveAs((locForOutputFiles()+hist+"_"+hist_jet_pt+"_avtracks.pdf").c_str());
   delete h,h2,M,c,px,py_2;
 }
