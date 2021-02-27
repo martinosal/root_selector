@@ -269,7 +269,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 */
 
 
-
+   //SS what's happening with selections ???? 
    if(selections){
      unsigned size_jet=0;
      double RNNIP=0.,DL1=0.;
@@ -3167,10 +3167,14 @@ void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector
         isCcheck.push_back(*it);
         jet_labelled=true;
       }
-      if(jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
+      //SS { 
+      //if(jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
+      if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
+	//SS }
         islcheck.push_back(*it);
         jet_labelled=true;
       }
+      // SS the line below is irrelevant 
       if(jet_labelled)  continue;
     }
   }
