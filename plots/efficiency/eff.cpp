@@ -1,6 +1,6 @@
 std::string locForOutputFiles()
 {
-  std::string myPath = "./outputPlots/EMPflow_201903";
+  std::string myPath = "./outputPlots/EMPflow_201903_";
   return myPath;
 }
 
