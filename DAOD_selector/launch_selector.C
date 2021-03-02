@@ -30,10 +30,10 @@ void launch_selector()
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
 
 
-//  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
+  //const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
   const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
-//  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
-//  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
+  //const char *jetcollection="bTag_AntiKt4EMPFlowJets";
+  //const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
 
 
 
@@ -55,6 +55,7 @@ void launch_selector()
 
   f->Process(&a);
 //  f->Process(&a,"",1,100); //for developing
+//  f->Process(&a,"",3000); //to runprocess only the first 3000 events 
 
 //  f->Process("DAOD_selector.C");
 

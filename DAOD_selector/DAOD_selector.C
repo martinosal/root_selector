@@ -160,7 +160,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    int isSV1tagged=0;
    std::vector<int> isJet,isJet_OR,isBcheck,isCcheck,islcheck;
 
-   if (m_Ntot%1000==0) std::cout<<".... in Process ... events processed so far "<<m_Ntot<<"/"<<fReader.GetCurrentEntry()<<"  out of "<<fReader.GetEntries(true)<<" Run / event nb = "<<*runnb<<"/"<<*eventnb<<std::endl;
+   //if (m_Ntot%1000==0) std::cout<<".... in Process ... events processed so far "<<m_Ntot<<"/"<<fReader.GetCurrentEntry()<<"  out of "<<fReader.GetEntries(true)<<" Run / event nb = "<<*runnb<<"/"<<*eventnb<<std::endl;
+   if (m_Ntot%1000==0) std::cout<<".... in Process ... events processed so far "<<m_Ntot<<"/"<<fReader.GetCurrentEntry()<<" Run / event nb = "<<*runnb<<"/"<<*eventnb<<std::endl;
 
    m_Ntot++;
 
@@ -173,16 +174,19 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    isJet.clear();
    isJet_OR.clear();
 
-
+   //return kTRUE;
    // here loop over jets
    std::vector<int> isB_1,isB_2,isC_1,isC_2;
-   for(int i=0;i<*njets;i++) {
+   Int_t nMyJets = *njets;
+   //std::cout<<" N. of jets = "<<nMyJets<<std::endl; 
+   for(int i=0;i<nMyJets;i++) {
 
      if(jet_nBHadr[i]>0){
        nBjets++;
        isB_1.push_back(i);
      }
 
+     //     continue;
      if(jet_nCHadr[i]>0){
        nCjets++;
        isC_1.push_back(i);
@@ -191,6 +195,8 @@ Bool_t DAOD_selector::Process(Long64_t entry)
      if(jet_nBHadr[i]==0 && jet_nCHadr[i]==0){
        nljets++;
      }
+     //   return kTRUE;
+
 
 
      if (jet_pt[i]<jet_pT_infcut) continue; //failing the pt cut (lower limit)
@@ -212,6 +218,9 @@ Bool_t DAOD_selector::Process(Long64_t entry)
      }
      m_njets_2_passJVT++;
      isJet.push_back(i);         //// Here's the vector of jets passing the jet-selection
+
+
+
 
      if(jet_nBHadr[i]>0){
        nBjets_2++;
@@ -243,6 +252,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 // number of jets with >=1 b hadron and >=1 c hadron
    m_nJetBCoverlap+=overlap(isB_1,isC_1);
    m_nJetBCoverlap_postJetSel+=overlap(isB_2,isC_2);
+
 
    OverlapRemoval(isJet, isJet_OR);//checks isolated jets with DR>1
 

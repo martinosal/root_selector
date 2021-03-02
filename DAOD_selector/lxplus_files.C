@@ -1,7 +1,24 @@
 void lxplus_files(TChain *f)
 {
 
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/flav_AktVR30Rmax4Rmin02TrackGhostTagJets.root");
+
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_001.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_002.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_003.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_004.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_005.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_006.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_007.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_008.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_009.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_010.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_011.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_012.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_013.root");
+  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_014.root");
+
+
+  //  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/flav_AktVR30Rmax4Rmin02TrackGhostTagJets.root");
   
 //    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/flav_Akt4EMPf_retagT_fix.root");
 //    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/flav_Akt4EMPf_BTagging201903_retagF_fix.root");

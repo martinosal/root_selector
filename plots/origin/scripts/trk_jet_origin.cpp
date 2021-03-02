@@ -1,4 +1,3 @@
-
 // std::string locForOutputFiles()
 // {
 //   std::string myPath = "./plots/";
