@@ -7,7 +7,7 @@ void launch_selector()
 {
   bool laptop=false;
   bool lxplus=false;
-  bool lecce=true;
+  bool lecce =true;
 
 
   bool debug=true;
@@ -30,10 +30,11 @@ void launch_selector()
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
 
 
-  //const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
-  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
   //const char *jetcollection="bTag_AntiKt4EMPFlowJets";
-  //const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
+  //const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+  //const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets";
+  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
+  //const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
 
 
 
@@ -41,9 +42,9 @@ void launch_selector()
 
   TChain *f = new TChain(jetcollection);
 
-  if(lecce)   {lecce_files(f);}
   if(laptop)  {laptop_files(f);}
-  if(lxplus)  {lxplus_files(f);}
+  if(lecce)   {lecce_files( f,std::string(jetcollection));}
+  if(lxplus)  {lxplus_files(f,std::string(jetcollection));}
 
   
   
@@ -51,11 +52,11 @@ void launch_selector()
 
   a.setFlags(lxplus,debug,derived_origin,selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,m_p1,m_p2,m_p3,decay_mode);
   a.setCuts(jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,DR_bcH_cut,pT_bcH_cut,trk_pT_cut,trk_eta_cut,trk_d0_cut,trk_z0sinth_cut);
-  
+  a.setOutputFNameString(std::string(jetcollection));
 
-  f->Process(&a);
+  //  f->Process(&a);
 //  f->Process(&a,"",1,100); //for developing
-//  f->Process(&a,"",3000); //to runprocess only the first 3000 events 
+  f->Process(&a,"",3000); //to runprocess only the first 3000 events 
 
 //  f->Process("DAOD_selector.C");
 

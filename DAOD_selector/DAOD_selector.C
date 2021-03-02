@@ -27,7 +27,7 @@
 
 #include "DAOD_selector.h"
 #include <TStyle.h>
-
+#include "TTree.h"
 
 void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool derived_origin_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retag_flag, double p1, double p2, double p3, string decay_mode_flag)
 {
@@ -55,6 +55,7 @@ void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool derived_ori
      m_p3=p3;
    }
    decay_mode=decay_mode_flag;
+   fOutputString="";
    return;
 }
 
@@ -109,7 +110,7 @@ void DAOD_selector::Begin(TTree * /*tree*/)
    nJFtrk=0,nJFoutputjets=0;
 
    //   std::cout<<"\n";
-   openOutputFile();
+   openOutputFile(fOutputString);
 
    bookHistosForSelections();
 

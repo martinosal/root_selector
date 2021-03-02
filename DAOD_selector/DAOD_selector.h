@@ -358,6 +358,7 @@ public :
    virtual Int_t   Version() const { return 2; }
    virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, double, double, double, string);
    virtual void    setCuts(float, float, float, float, float, float, float, float, float, float);
+   virtual void    setOutputFNameString(string x){fOutputString=x;}
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -393,7 +394,9 @@ public :
      bool selections,derived_origin,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,debug,lxplus,diag_trms;
      double m_p1,m_p2,m_p3;
      string decay_mode;
+     string fOutputString; 
 
+     
      // selection cuts
      float jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,m_pT_bcH_truth_cut,m_DR_bcH_truth_cut;
      float trk_pT_cut,trk_eta_cut,trk_d0_cut,trk_z0sinth_cut;

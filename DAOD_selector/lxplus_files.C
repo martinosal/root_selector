@@ -1,42 +1,33 @@
-void lxplus_files(TChain *f)
+void lxplus_files(TChain *f, std::string jcoll)
 {
+  std::string fileLocation = "/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/";
+  std::cout<<"laoding files from "<< fileLocation <<std::endl;
+  std::cout<<"and for tree named "<< jcoll <<std::endl;
 
-
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_001.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_002.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_003.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_004.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_005.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_006.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_007.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_008.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_009.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_010.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_011.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_012.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_013.root");
-  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin_014.root");
-
-
-  //  f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/flav_AktVR30Rmax4Rmin02TrackGhostTagJets.root");
+  std::string fileName;
+  if      (jcoll=="bTag_AntiKt4EMPFlowJets_BTagging201903")             fileName="flav_Akt4EMPf_BTagging201903_derorigin";
+  else if (jcoll=="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903") fileName="flav_AktVR30Rmax4Rmin02Tr_BTagging201903_derorigin";
+  //else if (jcoll=="bTag_AntiKtVR30Rmax4Rmin02TrackJets")               fileName="flav_AktVR30Rmax4Rmin02Tr_derorigin";
+  else if (jcoll=="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets")        fileName="flav_AktVR30Rmax4Rmin02TrackGhostTagJets_derorigin";
+  else
+    {
+      std::cout<<"Unknown jetCollection "<<  jcoll <<" ... unable to build the chain; exit"<<std::endl;
+      return;
+    }
+  std::cout<<"files to be read ... "<< fileName <<std::endl;
   
-//    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/flav_Akt4EMPf_retagT_fix.root");
-//    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/flav_Akt4EMPf_BTagging201903_retagF_fix.root");
-//    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/flav_AktVR30Rmax4Rmin02Tr_BTagging201903.root");
-/*
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_1.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_2.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_3.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_4.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_5.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_6.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_7.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_8.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_9.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_10.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_11.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_12.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_13.root");
-    f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/DAOD_output/DAOD_out_Akt4EMP_201903_retagF/flav_Akt4EMPf_BTagging201903_14.root");
-*/
+  f->Add((fileLocation+fileName+"_001.root").c_str());
+  f->Add((fileLocation+fileName+"_002.root").c_str());
+  f->Add((fileLocation+fileName+"_003.root").c_str());
+  f->Add((fileLocation+fileName+"_004.root").c_str());
+  f->Add((fileLocation+fileName+"_005.root").c_str());
+  f->Add((fileLocation+fileName+"_006.root").c_str());
+  f->Add((fileLocation+fileName+"_007.root").c_str());
+  f->Add((fileLocation+fileName+"_008.root").c_str());
+  f->Add((fileLocation+fileName+"_009.root").c_str());
+  f->Add((fileLocation+fileName+"_010.root").c_str());
+  f->Add((fileLocation+fileName+"_011.root").c_str());
+  f->Add((fileLocation+fileName+"_012.root").c_str());
+  f->Add((fileLocation+fileName+"_013.root").c_str());
+  f->Add((fileLocation+fileName+"_014.root").c_str());
 }
