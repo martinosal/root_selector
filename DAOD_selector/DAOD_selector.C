@@ -29,6 +29,14 @@
 #include <TStyle.h>
 #include "TTree.h"
 
+DAOD_selector::DAOD_selector()
+{
+   fOutputString="";
+   fJetLabeling ="Cone";
+   fDoFlavorLabelMatrix=true;
+}
+
+
 void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool derived_origin_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retag_flag, double p1, double p2, double p3, string decay_mode_flag)
 {
    std::cout<<"\n In DAOD_selector::setFlags"<<std::endl;
@@ -55,8 +63,6 @@ void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool derived_ori
      m_p3=p3;
    }
    decay_mode=decay_mode_flag;
-   fOutputString="";
-   fJetLabeling ="Cone";
    return;
 }
 
@@ -277,14 +283,27 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    else if (fJetLabeling=="Ghost")
      {
        // jet labelling (b-, c-, l-) fron DAOD flags  ===>>> ghostB/ChadronCount  ==> can select pure b/c-jets (no double hadrons) and light == 0 b/c hadrons
+       getGhostExtJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);
+     }
+   else if (fJetLabeling=="GhostIncl")
+     {
+       // jet labelling (b-, c-, l-) fron DAOD flags  ===>>> ghostB/ChadronCount  ==> can select pure b/c-jets (no double hadrons) and light == 0 b/c hadrons
        getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);
      }
    else if (fJetLabeling=="GhostCone")
      {
        // jet labelling (b-, c-, l-) fron DAOD flags - matching labels --- exclusive labeling schemes 
+       getGhostExtJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
+     }
+   else if (fJetLabeling=="GhostConeIncl")
+     {
+       // jet labelling (b-, c-, l-) fron DAOD flags - matching labels --- exclusive labeling schemes 
        getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
      }
 
+   getFlavorLabelMatrix(isJet);
+   if (fDoFlavorLabelMatrix) getJetFeaturesInFlavorLabelMatrix();
+   
    m_nBcheck+=isBcheck.size();
    m_nCcheck+=isCcheck.size();
    m_nlcheck+=islcheck.size();
@@ -1834,7 +1853,7 @@ void DAOD_selector::Terminate()
      hist_nljets->Write();
      hist_n_tracks_jetpt_l->Write();
 
-
+     hist2_jetFlavorMatrix->Write();
 
    }
 
@@ -2626,6 +2645,8 @@ void DAOD_selector::bookHistosForSelections()
      hist_nljets = new TH1F("nljets","nljets",1,1,2);
      hist_n_tracks_jetpt_l = new TH2F("n_tracks_jetpt_l", "n_tracks_jetpt_l", 500,0.,1000.,100, 0, 100);
 
+     hist2_jetFlavorMatrix = new TH2F("jetFlavorLabelMatrix","jetFlavorLabelMatrix",6,-0.5,5.5,6,-0.5,5.5);
+
    }
 }
 
@@ -3171,6 +3192,56 @@ void DAOD_selector::OverlapRemoval(std::vector<int>& isJet, std::vector<int>& is
 //    std::cout<<isJet.size()<<"\t"<<isJet_OR.size()<<"\n";
 }
 
+void DAOD_selector::getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck, bool diag_trms){
+  isBcheck.clear();
+  isCcheck.clear();
+  islcheck.clear();
+
+  bool jet_labelled = false;
+  if(diag_trms==false){
+    for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+      jet_labelled=false;
+
+      if(jet_ghostBHadCount[*it]==1){
+        isBcheck.push_back(*it);
+        jet_labelled=true;
+      }
+      if(jet_ghostCHadCount[*it]==1 && jet_ghostBHadCount[*it]==0){
+        isCcheck.push_back(*it);
+        jet_labelled=true;
+      }
+      if(jet_ghostCHadCount[*it]==0 && jet_ghostBHadCount[*it]==0){
+        islcheck.push_back(*it);
+        jet_labelled=true;
+      }
+      if(jet_labelled)  continue;
+    }
+  }
+  if(diag_trms==true){
+    for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+      jet_labelled=false;
+
+      if(jet_ghostBHadCount[*it]==1 && jet_DoubleHadLabel[*it]==5){
+        isBcheck.push_back(*it);
+        jet_labelled=true;
+      }
+      if(jet_ghostCHadCount[*it]==1 && jet_DoubleHadLabel[*it]==4){
+        isCcheck.push_back(*it);
+        jet_labelled=true;
+      }
+      //SS { 
+      //if(jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
+      if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
+	//SS }
+        islcheck.push_back(*it);
+        jet_labelled=true;
+      }
+      // SS the line below is irrelevant 
+      if(jet_labelled)  continue;
+    }
+  }
+
+}
 void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck, bool diag_trms){
   isBcheck.clear();
   isCcheck.clear();
@@ -3200,17 +3271,17 @@ void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector
     for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
       jet_labelled=false;
 
-      if(jet_ghostBHadCount[*it]==1 && jet_DoubleHadLabel[*it]==5){
+      if(jet_ghostBHadCount[*it]>0 && jet_LabDr_HadF[*it]==5){
         isBcheck.push_back(*it);
         jet_labelled=true;
       }
-      if(jet_ghostCHadCount[*it]==1 && jet_DoubleHadLabel[*it]==4){
+      if(jet_ghostCHadCount[*it]>0 && jet_ghostBHadCount[*it]==0 && jet_LabDr_HadF[*it]==4){
         isCcheck.push_back(*it);
         jet_labelled=true;
       }
       //SS { 
       //if(jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
-      if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
+      if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && jet_LabDr_HadF[*it]==0){
 	//SS }
         islcheck.push_back(*it);
         jet_labelled=true;
@@ -3362,4 +3433,57 @@ void DAOD_selector::getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<
 
 
    return;
+}
+void DAOD_selector::getFlavorLabelMatrix(std::vector<int>& isJet)
+{
+  for (unsigned int i1=0; i1<6; ++i1)
+    for (unsigned int i2=0; i2<6; ++i2)
+      m_jetFlavorMatrix[i1][i2].clear();
+
+
+  bool jet_labelled = false;
+
+  int iflc = -1;
+  int iflg = -1;
+  for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+    jet_labelled=false;
+
+    iflc = getConeFlavLabel(*it);
+    iflg = getGhosFlavLabel(*it);
+    hist2_jetFlavorMatrix->Fill(double(iflc), double(iflg));
+    //std::cout<<" iflc, g " << iflc<<" "<<iflg<<" double hadr "<<jet_DoubleHadLabel[*it]<<" ... nB/C hdr "<< jet_ghostBHadCount[*it]<<" "<<jet_ghostCHadCount[*it]<<std::endl;
+    if (iflc > -1 && iflg > -1)
+      {
+	m_jetFlavorMatrix[iflc][iflg].push_back(*it);
+      }
+    else
+      {
+	std::cout<<" Flavor Label not assigned for this jet,  DoubleHadLabel, nGhost B/C hadrons   "
+	  << jet_DoubleHadLabel[*it] <<" "<<jet_ghostBHadCount[*it]<<"/"<<jet_ghostCHadCount[*it]<<std::endl;
+      }
+  }
+  
+  return;
+}
+int DAOD_selector::getConeFlavLabel(int jetIndex)
+{
+  int iflav = -1;
+  if (jet_DoubleHadLabel[jetIndex]==5) return 0;
+  if (jet_DoubleHadLabel[jetIndex]==4) return 1;
+  if (jet_DoubleHadLabel[jetIndex]==0 || jet_DoubleHadLabel[jetIndex]==15) return 2;
+  if (jet_DoubleHadLabel[jetIndex]==55) return 3;
+  if (jet_DoubleHadLabel[jetIndex]==44) return 4;
+  if (jet_DoubleHadLabel[jetIndex]==54) return 5;
+  return iflav;
+}
+int DAOD_selector::getGhosFlavLabel(int jetIndex)
+{
+  int iflav = -1;
+  if (jet_ghostBHadCount[jetIndex]>1  && jet_ghostCHadCount[jetIndex]>1 ) return 5; 
+  if (jet_ghostBHadCount[jetIndex]==1 ) return 0; 
+  if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]==1) return 1; 
+  if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]==0) return 2; 
+  if (jet_ghostBHadCount[jetIndex]>1  ) return 3; 
+  if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]>1 ) return 4; 
+  return iflav;
 }

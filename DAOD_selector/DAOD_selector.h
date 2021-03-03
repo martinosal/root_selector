@@ -352,8 +352,7 @@ public :
    TTreeReaderArray<vector<int>> jet_trk_truth_origin = {fReader, "jet_trk_truth_origin"};// inclusive - from InDetTool
    TTreeReaderArray<vector<int>> jet_trk_truth_derivedlabel = {fReader, "jet_trk_truth_derivedlabel"};
 
-
-   DAOD_selector(TTree * /*tree*/ =0) { }
+   DAOD_selector();
    virtual ~DAOD_selector() { }
    virtual Int_t   Version() const { return 2; }
    virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, double, double, double, string);
@@ -362,6 +361,8 @@ public :
    virtual string  getOutputFNameString(){return fOutputString;}
    virtual void    setJetLabeling(string x){fJetLabeling=x;}
    virtual string  getJetLabeling(){return fJetLabeling;}
+   virtual void    setDoFlavorLabelMatrix(bool x){fDoFlavorLabelMatrix=x;}
+   virtual bool    getDoFlavorLabelMatrix(){return fDoFlavorLabelMatrix;}
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -389,13 +390,20 @@ public :
    void getHadronConeFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
    void getHadronConeExtFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
    void getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl, bool diag_trms);
-
+   void getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl, bool diag_trms);
+   void getFlavorLabelMatrix(std::vector<int>& isJet);
+   void getJetFeaturesInFlavorLabelMatrix(){return;}
+   int getConeFlavLabel(int jetIndex);
+   int getGhosFlavLabel(int jetIndex);
+   
+   
    ClassDef(DAOD_selector,0);
 
    private:
 
      // Flags selectong the running mode
      bool selections,derived_origin,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,debug,lxplus,diag_trms;
+     bool fDoFlavorLabelMatrix;
      double m_p1,m_p2,m_p3;
      string decay_mode;
      string fJetLabeling;
@@ -454,6 +462,16 @@ public :
      int JF_ntrk,SV1_ntrk,SV0_ntrk,IP2D_ntrk,IP3D_ntrk;
      int b_cnt,b_trkcut_cnt,trkcut_cnt,SV1input_trks,nSV1jets,nSV1trk,nIPxDtrk,nJFtrk,nSV1outputjets,nIPxDoutputjets,nJFoutputjets;
 
+     std::vector<int> m_jetFlavorMatrix[6][6];
+     /*
+     int m_mtx_bb , m_mtx_bc , m_mtx_bl , m_mtx_b2b ,  m_mtx_b2c, m_mtx_b54 ;
+     int m_mtx_cb , m_mtx_cc , m_mtx_cl , m_mtx_c2b ,  m_mtx_c2c, m_mtx_c54 ;
+     int m_mtx_lb , m_mtx_lc , m_mtx_ll , m_mtx_l2b ,  m_mtx_l2c, m_mtx_l54 ;
+     int m_mtx_2bb, m_mtx_2bc, m_mtx_2bl, m_mtx_2b2b,  m_mtx_2b2c,m_mtx_2b54;
+     int m_mtx_2cb, m_mtx_2cc, m_mtx_2cl, m_mtx_2c2b,  m_mtx_2c2c,m_mtx_2c54;
+     int m_mtx_54b, m_mtx_54c, m_mtx_54l, m_mtx_542b,  m_mtx_542c,m_mtx_5454;
+     */
+     
      unsigned m_track_cut;
 
      std::vector< std::vector<float> > bin_v = std::vector< std::vector<float> >(bin_1);
@@ -970,6 +988,7 @@ public :
      TH2F *hist_single_matched_DR_trk_pTfraction;
      TH1F *hist_single_matched_d0_B;
 
+     TH2F *hist2_jetFlavorMatrix;// = new TH2F("jetFlavorLabelMatrix","jetFlavorLabelMatrix",6,-0.5,5.5,6,-0.5,5.5);
 
 
 
