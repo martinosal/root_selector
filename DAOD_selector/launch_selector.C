@@ -5,8 +5,8 @@
 
 void launch_selector()
 {
-  bool laptop=false;
-  bool lxplus=true;
+  bool laptop=true;
+  bool lxplus=false;
   bool lecce=false;
 
   bool diag_jetlabel=true;
@@ -28,10 +28,14 @@ void launch_selector()
   float DR_bcH_cut=0.3,pT_bcH_cut=5*1e3;
   float trk_pT_cut=0.4*1e3,trk_eta_cut=2.4,trk_d0_cut=50.*1e3,trk_z0sinth_cut=50.*1e3;
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
+  std::string collection="EMPFlow";
 
+    const char *jetcollection="";
 
-    const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
-  //  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+    if(collection=="VR30ghost")    const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
+    if(collection=="VR30BTag")     const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
+    if(collection=="EMPFlow")      const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+
 //  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
 //  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
 
@@ -43,7 +47,7 @@ void launch_selector()
 
   if(lecce)   {lecce_files(f);}
   if(laptop)  {laptop_files(f);}
-  if(lxplus)  {lxplus_files(f);}
+  if(lxplus)  {lxplus_files(f,std::string(jetcollection));}
 
   DAOD_selector a;
 
