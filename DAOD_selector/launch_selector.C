@@ -5,11 +5,10 @@
 
 void launch_selector()
 {
-  bool laptop=true;
-  bool lxplus=false;
+  bool laptop=false;
+  bool lxplus=true;
   bool lecce=false;
 
-  bool diag_jetlabel=true;
   bool debug=true;
   bool derived_origin=true;
   bool selections=true;
@@ -21,27 +20,41 @@ void launch_selector()
   bool cut=true;
   bool retag=false;
   double m_p1=0.,m_p2=0.,m_p3=0.;
-  string decay_mode="false";//can be "leptonic" or "hadronic", set "false" or any other value for decay_mode=false
 
-  float jet_pT_infcut=12*1e3,jet_pT_supcut=1000*1e4,jet_eta_cut=2.5,jet_JVT_cut=0.2;//was 0.5
-  //float jet_pT_infcut=20*1e3,jet_pT_supcut=300*1e3,jet_eta_cut=2.5,jet_JVT_cut=0.5;
+  std::string decay_mode="false";//can be "leptonic" or "hadronic", set "false" or any other value for decay_mode=false
+  std::string jetlabeling="DIAGjetlab";//can be "DIAGjetlab", "CONEjetlab" or "GHOSTjetlab"
+
+
+
+  float jet_pT_infcut,jet_pT_supcut=1000*1e4,jet_eta_cut=2.5,jet_JVT_cut=0.2;//was 0.5
+  
   float DR_bcH_cut=0.3,pT_bcH_cut=5*1e3;
   float trk_pT_cut=0.4*1e3,trk_eta_cut=2.4,trk_d0_cut=50.*1e3,trk_z0sinth_cut=50.*1e3;
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
+
   std::string collection="EMPFlow";
 
     const char *jetcollection="";
 
-    if(collection=="VR30ghost")    const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
-    if(collection=="VR30BTag")     const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
-    if(collection=="EMPFlow")      const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+    if(collection=="VR30ghost"){
+      jet_pT_infcut=12*1e3;
+      jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
+    }
+    if(collection=="VR30BTag"){
+      jet_pT_infcut=12*1e3;
+      jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
+    }
+    if(collection=="EMPFlow"){
+      jet_pT_infcut=20*1e3;
+      jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+    }
 
-//  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
-//  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
+    //const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
 
 
 
   std::cout<<"\nJet Collection: " << jetcollection << "\n";
+  std::cout<<"Jet labeling: "<<jetlabeling<<std::endl;
 
   TChain *f = new TChain(jetcollection);
 
@@ -51,7 +64,7 @@ void launch_selector()
 
   DAOD_selector a;
 
-  a.setFlags(diag_jetlabel,lxplus,debug,derived_origin,selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,m_p1,m_p2,m_p3,decay_mode);
+  a.setFlags(lxplus,debug,derived_origin,selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,m_p1,m_p2,m_p3,decay_mode, jetlabeling);
   a.setCuts(jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,DR_bcH_cut,pT_bcH_cut,trk_pT_cut,trk_eta_cut,trk_d0_cut,trk_z0sinth_cut);
 
   f->Process(&a);
