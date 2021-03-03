@@ -5,8 +5,8 @@
 
 void launch_selector()
 {
-  bool laptop=true;
-  bool lxplus=false;
+  bool laptop=false;
+  bool lxplus=true;
   bool lecce=false;
 
 
@@ -30,8 +30,8 @@ void launch_selector()
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
 
 
-  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
-//  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
+  //    const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
+  const char *jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
 //  const char *jetcollection="bTag_AntiKt4EMPFlowJets";
 //  const char *jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
 
