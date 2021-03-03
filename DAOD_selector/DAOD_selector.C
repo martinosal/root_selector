@@ -111,7 +111,7 @@ void DAOD_selector::Begin(TTree * /*tree*/)
    nJFtrk=0,nJFoutputjets=0;
 
    //   std::cout<<"\n";
-   openOutputFile();
+   openOutputFile(fOutputString);
 
    bookHistosForSelections();
 

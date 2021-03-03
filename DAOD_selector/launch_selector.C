@@ -67,8 +67,16 @@ void launch_selector()
   a.setFlags(lxplus,debug,derived_origin,selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,m_p1,m_p2,m_p3,decay_mode, jetlabeling);
   a.setCuts(jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,DR_bcH_cut,pT_bcH_cut,trk_pT_cut,trk_eta_cut,trk_d0_cut,trk_z0sinth_cut);
 
-  f->Process(&a);
-//  f->Process(&a,"",1,100); //for developing
+  if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic")){
+    a.setOutputFNameString(std::string(jetcollection)+"_"+jetlabeling+"_"+decay_mode);
+  }
+  else{
+    a.setOutputFNameString(std::string(jetcollection)+"_"+jetlabeling);
+  }
+
+
+    f->Process(&a);
+  //  f->Process(&a,"",1,100); //for developing
 
 //  f->Process("DAOD_selector.C");
 

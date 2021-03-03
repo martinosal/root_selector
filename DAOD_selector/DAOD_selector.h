@@ -358,7 +358,7 @@ public :
    virtual Int_t   Version() const { return 2; }
    virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, double, double, double, string, string);
    virtual void    setCuts(float, float, float, float, float, float, float, float, float, float);
-
+   virtual void    setOutputFNameString(string x){fOutputString=x;}
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -393,7 +393,7 @@ public :
      // Flags selectong the running mode
      bool selections,derived_origin,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,debug,lxplus,diag_trms;
      double m_p1,m_p2,m_p3;
-     string decay_mode,jetlabeling;
+     string decay_mode,jetlabeling,fOutputString;
 
      // selection cuts
      float jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,m_pT_bcH_truth_cut,m_DR_bcH_truth_cut;
