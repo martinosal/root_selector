@@ -29,10 +29,11 @@
 #include <TStyle.h>
 
 
-void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool derived_origin_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retag_flag, double p1, double p2, double p3, string decay_mode_flag)
+void DAOD_selector::setFlags(bool diag_jetlabel_flag, bool lxplus_flag, bool debug_flag, bool derived_origin_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retag_flag, double p1, double p2, double p3, string decay_mode_flag)
 {
    std::cout<<"\n In DAOD_selector::setFlags"<<std::endl;
-
+   
+   diag_jetlabel=diag_jetlabel_flag;
    lxplus=lxplus_flag;
    debug=debug_flag;
    derived_origin=derived_origin_flag;
@@ -160,7 +161,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    int isSV1tagged=0;
    std::vector<int> isJet,isJet_OR,isBcheck,isCcheck,islcheck;
 
-   if (m_Ntot%1000==0) std::cout<<".... in Process ... events processed so far "<<m_Ntot<<"/"<<fReader.GetCurrentEntry()<<"  out of "<<fReader.GetEntries()<<" Run / event nb = "<<*runnb<<"/"<<*eventnb<<std::endl;
+   if (m_Ntot%1000==0) std::cout<<".... in Process ... events processed so far "<<m_Ntot<<"/"<<fReader.GetCurrentEntry()<<"\n";//  out of "<<fReader.GetEntries()<<" Run / event nb = "<<*runnb<<"/"<<*eventnb<<std::endl;
 
    m_Ntot++;
 
@@ -248,9 +249,15 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 // jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
 //   getTrueJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
-   getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
+   if(diag_jetlabel==true){
+     getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);
+   }
+   else{
+     //select one between getTrueJetFlavourLabel (custom labeling), getGhostJetFlavourLabel(with diag_trms==false) and getHadronConeFlavourLabel
+     //   getTrueJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
+   getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);//diag_trms=false: not diagonal terms
 //   getHadronConeFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
-
+   }
    m_nBcheck+=isBcheck.size();
    m_nCcheck+=isCcheck.size();
    m_nlcheck+=islcheck.size();
