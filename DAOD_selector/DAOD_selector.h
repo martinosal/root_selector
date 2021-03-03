@@ -392,7 +392,7 @@ public :
    void getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl, bool diag_trms);
    void getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl, bool diag_trms);
    void getFlavorLabelMatrix(std::vector<int>& isJet);
-   void getJetFeaturesInFlavorLabelMatrix(){return;}
+   void getJetFeaturesInFlavorLabelMatrix();
    int getConeFlavLabel(int jetIndex);
    int getGhosFlavLabel(int jetIndex);
    

@@ -3,33 +3,41 @@
 #include "lxplus_files.C"
 #include "lecce_files.C"
 
-void launch_selector_oneSample(){
-
+void launch_selector_1Sample(std::string location="Lecce", 
+			     std::string jcoll="bTag_AntiKt4EMPFlowJets_BTagging201903", 
+			     std::string labScheme="Cone", 
+			     bool lowPt=false, 
+			     int nEv=10000000)
+{
 
   //////////=====================================
 
-  int nEventsToProcess = 10000000;
+  //int nEventsToProcess = 10000000;
   //int nEventsToProcess = 3000;
+  int nEventsToProcess = nEv;
+  //
   bool laptop=false;
   bool lxplus=false;
   bool lecce =true;
-  bool lowPtForVR = false;
-
-  const char *jetcollection="";
-  std::string Labeling;
-
+  lecce  = (location=="Lecce"  || location=="lecce"  || location=="LECCE"  );
+  lxplus = (location=="Lxplus" || location=="lxplus" || location=="LXPLUS" );
+  laptop = (location=="Laptop" || location=="laptop" || location=="LAPTOP" );
+  //
+  bool lowPtForVR = lowPt;
+  //
   //jetcollection="bTag_AntiKt4EMPFlowJets_BTagging201903";
   //jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets";
   //jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903";
-  jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
-
+  //jetcollection="bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
+  const char *jetcollection=jcoll.c_str();
+  //
   //Labeling ="Cone";
-  Labeling ="Ghost";
+  //Labeling ="Ghost";
   //Labeling ="GhostCone";
   //Labeling ="ConeIncl";
   //Labeling ="GhostIncl";
   //Labeling ="GhostConeIncl";
-
+  std::string Labeling=labScheme;
 
   //////////=====================================
 
