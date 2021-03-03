@@ -56,6 +56,7 @@ void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool derived_ori
    }
    decay_mode=decay_mode_flag;
    fOutputString="";
+   fJetLabeling ="Cone";
    return;
 }
 
@@ -257,10 +258,32 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
    OverlapRemoval(isJet, isJet_OR);//checks isolated jets with DR>1
 
-// jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
-//   getTrueJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
-   getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
-//   getHadronConeFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
+
+   if (fJetLabeling=="ConeLocalImpl")
+     {
+       // jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
+       getTrueJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
+     }
+   else if (fJetLabeling=="Cone")
+     {
+       // jet labelling (b-, c-, l-) fron DAOD flag HadronConeExclusiveExtendedTruthLabelID ===>>> get pure b/c-jets (no double hadrons) and light=no b/c hadrons (includes tau jets)
+       getHadronConeExtFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
+     }
+   else if (fJetLabeling=="ConeIncl")
+     {
+       // jet labelling (b-, c-, l-) fron DAOD flag HadronConeExclusiveTruthLabelID ===>>> b/c-jets contain b/c hadrons (double hadrons allowed) and light=no b/c hadrons (includes tau jets)
+       getHadronConeFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
+     }
+   else if (fJetLabeling=="Ghost")
+     {
+       // jet labelling (b-, c-, l-) fron DAOD flags  ===>>> ghostB/ChadronCount  ==> can select pure b/c-jets (no double hadrons) and light == 0 b/c hadrons
+       getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);
+     }
+   else if (fJetLabeling=="GhostCone")
+     {
+       // jet labelling (b-, c-, l-) fron DAOD flags - matching labels --- exclusive labeling schemes 
+       getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
+     }
 
    m_nBcheck+=isBcheck.size();
    m_nCcheck+=isCcheck.size();
@@ -304,26 +327,26 @@ Bool_t DAOD_selector::Process(Long64_t entry)
            hist_ip2d_llr_B->Fill(jet_ip2d_llr[*it]); //llr is computed as log(pb/pu)
            hist_ip2d_llr_jetpt_B->Fill(jet_ip2d_llr[*it],jet_pt[*it]*0.001);
            if(jet_bH_pt[*it].size()==1)
-             hist_ip2d_llr_jetpt_singleB->Fill(jet_ip2d_llr[*it],jet_bH_pt[*it][0]*0.001);
+             hist_ip2d_llr_jetpt_singleB->Fill(jet_ip2d_llr[*it],jet_pt[*it]*0.001);
          }
          if(jet_ip3d_pb[*it]!=-99){
            hist_ip3d_llr_B->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
            hist_ip3d_llr_jetpt_B->Fill(jet_ip3d_llr[*it],jet_pt[*it]*0.001);
            if(jet_bH_pt[*it].size()==1)
-             hist_ip3d_llr_jetpt_singleB->Fill(jet_ip3d_llr[*it],jet_bH_pt[*it][0]*0.001);
+             hist_ip3d_llr_jetpt_singleB->Fill(jet_ip3d_llr[*it],jet_pt[*it]*0.001);
          }
          if(jet_rnnip_pb[*it]!=-99){
            RNNIP=log(jet_rnnip_pb[*it]/(m_fcRNNIP*jet_rnnip_pc[*it]+(1.-m_fcRNNIP)*jet_rnnip_pu[*it]));
            hist_rnnip_llr_B->Fill(RNNIP); //llr is computed as log(pb/pu)
            hist_rnnip_llr_jetpt_B->Fill(RNNIP,jet_pt[*it]*0.001);
            if(jet_bH_pt[*it].size()==1)
-             hist_rnnip_llr_jetpt_singleB->Fill(RNNIP,jet_bH_pt[*it][0]*0.001);
+             hist_rnnip_llr_jetpt_singleB->Fill(RNNIP,jet_pt[*it]*0.001);
          }
          if(sv1_llr[*it]!=-99){
            hist_sv1_llr_B->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
            hist_sv1_llr_jetpt_B->Fill(sv1_llr[*it],jet_pt[*it]*0.001);
            if(jet_bH_pt[*it].size()==1)
-             hist_sv1_llr_jetpt_singleB->Fill(sv1_llr[*it],jet_bH_pt[*it][0]*0.001);
+             hist_sv1_llr_jetpt_singleB->Fill(sv1_llr[*it],jet_pt[*it]*0.001);
 
            hist_jet_sv1_Nvtx_B->Fill(jet_sv1_Nvtx[*it]);
            hist_jet_sv1_ntrkv_B->Fill(jet_sv1_ntrkv[*it]);
@@ -1717,7 +1740,8 @@ void DAOD_selector::SlaveTerminate()
 
 void DAOD_selector::Terminate()
 {
-   std::cout<<"\n In DAOD_selector::Terminate"<<std::endl;
+   std::cout<<"\n===\n==="<<std::endl;
+   std::cout<<" In DAOD_selector::Terminate"<<std::endl;
    // The Terminate() function is the last function to be called during
    // a query. It always runs on the client, it can be used to present
    // the results graphically or save the results to file.
@@ -2275,6 +2299,8 @@ void DAOD_selector::Terminate()
       std::cout<< "fraction of events without b:\t\t" << (double) m_noB/m_Ntot << "\n";
     }
 */
+    std::cout<<"=================================================================="<<std::endl;
+    std::cout<<"====== Output file Name : "<<getOutputFNameString()<<std::endl;
     if(discriminants && selections){
       std::cout<< "\nDISCRIMINANTS\n\n";
     }
@@ -2386,7 +2412,8 @@ void DAOD_selector::Terminate()
         std::cout<<"\n"<<decay_mode<<" mode:";
       }
 
-      std::cout<<"\nb jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << ", light jets "<<m_nlcheck<<"\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
+      std::cout<<"\nApplying jet labeling of type <"<<getJetLabeling()<<"> "<<std::endl;
+      std::cout<<"b jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << ", light jets "<<m_nlcheck<<"\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
       std::cout<<"\nTRACK/CHILDREN CUTS\npT > "<<1e-3*trk_pT_cut<<" GeV\n"<<"|eta| < "<<trk_eta_cut<<"\n";//<<"|d0| < "<<trk_d0_cut<<" mm"<<"\n"<<"|z0*sin(theta)| < "<<trk_z0sinth_cut<<" mm"<<"\n";
       std::cout<<"\n(JF_ntrk, SV1_ntrk, SV0_ntrk, IP2D_ntrk, IP3D_ntrk)\n"<<JF_ntrk<<", \t"<<SV1_ntrk<<", \t"<<SV0_ntrk<<", \t"<<IP2D_ntrk<<", \t"<<IP3D_ntrk<<"\n";
       std::cout<<"Number of jets: "<<b_cnt<<"\tCut b-jets: "<<b_trkcut_cnt<<"\n";
@@ -2444,7 +2471,10 @@ void DAOD_selector::Terminate()
     }
 
 
-   std::cout<<"Out of DAOD_selector::Terminate"<<std::endl;
+   std::cout<<"=================================================================="<<std::endl;
+   std::cout<<"Out of DAOD_selector::Terminate for "<<getOutputFNameString()<<std::endl;
+   std::cout<<"===\n===\n"<<std::endl;
+   
    return;
 }
 void DAOD_selector::openOutputFile(std::string fileNameStringID)
@@ -3212,6 +3242,33 @@ void DAOD_selector::getHadronConeFlavourLabel(std::vector<int>& isJet, std::vect
       jet_labelled=true;
     }
     if(jet_LabDr_HadF[*it]==0 || jet_LabDr_HadF[*it]==15){
+      islcheck.push_back(*it);
+      jet_labelled=true;
+    }
+    if(jet_labelled)  continue;
+
+  }
+}
+void DAOD_selector::getHadronConeExtFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck)
+{
+  isBcheck.clear();
+  isCcheck.clear();
+  islcheck.clear();
+
+  bool jet_labelled = false;
+
+  for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+    jet_labelled=false;
+
+    if(jet_DoubleHadLabel[*it]==5){
+      isBcheck.push_back(*it);
+      jet_labelled=true;
+    }
+    if(jet_DoubleHadLabel[*it]==4){
+      isCcheck.push_back(*it);
+      jet_labelled=true;
+    }
+    if(jet_DoubleHadLabel[*it]==0 || jet_DoubleHadLabel[*it]==15){
       islcheck.push_back(*it);
       jet_labelled=true;
     }

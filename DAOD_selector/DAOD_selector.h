@@ -359,6 +359,9 @@ public :
    virtual void    setFlags(bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool, double, double, double, string);
    virtual void    setCuts(float, float, float, float, float, float, float, float, float, float);
    virtual void    setOutputFNameString(string x){fOutputString=x;}
+   virtual string  getOutputFNameString(){return fOutputString;}
+   virtual void    setJetLabeling(string x){fJetLabeling=x;}
+   virtual string  getJetLabeling(){return fJetLabeling;}
    virtual void    Begin(TTree *tree);
    virtual void    SlaveBegin(TTree *tree);
    virtual void    Init(TTree *tree);
@@ -384,6 +387,7 @@ public :
    void OverlapRemoval(std::vector<int>& isJet, std::vector<int>& isJet_OR);
    void getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
    void getHadronConeFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
+   void getHadronConeExtFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
    void getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl, bool diag_trms);
 
    ClassDef(DAOD_selector,0);
@@ -394,6 +398,7 @@ public :
      bool selections,derived_origin,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,debug,lxplus,diag_trms;
      double m_p1,m_p2,m_p3;
      string decay_mode;
+     string fJetLabeling;
      string fOutputString; 
 
      
