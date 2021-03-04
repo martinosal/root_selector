@@ -19,9 +19,8 @@ void lxplus_files(TChain *f, std::string jcoll)
     std::stringstream ss;
     ss << std::setw(3) << std::setfill('0') << i;
     std::string s = ss.str();
-//    char *intStr = itoa(i);
-//    string str = string(intStr);
-    f->Add((fileLocation+fileName+"0"+s+".root").c_str());
+
+    f->Add((fileLocation+fileName+s+".root").c_str());
   }
   /*
   f->Add("/eos/user/m/mcentonz/File/FTPF/FTPF_taggers_output/QT/flav_Akt4EMPf_BTagging201903_derorigin_001.root");

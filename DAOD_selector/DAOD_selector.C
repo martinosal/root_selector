@@ -29,11 +29,11 @@
 #include <TStyle.h>
 
 
-void DAOD_selector::setFlags(bool diag_jetlabel_flag, bool lxplus_flag, bool debug_flag, bool derived_origin_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retag_flag, double p1, double p2, double p3, string decay_mode_flag)
+void DAOD_selector::setFlags(bool lxplus_flag, bool debug_flag, bool derived_origin_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retag_flag, double p1, double p2, double p3, string decay_mode_flag, string jetlabeling_flag)
 {
    std::cout<<"\n In DAOD_selector::setFlags"<<std::endl;
 
-   diag_jetlabel=diag_jetlabel_flag;
+   //   diag_jetlabel=diag_jetlabel_flag;
    lxplus=lxplus_flag;
    debug=debug_flag;
    derived_origin=derived_origin_flag;
@@ -56,6 +56,7 @@ void DAOD_selector::setFlags(bool diag_jetlabel_flag, bool lxplus_flag, bool deb
      m_p3=p3;
    }
    decay_mode=decay_mode_flag;
+   jetlabeling=jetlabeling_flag;
    return;
 }
 
@@ -110,7 +111,7 @@ void DAOD_selector::Begin(TTree * /*tree*/)
    nJFtrk=0,nJFoutputjets=0;
 
    //   std::cout<<"\n";
-   openOutputFile();
+   openOutputFile(fOutputString);
 
    bookHistosForSelections();
 
@@ -248,16 +249,22 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    OverlapRemoval(isJet, isJet_OR);//checks isolated jets with DR>1
 
 // jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
+
+
+//select one between getTrueJetFlavourLabel (custom labeling), getGhostJetFlavourLabel(with diag_trms==false) and getHadronConeFlavourLabel
+   if(jetlabeling=="DIAGjetlab"){
+     //     std::cout<<"jetlabeling: "<<jetlabeling<<std::endl;
+     getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
+   }
+   else if(jetlabeling=="CONEjetlab"){
 //   getTrueJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
-   if(diag_jetlabel==true){
-     getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);
+   getHadronConeFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
    }
-   else{
-     //select one between getTrueJetFlavourLabel (custom labeling), getGhostJetFlavourLabel(with diag_trms==false) and getHadronConeFlavourLabel
-     //   getTrueJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
-   getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);//diag_trms=false: not diagonal terms
-//   getHadronConeFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
+   else if(jetlabeling=="GHOSTjetlab"){
+     getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);
    }
+   else std::cout<<"Wrong jetlabeling name"<<std::endl;
+
    m_nBcheck+=isBcheck.size();
    m_nCcheck+=isCcheck.size();
    m_nlcheck+=islcheck.size();
