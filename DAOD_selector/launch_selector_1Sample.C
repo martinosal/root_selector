@@ -86,8 +86,8 @@ void launch_selector_1Sample(std::string location="Lecce",
 
   if (lowPtForVR)
     {
-      if (Labeling=="Cone" || Labeling=="ConeIncl" || 
-	  Labeling=="Ghost" || Labeling=="ConeIncl" ||
+      if (Labeling=="Cone"      || Labeling=="ConeIncl"     || 
+	  Labeling=="Ghost"     || Labeling=="GhostIncl"    ||
 	  Labeling=="GhostCone" || Labeling=="GhostConeIncl")
 	{
 	  a.setOutputFNameString(std::string(jetcollection)+"_"+Labeling+"_12GeV");
@@ -113,8 +113,8 @@ void launch_selector_1Sample(std::string location="Lecce",
     }
   else
     {
-      if (Labeling=="Cone" || Labeling=="ConeIncl" || 
-	  Labeling=="Ghost" || Labeling=="ConeIncl" ||
+      if (Labeling=="Cone"      || Labeling=="ConeIncl"     || 
+	  Labeling=="Ghost"     || Labeling=="GhostIncl"    ||
 	  Labeling=="GhostCone" || Labeling=="GhostConeIncl")
 	{
 	  a.setOutputFNameString(std::string(jetcollection)+"_"+Labeling);
