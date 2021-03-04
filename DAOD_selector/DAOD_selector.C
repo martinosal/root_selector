@@ -32,7 +32,7 @@
 void DAOD_selector::setFlags(bool diag_jetlabel_flag, bool lxplus_flag, bool debug_flag, bool derived_origin_flag, bool selections_flag, bool discriminants_flag, bool shrinking_cone_flag, bool selection_alg_flag, bool origin_selection_flag, bool geometric_selection_flag, bool cut_flag, bool retag_flag, double p1, double p2, double p3, string decay_mode_flag)
 {
    std::cout<<"\n In DAOD_selector::setFlags"<<std::endl;
-   
+
    diag_jetlabel=diag_jetlabel_flag;
    lxplus=lxplus_flag;
    debug=debug_flag;
@@ -305,6 +305,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
          if(jet_ip3d_pb[*it]!=-99){
            hist_ip3d_llr_B->Fill(jet_ip3d_llr[*it]); //llr is computed as log(pb/pu)
            hist_ip3d_llr_jetpt_B->Fill(jet_ip3d_llr[*it],jet_pt[*it]*0.001);
+           hist_ip3d_llr_ntrks_B->Fill(jet_ip3d_llr[*it],jet_trk_pt[*it].size());
            if(jet_bH_pt[*it].size()==1)
              hist_ip3d_llr_jetpt_singleB->Fill(jet_ip3d_llr[*it],jet_bH_pt[*it][0]*0.001);
          }
@@ -312,12 +313,14 @@ Bool_t DAOD_selector::Process(Long64_t entry)
            RNNIP=log(jet_rnnip_pb[*it]/(m_fcRNNIP*jet_rnnip_pc[*it]+(1.-m_fcRNNIP)*jet_rnnip_pu[*it]));
            hist_rnnip_llr_B->Fill(RNNIP); //llr is computed as log(pb/pu)
            hist_rnnip_llr_jetpt_B->Fill(RNNIP,jet_pt[*it]*0.001);
+           hist_rnnip_llr_ntrks_B->Fill(RNNIP,jet_trk_pt[*it].size());
            if(jet_bH_pt[*it].size()==1)
              hist_rnnip_llr_jetpt_singleB->Fill(RNNIP,jet_bH_pt[*it][0]*0.001);
          }
          if(sv1_llr[*it]!=-99){
            hist_sv1_llr_B->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
            hist_sv1_llr_jetpt_B->Fill(sv1_llr[*it],jet_pt[*it]*0.001);
+           hist_sv1_llr_ntrks_B->Fill(jet_sv1_llr[*it],jet_trk_pt[*it].size());
            if(jet_bH_pt[*it].size()==1)
              hist_sv1_llr_jetpt_singleB->Fill(sv1_llr[*it],jet_bH_pt[*it][0]*0.001);
 
@@ -1839,6 +1842,7 @@ void DAOD_selector::Terminate()
      hist_ip3d_llr_B->Write();
      hist_ip3d_llr_jetpt_singleB->Write();
      hist_ip3d_llr_jetpt_B->Write();
+     hist_ip3d_llr_ntrks_B->Write();
      hist_ip3d_llr_C->Write();
      hist_ip3d_llr_jetpt_singleC->Write();
      hist_ip3d_llr_jetpt_C->Write();
@@ -1847,6 +1851,7 @@ void DAOD_selector::Terminate()
      hist_rnnip_llr_B->Write();
      hist_rnnip_llr_jetpt_singleB->Write();
      hist_rnnip_llr_jetpt_B->Write();
+     hist_rnnip_llr_ntrks_B->Write();
      hist_rnnip_llr_C->Write();
      hist_rnnip_llr_jetpt_singleC->Write();
      hist_rnnip_llr_jetpt_C->Write();
@@ -2614,6 +2619,7 @@ void DAOD_selector::bookHistosForDiscriminants()
      hist_ip3d_llr_B = new TH1F("ip3d_llr_B", "ip3d_llr_B", nbin, -20., 50.);
      hist_ip3d_llr_C = new TH1F("ip3d_llr_C", "ip3d_llr_C", nbin, -20., 50.);
      hist_ip3d_llr_jetpt_B = new TH2F("ip3d_llr_jetpt_B","ip3d_llr_jetpt_B",nbin,-20,50, 500, 0., 1000.);
+     hist_ip3d_llr_ntrks_B = new TH2F("ip3d_llr_ntrks_B","ip3d_llr_ntrks_B",nbin,-20,50, 500, 0., 1000.);
      hist_ip3d_llr_jetpt_singleB = new TH2F("ip3d_llr_jetpt_singleB","ip3d_llr_jetpt_singleB",nbin,-20,50, 500, 0., 1000.);
      hist_ip3d_llr_jetpt_C = new TH2F("ip3d_llr_jetpt_C","ip3d_llr_jetpt_C",nbin,-20,50, 500, 0., 1000.);
      hist_ip3d_llr_jetpt_singleC = new TH2F("ip3d_llr_jetpt_singleC","ip3d_llr_jetpt_singleC",nbin,-20,50, 500, 0., 1000.);
@@ -2622,12 +2628,14 @@ void DAOD_selector::bookHistosForDiscriminants()
      hist_rnnip_llr_B = new TH1F("rnnip_llr_B", "rnnip_llr_B", nbin, -20., 50.);
      hist_rnnip_llr_C = new TH1F("rnnip_llr_C", "rnnip_llr_C", nbin, -20., 50.);
      hist_rnnip_llr_jetpt_B = new TH2F("rnnip_llr_jetpt_B","rnnip_llr_jetpt_B",nbin,-20,50, 500, 0., 1000.);
+     hist_rnnip_llr_ntrks_B = new TH2F("rnnip_llr_ntrks_B","rnnip_llr_ntrks_B",nbin,-20,50, 100, 0., 100.);
      hist_rnnip_llr_jetpt_singleB = new TH2F("rnnip_llr_jetpt_singleB","rnnip_llr_jetpt_singleB",nbin,-20,50, 500, 0., 1000.);
      hist_rnnip_llr_jetpt_C = new TH2F("rnnip_llr_jetpt_C","rnnip_llr_jetpt_C",nbin,-20,50, 500, 0., 1000.);
      hist_rnnip_llr_jetpt_singleC = new TH2F("rnnip_llr_jetpt_singleC","rnnip_llr_jetpt_singleC",nbin,-20,50, 500, 0., 1000.);
 
      hist_sv1_llr_l = new TH1F("sv1_llr_l","sv1_llr_l", nbin, -20., 50.);
      hist_sv1_llr_B = new TH1F("sv1_llr_B", "sv1_llr_B", nbin, -20., 50.);
+     hist_sv1_llr_ntrks_B = new TH2F("sv1_llr_ntrks_B","sv1_llr_ntrks_B",nbin,-20,50, 500, 0., 1000.);
      hist_sv1_llr_C = new TH1F("sv1_llr_C", "sv1_llr_C", nbin, -20., 50.);
      hist_sv1_llr_jetpt_B = new TH2F("sv1_llr_jetpt_B","sv1_llr_jetpt_B",nbin,-20,50, 500, 0., 1000.);
      hist_sv1_llr_jetpt_singleB = new TH2F("sv1_llr_jetpt_singleB","sv1_llr_jetpt_singleB",nbin,-20,50, 500, 0., 1000.);

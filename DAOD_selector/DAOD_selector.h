@@ -564,12 +564,15 @@ public :
      TH2F *hist_ip2d_llr_jetpt_singleB;
      TH1F *hist_ip3d_llr_B;
      TH2F *hist_ip3d_llr_jetpt_B;
+     TH2F *hist_ip3d_llr_ntrks_B;
      TH2F *hist_ip3d_llr_jetpt_singleB;
      TH1F *hist_rnnip_llr_B;
      TH2F *hist_rnnip_llr_jetpt_B;
+     TH2F *hist_rnnip_llr_ntrks_B;
      TH2F *hist_rnnip_llr_jetpt_singleB;
      TH1F *hist_sv1_llr_B;
      TH2F *hist_sv1_llr_jetpt_B;
+     TH2F *hist_sv1_llr_ntrks_B;
      TH2F *hist_sv1_llr_jetpt_singleB;
      TH1F *hist_jf_llr_B;
      TH2F *hist_jf_llr_jetpt_B;
