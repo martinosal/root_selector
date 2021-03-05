@@ -1,9 +1,23 @@
 std::string locForOutputFiles()
 {
   std::string myPath = "./outputPlots/EMPflow_201903_";
+  //std::string myPath = "./outputPlots/VR30cone_201903_";
+  //std::string myPath = "./outputPlots/VR30ghost_";
+  //std::string myPath = "./outputPlots/VR30cone_"; //??
   return myPath;
 }
 
+std::string jetCollectionName()
+{
+  std::string jetCollection = "AntiKt4EMPFlowJets";
+  //std::string jetCollection = "AntiKtVR30Rmax4Rmin02TrackJets";
+  //std::string jetCollection = "AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
+  return jetCollection;
+}
+/*if(myPath.find("./outputPlots/EMPflow_201903_")!=string::npos) jetCollection = "AntiKt4EMPFlowJets";
+else if(myPath.find("./outputPlots/VR30cone_201903_")!=string::npos) jetCollection = "AntiKtVR30Rmax4Rmin02TrackJets";
+else if(myPath.find("./outputPlots/VR30ghost_201903_")!=string::npos) jetCollection = "AntiKtVR30Rmax4Rmin02TrackGhostTagJets";
+*/
 void eff_DR(string flag="jet",string flav="b"){
 //TTree* tree = (TTree*) file.Get("treename");
 //TCanvas c1("c1", "canvas", 1300, 900);
@@ -57,16 +71,18 @@ void eff_DR(string flag="jet",string flav="b"){
   }
 
 
-  TCanvas*  c = new TCanvas("c1", "canvas", 1300, 900);
+  TCanvas*  c = new TCanvas("c1", "canvas", 800, 600); //was 1300, 900
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
 
   //h->SetTitle("efficiency_jet_pT");
-  if(flag=="jet") h->GetXaxis()->SetTitle("jet pT [GeV]");
-  if(flag=="bH")  h->GetXaxis()->SetTitle("bH pT [GeV]");
-  if(flag=="cH")  h->GetXaxis()->SetTitle("cH pT [GeV]");
-  if(flav=="b")  h->GetYaxis()->SetTitle("DR_bH,jet");
-  if(flav=="c")  h->GetYaxis()->SetTitle("DR_cH,jet");
+  if(flag=="jet") h->GetXaxis()->SetTitle("Jet p_{T} [GeV]");
+  if(flag=="bH")  h->GetXaxis()->SetTitle("b-hadron p_{T} [GeV]");
+  if(flag=="cH")  h->GetXaxis()->SetTitle("c-hadron p_{T} [GeV]");
+  if(flav=="b")  {h->GetYaxis()->SetTitle("#DeltaR(b-hadron,jet)");
+    c->SetRightMargin(0.14);}
+  if(flav=="c")  {h->GetYaxis()->SetTitle("#DeltaR(c-hadron,jet)");
+    c->SetRightMargin(0.14);}
 
   h->GetXaxis()->SetRangeUser(0., 300.);
   h->GetYaxis()->SetRangeUser(0., 0.3);
@@ -75,6 +91,16 @@ void eff_DR(string flag="jet",string flav="b"){
 
   std::string path =locForOutputFiles();//"/home/salomon/Private/atlas/FTPF/Selector/plots/origin/";
   std::cout<<" path = "<<path<<std::endl;
+
+  double x = 0.58;
+  double y = 0.88;
+  ATLASLabel(x,y,"Internal");
+  TLatex l;
+  l.SetNDC();
+  l.SetTextFont(42);
+  l.SetTextSize(0.025);
+  std::string collection = jetCollectionName();
+  l.DrawLatex(x,y-0.03,("mc16d, t#bar{t}, "+collection).c_str());
 
   c->SaveAs((path+num+den+".pdf").c_str());
 
@@ -115,18 +141,28 @@ void eff_pt(string flag="jet",string flav="b"){
   h_den->Sumw2();
   h->Divide(h_num, h_den, 1., 1., "B");
 
-  TCanvas* c = new TCanvas("c1", "canvas", 1300, 900);
+  TCanvas* c = new TCanvas("c1", "canvas", 800, 600); //was 1300, 900
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
 
 //  h->SetTitle("efficiency_jet_pT");
-  if(flag=="jet") h->GetXaxis()->SetTitle("jet pT [GeV]");
-  if(flag=="bH")  h->GetXaxis()->SetTitle("bH pT [GeV]");
-  if(flag=="cH")  h->GetXaxis()->SetTitle("cH pT [GeV]");
+  if(flag=="jet") h->GetXaxis()->SetTitle("Jet p_{T} [GeV]");
+  if(flag=="bH")  h->GetXaxis()->SetTitle("b-hadron p_{T} [GeV]");
+  if(flag=="cH")  h->GetXaxis()->SetTitle("c-hadron p_{T} [GeV]");
   h->GetYaxis()->SetTitle("efficiency");
   h->GetXaxis()->SetRangeUser(0., 300.);
   h->GetYaxis()->SetRangeUser(0., 1.);
   h->Draw();
+
+  double x = 0.18;
+  double y = 0.22;
+  ATLASLabel(x,y,"Internal");
+  TLatex l;
+  l.SetNDC();
+  l.SetTextFont(42);
+  l.SetTextSize(0.025);
+  std::string collection = jetCollectionName();
+  l.DrawLatex(x,y-0.03,("mc16d, t#bar{t}, "+collection).c_str());
 
   std::string path =locForOutputFiles();//"/home/salomon/Private/atlas/FTPF/Selector/plots/origin/";
   std::cout<<" path = "<<path<<std::endl;
