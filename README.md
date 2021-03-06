@@ -47,3 +47,12 @@ root -l
 .x go.C
 
 This produces your root ntuple named debug_.root.
+
+Otherwise, in go.C you can execute launch_selector_1Sample, passing as input arguments the main parameters: 
+- location of input files, jet collection, truth labeling schema for jets, lowpt (false => pt > 20 GeV, true => pt> 12 GeV ), number of events to be processed. See below the interface: 
+
+void launch_selector_1Sample(std::string location="Lecce",
+                             std::string jcoll="bTag_AntiKt4EMPFlowJets_BTagging201903",
+                             std::string labScheme="Cone",
+                             bool lowPt=false,
+                             int nEv=10000000)

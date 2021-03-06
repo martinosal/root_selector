@@ -3487,3 +3487,8 @@ int DAOD_selector::getGhosFlavLabel(int jetIndex)
   if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]>1 ) return 4; 
   return iflav;
 }
+void DAOD_selector::getJetFeaturesInFlavorLabelMatrix()
+{
+  // here use m_jetFlavorMatrix[icone][ighost] to fill histograms 
+  return;
+}
