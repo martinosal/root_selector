@@ -71,7 +71,7 @@ void eff_DR(string flag="jet",string flav="b"){
   }
 
 
-  TCanvas*  c = new TCanvas("c1", "canvas", 800, 600); //was 1300, 900
+  TCanvas*  c = new TCanvas("c1", "canvas", 800, 600);
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
 
@@ -141,7 +141,7 @@ void eff_pt(string flag="jet",string flav="b"){
   h_den->Sumw2();
   h->Divide(h_num, h_den, 1., 1., "B");
 
-  TCanvas* c = new TCanvas("c1", "canvas", 800, 600); //was 1300, 900
+  TCanvas* c = new TCanvas("c1", "canvas", 800, 600);
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
 

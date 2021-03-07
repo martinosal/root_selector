@@ -1,5 +1,11 @@
+#include "atlasstyle-00-04-02/AtlasStyle.C"
+#include "atlasstyle-00-04-02/AtlasUtils.C"
+#include "atlasstyle-00-04-02/AtlasLabels.C"
+
 void makePlots()
 {
+
+  SetAtlasStyle();
 
   gROOT->ProcessLine(".L ../plots/efficiency/eff.cpp");
   gROOT->ProcessLine(".L ../plots/origin/scripts/truth_label_origin.cpp");

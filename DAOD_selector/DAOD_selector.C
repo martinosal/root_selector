@@ -302,7 +302,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
      }
 
    getFlavorLabelMatrix(isJet);
-   if (fDoFlavorLabelMatrix) getJetFeaturesInFlavorLabelMatrix();
+   //if (fDoFlavorLabelMatrix) getJetFeaturesInFlavorLabelMatrix();
    
    m_nBcheck+=isBcheck.size();
    m_nCcheck+=isCcheck.size();

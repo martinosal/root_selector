@@ -137,7 +137,7 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
   double M_der[Nbins][7];
 
 
-  TCanvas c("c", "canvas", 1300, 900);
+  TCanvas c("c", "canvas", 800, 600);
   c.SetGrid();
 
   gPad->SetLogy();
@@ -205,10 +205,10 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
   }
 }
 */
-  string origin[6] = {"PU","FAKE","FAKE_b/c","GEANT","FRAG","B/C"};
+  string origin[6] = {"PU","FAKE","B/C FAKE","GEANT","FRAG","B/C"};
   int colors[6] = {2,30,38,44,12,4};
 
-  auto leg = new TLegend(0.2,0.2,0.35,0.4);//x1,y1,x2,y2
+  auto leg = new TLegend(0.6,0.2,0.75,0.4);//x1,y1,x2,y2
   TH1D** py_2 = new TH1D*[n_Xbins];
   for(int i=1;i<=6;i++){
     py_2[i] = new TH1D(Form("syj%d",i),"",Nbins,0,pt_max);
@@ -216,21 +216,31 @@ void jet_orig(std::string hist,TFile* fData=_file0, int DpT=50, double pt_max=10
       py_2[i]->AddBinContent(k+1,M_der[k][i]);
       py_2[i]->SetStats(0);
       py_2[i]->GetYaxis()->SetRangeUser(1e-3, 1.);
-      if(flag=="jet") py_2[i]->GetXaxis()->SetTitle("jet pT [GeV]");
-      if(flag=="bH") py_2[i]->GetXaxis()->SetTitle("bH pT [GeV]");
-      if(flag=="cH") py_2[i]->GetXaxis()->SetTitle("cH pT [GeV]");
+      if(flag=="jet") py_2[i]->GetXaxis()->SetTitle("Jet p_{T} [GeV]");
+      if(flag=="bH") py_2[i]->GetXaxis()->SetTitle("b-hadron p_{T} [GeV]");
+      if(flag=="cH") py_2[i]->GetXaxis()->SetTitle("c-hadron p_{T} [GeV]");
       py_2[i]->GetYaxis()->SetTitle("fraction of tracks");
       py_2[i]->SetLineWidth(2);
       py_2[i]->SetLineColor(colors[i-1]);
       py_2[i]->SetOption("col");
-      py_2[i]->SetMarkerStyle(5);
-      py_2[i]->SetMarkerSize(2);
     }
-    leg->AddEntry(py_2[i],origin[i-1].c_str(),"l");
+    leg->AddEntry(py_2[i],origin[i-1].c_str(),"F");
       py_2[i]->Draw("same hist");
-      py_2[i]->Draw("hist p same");
+      py_2[i]->Draw("hist same");
   }
+    leg->SetBorderSize(0);
+    leg->SetTextSize(0.03);
     leg->Draw();
+    double x = 0.18;
+    double yLeg = 0.22;
+    ATLASLabel(x,yLeg,"Internal");
+    TLatex l;
+    l.SetNDC();
+    l.SetTextFont(42);
+    l.SetTextSize(0.025);
+    std::string collection = jetCollectionName();
+    l.DrawLatex(x,yLeg-0.03,("mc16d, t#bar{t}, "+collection).c_str());
+
     c.SaveAs((locForOutputFiles()+hist+"_binN.pdf").c_str());
     delete h,M,c,px,py_2;
 }
@@ -253,7 +263,7 @@ void avtrk_orig(std::string hist,std::string hist_pt,TFile* fData=_file0, int Dp
   int rebin=bin_to_pT*DpT;//nbins associated with DpT
   int Nbins=(int) pt_max/DpT;
 
-  TCanvas c("c", "canvas", 1300, 900);
+  TCanvas c("c", "canvas", 800, 600);
   c.SetGrid();
   gPad->SetLogy();
 
@@ -327,7 +337,7 @@ void avtrk_orig(std::string hist,std::string hist_pt,TFile* fData=_file0, int Dp
   }
 }
 */
-  string origin[6] = {"PU","FAKE","FAKE_b/c","GEANT","FRAG","B/C"};
+  string origin[6] = {"PU","FAKE","B/C FAKE","GEANT","FRAG","B/C"};
   int colors[6] = {2,30,38,44,12,4};
 
   auto leg = new TLegend(0.75,0.75,0.9,0.9);//x1,y1,x2,y2
@@ -379,21 +389,31 @@ void avtrk_orig(std::string hist,std::string hist_pt,TFile* fData=_file0, int Dp
   for(int i=1;i<=6;i++){
     h2[i]->SetStats(0);
     h2[i]->GetYaxis()->SetRangeUser(1e-2, 100);
-    if(flag=="jet") h2[i]->GetXaxis()->SetTitle("jet pT [GeV]");
-    if(flag=="bH") h2[i]->GetXaxis()->SetTitle("bH pT [GeV]");
-    if(flag=="cH") h2[i]->GetXaxis()->SetTitle("cH pT [GeV]");
-    h2[i]->GetYaxis()->SetTitle("<trk>");
+    if(flag=="jet") h2[i]->GetXaxis()->SetTitle("Jet p_{T} [GeV]");
+    if(flag=="bH") h2[i]->GetXaxis()->SetTitle("b-hadron p_{T} [GeV]");
+    if(flag=="cH") h2[i]->GetXaxis()->SetTitle("c-hadron p_{T} [GeV]");
+    h2[i]->GetYaxis()->SetTitle("average # of tracks");
     h2[i]->SetLineWidth(2);
     h2[i]->SetLineColor(colors[i-1]);
     h2[i]->SetOption("col");
-    h2[i]->SetMarkerStyle(5);
-    h2[i]->SetMarkerSize(2);
-    leg->AddEntry(h2[i],origin[i-1].c_str(),"l");
+    leg->AddEntry(h2[i],origin[i-1].c_str(),"F");
     h2[i]->Draw("same hist");
-    h2[i]->Draw("hist p same");
+    h2[i]->Draw("hist same");
   }
 
+  leg->SetBorderSize(0);
+  leg->SetTextSize(0.03);
   leg->Draw();
+  double x = 0.18;
+  double yLeg = 0.22;
+  ATLASLabel(x,yLeg,"Internal");
+  TLatex l;
+  l.SetNDC();
+  l.SetTextFont(42);
+  l.SetTextSize(0.025);
+  std::string collection = jetCollectionName();
+  l.DrawLatex(x,yLeg-0.03,("mc16d, t#bar{t}, "+collection).c_str());
+
   c.SaveAs((locForOutputFiles()+hist+"_"+hist_pt+"_avtracks.pdf").c_str());
 
   delete h,h2,M,c,px,py_2;
