@@ -40,20 +40,30 @@ void assoc_tracks(std::string hist,std::string hist_pt,TFile* fData=_file0, stri
 
 
 
-  TCanvas c("c", "canvas", 1300, 900);
+  TCanvas c("c", "canvas", 800, 600);
   c.SetGrid();
   gPad->SetLogy();
 //  h_proj->SetTitle("");
-  if(flag=="jet") h2->GetXaxis()->SetTitle("jet pT [GeV]");
-  if(flag=="bH") h2->GetXaxis()->SetTitle("bH pT [GeV]");
-  if(flag=="cH") h2->GetXaxis()->SetTitle("cH pT [GeV]");
+  if(flag=="jet") h2->GetXaxis()->SetTitle("Jet p_{T} [GeV]");
+  if(flag=="bH") h2->GetXaxis()->SetTitle("b-hadron p_{T} [GeV]");
+  if(flag=="cH") h2->GetXaxis()->SetTitle("c-hadron p_{T} [GeV]");
   h2->SetStats(0);
-  h2->GetYaxis()->SetTitle("average number of assoc. tracks");
+  h2->GetYaxis()->SetTitle("average # of assoc. tracks");
   h2->GetXaxis()->SetRangeUser(0., 300.);
   h2->GetYaxis()->SetRangeUser(1e-1, 100.);
 //  h_proj->GetYaxis()->SetRangeUser(0., 0.3);
 
   h2->Draw();
+  double x = 0.18;
+  double y = 0.22;
+  ATLASLabel(x,y,"Internal");
+  TLatex l;
+  l.SetNDC();
+  l.SetTextFont(42);
+  l.SetTextSize(0.025);
+  std::string collection = jetCollectionName();
+  l.DrawLatex(x,y-0.03,("mc16d, t#bar{t}, "+collection).c_str());
+
   c.SaveAs((locForOutputFiles()+hist+"_assoctrks.pdf").c_str());
 
 }
