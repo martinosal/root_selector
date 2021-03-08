@@ -381,9 +381,19 @@ public :
    void openOutputFile(std::string fileNameStringID="");
 
    void bookHistosForSelections();
+   void bookHistosForFlavorLabelStudies();
    void bookHistosForDiscriminants();
    void bookHistosForShrinkingCone();
    void bookHistosForSelectionAlgos();
+   void saveHistosInMaps();
+
+   // Histogramming utilities <<<
+   void BookHisto (std::string name, std::string nametitle,  Int_t nx, Double_t xlow, Double_t xup);
+   void BookHisto2(std::string name, std::string nametitle,  Int_t nx, Double_t xlow, Double_t xup, Int_t ny, Double_t ylow, Double_t yup);
+   void FillHisto (std::string name, Double_t bin, Double_t weight=1.);
+   void FillHisto2(std::string name, Double_t xbin, Double_t ybin, Double_t weight=1.);
+   void Normalize (std::string name, Double_t fac);    
+   // >>>
 
    void OverlapRemoval(std::vector<int>& isJet, std::vector<int>& isJet_OR);
    void getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
@@ -990,6 +1000,9 @@ public :
 
      TH2F *hist2_jetFlavorMatrix;// = new TH2F("jetFlavorLabelMatrix","jetFlavorLabelMatrix",6,-0.5,5.5,6,-0.5,5.5);
 
+
+     std::map<std::string, TH1D*>    fHisto1DMap;            
+     std::map<std::string, TH2D*>    fHisto2DMap;   
 
 
 };

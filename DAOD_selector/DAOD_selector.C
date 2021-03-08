@@ -121,6 +121,8 @@ void DAOD_selector::Begin(TTree * /*tree*/)
 
    bookHistosForSelections();
 
+   bookHistosForFlavorLabelStudies();
+
    bookHistosForDiscriminants();
 
    bookHistosForShrinkingCone();
@@ -1857,6 +1859,21 @@ void DAOD_selector::Terminate()
 
    }
 
+   
+   if (fDoFlavorLabelMatrix)
+     {
+
+       saveHistosInMaps();
+       /*
+       //getPtFromFlavorLabelMatrix();
+       for(unsigned int i1=0; i1<6; i1++){
+         for(unsigned int i2=0; i2<6; i2++){
+           HistopT[i1][i2]->Write();
+         }
+       }
+       */       
+     }
+
 
    if(discriminants){
 
@@ -2647,7 +2664,28 @@ void DAOD_selector::bookHistosForSelections()
 
      hist2_jetFlavorMatrix = new TH2F("jetFlavorLabelMatrix","jetFlavorLabelMatrix",6,-0.5,5.5,6,-0.5,5.5);
 
+    
    }
+}
+
+void DAOD_selector::bookHistosForFlavorLabelStudies()
+{ 
+  if (fDoFlavorLabelMatrix)
+    {
+     //Histograms for labeling studies 
+     std::string HistoName[6] = {"1B", "1D0B", "0B0D", "2B", "2D0B", "2B2D"};
+     std::string hVariable;
+     std::string hNameLab;
+     for(uint32_t iX=0; iX<6; iX++){
+       for(uint32_t iY=0; iY<6; iY++){
+	 hNameLab = HistoName[iX]+"_"+HistoName[iY];
+	 hVariable = "Labels_"+hNameLab+"_jetPt";
+         //HistopT[iX][iY] = new TH1D(hVariable.c_str(),(HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries").c_str(),50,0,300);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries"), 50,0.,300.);
+       }
+     }      
+    }
+  return;
 }
 
 void DAOD_selector::bookHistosForDiscriminants()
@@ -3489,6 +3527,135 @@ int DAOD_selector::getGhosFlavLabel(int jetIndex)
 }
 void DAOD_selector::getJetFeaturesInFlavorLabelMatrix()
 {
-  // here use m_jetFlavorMatrix[icone][ighost] to fill histograms 
+  // here use m_jetFlavorMatrix[icone][ighost] to fill histograms
+  std::string HistoName[6] = {"1B", "1D0B", "0B0D", "2B", "2D0B", "2B2D"};
+  std::string hNameLab;
+  std::string hVariable;
+  std::vector<int> jVec;
+  int jetIndex=-1;
+  for(uint32_t iX=0; iX<6; iX++){
+    for(uint32_t iY=0; iY<6; iY++){
+      hNameLab = HistoName[iX]+"_"+HistoName[iY];
+      jVec = m_jetFlavorMatrix[iX][iY];
+      if (jVec.size()>0)
+	{
+	  for (unsigned int ijet=0; ijet<jVec.size(); ++ijet)
+	    {
+	      jetIndex = jVec[ijet];
+	      if (jetIndex < 0)
+		{
+		  std::cout<<"jetIndex not found ... skipping"<<std::endl;
+		  continue;
+		}
+
+	      // jet pT
+	      // name of the histogram => hVariable
+	      hVariable = "Labels_"+hNameLab+"_jetPt";
+	      //HistopT[iX][iY]->Fill( jet_pt[jetIndex] );
+	      FillHisto(hVariable, 0.001*jet_pt[jetIndex]);
+	    }
+	}
+    }
+  }      
+
+
+
   return;
+}
+
+void DAOD_selector::BookHisto (std::string name, std::string nametitle,  
+			       Int_t nx, Double_t xlow, Double_t xup)
+{
+  if (nametitle=="") nametitle=name;
+  TH1D* hT1y = new TH1D(name.c_str(), nametitle.c_str(), nx, xlow, xup);
+  fHisto1DMap[name]=hT1y;
+  return;
+}
+void DAOD_selector::BookHisto2(std::string name, std::string nametitle,  
+			       Int_t nx, Double_t xlow, Double_t xup, Int_t ny, Double_t ylow, Double_t yup)
+{
+  if (nametitle=="") nametitle=name;
+  TH2D* hT1y = new TH2D(name.c_str(), nametitle.c_str(), nx, xlow, xup, ny, ylow, yup);
+  fHisto2DMap[name]=hT1y;
+  return;
+}
+void DAOD_selector::FillHisto (std::string hname, Double_t bin, Double_t weight)
+{
+  if (fHisto1DMap.find(hname)==fHisto1DMap.end()) {
+    std::cout << "---> warning from HistoSvc::FillHisto() : histo " << hname
+	      << " does not exist. (xbin=" << bin << " weight=" << weight << ")"
+	      << std::endl;
+    return;
+  }
+  if  (fHisto1DMap[hname]) {fHisto1DMap[hname]->Fill(bin, weight); }
+  else
+    {
+      std::cout << "---> warning from HistoSvc::FillHisto() : histo " << hname
+		<< " found in the map with a NULL pointer "
+		<< std::endl;
+    }
+  return;
+}
+void DAOD_selector::FillHisto2(std::string hname, Double_t xbin, Double_t ybin, Double_t weight)
+{
+  if (fHisto2DMap.find(hname)==fHisto2DMap.end()) {
+    std::cout << "---> warning from HistoSvc::FillHisto() : histo2D " << hname
+	      << " does not exist. (xbin=" << xbin << " ybin=" << ybin <<" weight=" << weight << ")"
+	      << std::endl;
+    return;
+  }
+  if  (fHisto2DMap[hname]) {fHisto2DMap[hname]->Fill(xbin, ybin, weight); }
+  else
+    {
+      std::cout << "---> warning from HistoSvc::FillHisto() : histo " << hname
+		<< " found in the map with a NULL pointer "
+		<< std::endl;
+    }  
+  return;
+}
+void DAOD_selector::Normalize (std::string hname, Double_t fac)
+{
+   if (fHisto1DMap.find(hname)!=fHisto1DMap.end()) {
+     if  (fHisto1DMap[hname]) {
+       fHisto1DMap[hname]->Scale(fac);
+     }
+     else{
+       std::cout << "---> warning from HistoSvc::FillHisto() : histo " << hname
+		 << " found in the map with a NULL pointer "
+		 << std::endl;
+     }
+     //    std::cout << "---> warning from HistoSvc::FillHisto() : histo2D " << hname
+     //           << ", to be normalized, does not exist. " << xbin << " ybin=" << ybin <<" weight=" << weight << ")"
+     //           << std::endl;
+    return;
+   }
+   else{
+     if (fHisto2DMap.find(hname)!=fHisto2DMap.end()) {
+       if  (fHisto2DMap[hname]) {
+	 fHisto2DMap[hname]->Scale(fac);
+       }
+       else{
+	 std::cout << "---> warning from HistoSvc::NormalizeHisto() : histo2D " << hname
+		   << " found in the map with a NULL pointer "
+		   << std::endl;
+       }
+       return;
+     }
+     else
+       {
+	 std::cout << "---> warning from HistoSvc::NormalizeHisto() : histo " << hname
+		   << " NOT found in the map of 1D histos nor in the map of 2D histos"
+		   << std::endl;
+	 return;
+       }
+   }
+  return;
+} 
+void DAOD_selector::saveHistosInMaps()
+{
+  for (std::map<std::string, TH1D*>::const_iterator it=fHisto1DMap.begin(); it!=fHisto1DMap.end(); ++it )
+    (*it).second->Write();
+  for (std::map<std::string, TH2D*>::const_iterator it=fHisto2DMap.begin(); it!=fHisto2DMap.end(); ++it )
+    (*it).second->Write();
+
 }
