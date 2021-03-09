@@ -421,7 +421,7 @@ public :
 
      
      // selection cuts
-     float jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,m_pT_bcH_truth_cut,m_DR_bcH_truth_cut;
+     float jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,jet_Isol_cut,m_pT_bcH_truth_cut,m_DR_bcH_truth_cut;
      float trk_pT_cut,trk_eta_cut,trk_d0_cut,trk_z0sinth_cut;
 
      // Service variables
@@ -466,6 +466,7 @@ public :
      int m_njets_2_passOR;
      int m_njets_2_passORmu;
      int m_njets_2_passJVT;
+     int m_njets_2_passIsol;
 
      int m_nBcheck,m_nCcheck,m_nlcheck;
      int m_nJetBCoverlap,m_nJetBCoverlap_postJetSel,ov_check;

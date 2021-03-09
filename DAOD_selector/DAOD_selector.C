@@ -34,7 +34,7 @@ DAOD_selector::DAOD_selector()
 {
    fOutputString="";
    fJetLabeling ="Cone";
-   fDoFlavorLabelMatrix=true;
+   fDoFlavorLabelMatrix=false;
 }
 
 
@@ -74,12 +74,17 @@ void DAOD_selector::setCuts(float m_jet_pT_infcut, float m_jet_pT_supcut, float 
    jet_pT_supcut=m_jet_pT_supcut;
    jet_eta_cut=m_jet_eta_cut;
    jet_JVT_cut=m_jet_JVT_cut;
+   jet_Isol_cut=1.;
    m_DR_bcH_truth_cut=m_DR_bcH_cut;
    m_pT_bcH_truth_cut=m_pT_bcH_cut;
    trk_pT_cut=m_trk_pT_cut;
    trk_eta_cut=m_trk_eta_cut;
    trk_d0_cut=m_trk_d0_cut;
    trk_z0sinth_cut=m_trk_z0sinth_cut;
+
+
+   //// print cuts [
+   //// ]
    return;
 }
 
@@ -266,6 +271,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 
 
    OverlapRemoval(isJet, isJet_OR);//checks isolated jets with DR>1
+   m_njets_2_passIsol=m_njets_2_passIsol+isJet_OR.size();
 
 
    if (fJetLabeling=="ConeLocalImpl")
@@ -2426,30 +2432,34 @@ void DAOD_selector::Terminate()
       mg->Draw("A");
     }
 
+    //if(selection_alg){
+    std::cout<<"\nTRUTH LEVEL COMPOSITION\n# of jets: "<< m_njets << " of which:\n" << "b jets: " << m_nBjets << ", c jets: " << m_nCjets << ", light jets: "<< m_nljets << "\nB-C overlap: " << m_nJetBCoverlap<<" ("<< (float) 100*m_nJetBCoverlap/m_nBjets<<" %)\n";
+    
+    std::cout<<"\nB-C JET CUTS\n"<<1e-3*jet_pT_infcut<<" < Jet pT [GeV] < "<<1e-3*jet_pT_supcut<<"\nJet JVT > "<<jet_JVT_cut<<" (for jet pT in [20, 60] GeV, |eta| < 2.4)\nJet |eta| < "<<jet_eta_cut<<"\nJet Isolation DR > "<<jet_Isol_cut<<", OverlapRemoval (e+-/mu+-), NOT isBad\n";
+    
+    std::cout<<" CutFlow: passing PtMin           "<<m_njets_2_passPtMin<<std::endl;
+    std::cout<<" CutFlow: passing PtMax           "<<m_njets_2_passPtMax<<std::endl;
+    std::cout<<" CutFlow: passing Eta Range       "<<m_njets_2_passEtaRange<<std::endl;
+    std::cout<<" CutFlow: passing BadMedium       "<<m_njets_2_passBadMedium<<std::endl;
+    std::cout<<" CutFlow: passing OR              "<<m_njets_2_passOR<<std::endl;
+    std::cout<<" CutFlow: passing ORmu            "<<m_njets_2_passORmu<<std::endl;
+    std::cout<<" CutFlow: passing JVT             "<<m_njets_2_passJVT<<std::endl;
+    std::cout<<" CutFlow: passing isolation       "<<m_njets_2_passIsol<<std::endl;
+    
+    
+    std::cout<<"\n# of jets: "<< m_njets_2 << " of which:\n" << "b jets: " << m_nBjets_2 << ", c jets: " << m_nCjets_2 << ", light jets: "<< m_nljets_2 << "\nB-C overlap: " <<m_nJetBCoverlap_postJetSel<<" ("<< (float) 100*m_nJetBCoverlap_postJetSel/m_nBjets_2<<" %)\n";
+    
+    
+    std::cout<<"\nB-C HADRONS CUTS\n"<<"b-c Hadr pT > "<<1e-3*m_pT_bcH_truth_cut<<" GeV\n"<<"b-c Hadr DR < "<<m_DR_bcH_truth_cut<<"\n";
+    if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic")){
+      std::cout<<"\n"<<decay_mode<<" mode:";
+    }
+    
+    std::cout<<"\nApplying jet labeling of type <"<<getJetLabeling()<<"> "<<std::endl;
+    std::cout<<"b jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << ", light jets "<<m_nlcheck<<"\t\t Total Labeled = "<<m_nBcheck+m_nCcheck+m_nlcheck<<"\t Total Lab/Total "<<Double_t(m_nBcheck+m_nCcheck+m_nlcheck)/Double_t(m_njets_2_passIsol)
+	     <<"\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
+    
     if(selection_alg){
-      std::cout<<"\nTRUTH LEVEL COMPOSITION\n# of jets: "<< m_njets << " of which:\n" << "b jets: " << m_nBjets << ", c jets: " << m_nCjets << ", light jets: "<< m_nljets << "\nB-C overlap: " << m_nJetBCoverlap<<" ("<< (float) 100*m_nJetBCoverlap/m_nBjets<<" %)\n";
-
-      std::cout<<"\nB-C JET CUTS\n"<<1e-3*jet_pT_infcut<<" < Jet pT [GeV] < "<<1e-3*jet_pT_supcut<<"\nJet JVT > "<<jet_JVT_cut<<" (for jet pT in [20, 60] GeV, |eta| < 2.4)\nJet |eta| < "<<jet_eta_cut<<", OverlapRemoval (e+-/mu+-), NOT isBad\n";
-
-      std::cout<<" CutFlow: passing PtMin           "<<m_njets_2_passPtMin<<std::endl;
-      std::cout<<" CutFlow: passing PtMax           "<<m_njets_2_passPtMax<<std::endl;
-      std::cout<<" CutFlow: passing Eta Range       "<<m_njets_2_passEtaRange<<std::endl;
-      std::cout<<" CutFlow: passing BadMedium       "<<m_njets_2_passBadMedium<<std::endl;
-      std::cout<<" CutFlow: passing OR              "<<m_njets_2_passOR<<std::endl;
-      std::cout<<" CutFlow: passing ORmu            "<<m_njets_2_passORmu<<std::endl;
-      std::cout<<" CutFlow: passing JVT             "<<m_njets_2_passJVT<<std::endl;
-
-
-      std::cout<<"\n# of jets: "<< m_njets_2 << " of which:\n" << "b jets: " << m_nBjets_2 << ", c jets: " << m_nCjets_2 << ", light jets: "<< m_nljets_2 << "\nB-C overlap: " <<m_nJetBCoverlap_postJetSel<<" ("<< (float) 100*m_nJetBCoverlap_postJetSel/m_nBjets_2<<" %)\n";
-
-
-      std::cout<<"\nB-C HADRONS CUTS\n"<<"b-c Hadr pT > "<<1e-3*m_pT_bcH_truth_cut<<" GeV\n"<<"b-c Hadr DR < "<<m_DR_bcH_truth_cut<<"\n";
-      if(!decay_mode.compare("leptonic") || !decay_mode.compare("hadronic")){
-        std::cout<<"\n"<<decay_mode<<" mode:";
-      }
-
-      std::cout<<"\nApplying jet labeling of type <"<<getJetLabeling()<<"> "<<std::endl;
-      std::cout<<"b jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << ", light jets "<<m_nlcheck<<"\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
       std::cout<<"\nTRACK/CHILDREN CUTS\npT > "<<1e-3*trk_pT_cut<<" GeV\n"<<"|eta| < "<<trk_eta_cut<<"\n";//<<"|d0| < "<<trk_d0_cut<<" mm"<<"\n"<<"|z0*sin(theta)| < "<<trk_z0sinth_cut<<" mm"<<"\n";
       std::cout<<"\n(JF_ntrk, SV1_ntrk, SV0_ntrk, IP2D_ntrk, IP3D_ntrk)\n"<<JF_ntrk<<", \t"<<SV1_ntrk<<", \t"<<SV0_ntrk<<", \t"<<IP2D_ntrk<<", \t"<<IP3D_ntrk<<"\n";
       std::cout<<"Number of jets: "<<b_cnt<<"\tCut b-jets: "<<b_trkcut_cnt<<"\n";
@@ -2661,9 +2671,6 @@ void DAOD_selector::bookHistosForSelections()
 
      hist_nljets = new TH1F("nljets","nljets",1,1,2);
      hist_n_tracks_jetpt_l = new TH2F("n_tracks_jetpt_l", "n_tracks_jetpt_l", 500,0.,1000.,100, 0, 100);
-
-     hist2_jetFlavorMatrix = new TH2F("jetFlavorLabelMatrix","jetFlavorLabelMatrix",6,-0.5,5.5,6,-0.5,5.5);
-
     
    }
 }
@@ -2672,6 +2679,8 @@ void DAOD_selector::bookHistosForFlavorLabelStudies()
 { 
   if (fDoFlavorLabelMatrix)
     {
+      hist2_jetFlavorMatrix = new TH2F("jetFlavorLabelMatrix","jetFlavorLabelMatrix",6,-0.5,5.5,6,-0.5,5.5);
+
      //Histograms for labeling studies 
      std::string HistoName[6] = {"1B", "1D0B", "0B0D", "2B", "2D0B", "2B2D"};
      std::string hVariable;
@@ -2681,15 +2690,15 @@ void DAOD_selector::bookHistosForFlavorLabelStudies()
 	 hNameLab = HistoName[iX]+"_"+HistoName[iY];
 	 hVariable = "Labels_"+hNameLab+"_jetPt";
          //HistopT[iX][iY] = new TH1D(hVariable.c_str(),(HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries").c_str(),50,0,300);
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries"), 50,0.,300.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries"), 60,0.,300.);
 	 hVariable = "Labels_"+hNameLab+"_jetEta";
 	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet \eta; Entries"), 100,-3.,3.);
 	 hVariable = "Labels_"+hNameLab+"_bHPt";
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T} [GeV]; Entries"), 50, 0.,300.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T} [GeV]; Entries"), 60, 0.,300.);
 	 hVariable = "Labels_"+hNameLab+"_bHPtFraction";
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T}/jet p_{T}; Entries"), 50, 0.,300.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T}/jet p_{T}; Entries"), 60, 0.,300.);
 	 hVariable = "Labels_"+hNameLab+"_bHjetDR";
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron - jet DR; Entries"), 50, 0.,300.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron - jet DR; Entries"), 60, 0.,300.);
 	 std::string stringAlgo[5]={"IP2D","IP3D","RNNIP","SV1","JF"};
 	 for (unsigned int algoBit=0; algoBit<5; ++algoBit) /// 0=IP2D, 1=IP3D, 2=RNNIP, 3=SV1, 4=JF
 	   {
@@ -3217,6 +3226,7 @@ void DAOD_selector::initCounters()
      m_njets_2_passOR=0;
      m_njets_2_passORmu=0;
      m_njets_2_passJVT=0;
+     m_njets_2_passIsol=0;
 
   return;
 }
@@ -3241,7 +3251,7 @@ void DAOD_selector::OverlapRemoval(std::vector<int>& isJet, std::vector<int>& is
           D_phi=jet_phi[idx_l]-jet_phi[idx_k];
         }
         DeltaR=sqrt(D_eta*D_eta+D_phi*D_phi);
-        if(DeltaR>1.0){
+        if(DeltaR>jet_Isol_cut){
 //          std::cout<<"Overlap\t"<<isJet.size()<<" "<<isJet_OR.size()<<" "<<l<<"\n";
 //          isJet_OR.erase(isJet_OR.begin()+l);
 //          continue;
@@ -3592,7 +3602,7 @@ void DAOD_selector::getFlavorLabelMatrix(std::vector<int>& isJet)
 
     iflc = getConeFlavLabel(*it);
     iflg = getGhosFlavLabel(*it);
-    hist2_jetFlavorMatrix->Fill(double(iflc), double(iflg));
+    if (fDoFlavorLabelMatrix) hist2_jetFlavorMatrix->Fill(double(iflc), double(iflg));
     //std::cout<<" iflc, g " << iflc<<" "<<iflg<<" double hadr "<<jet_DoubleHadLabel[*it]<<" ... nB/C hdr "<< jet_ghostBHadCount[*it]<<" "<<jet_ghostCHadCount[*it]<<std::endl;
     if (iflc > -1 && iflg > -1)
       {
