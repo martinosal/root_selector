@@ -1,3 +1,4 @@
+#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 #define DAOD_selector_cxx
 // The class definition in selector.h has been generated automatically
 // by the ROOT utility TTree::MakeSelector(). This class is derived
@@ -275,35 +276,35 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    else if (fJetLabeling=="Cone")
      {
        // jet labelling (b-, c-, l-) fron DAOD flag HadronConeExclusiveExtendedTruthLabelID ===>>> get pure b/c-jets (no double hadrons) and light=no b/c hadrons (includes tau jets)
-       getHadronConeExtFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
+       getHadronConeExtFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
      }
    else if (fJetLabeling=="ConeIncl")
      {
        // jet labelling (b-, c-, l-) fron DAOD flag HadronConeExclusiveTruthLabelID ===>>> b/c-jets contain b/c hadrons (double hadrons allowed) and light=no b/c hadrons (includes tau jets)
-       getHadronConeFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
+       getHadronConeFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
      }
    else if (fJetLabeling=="Ghost")
      {
        // jet labelling (b-, c-, l-) fron DAOD flags  ===>>> ghostB/ChadronCount  ==> can select pure b/c-jets (no double hadrons) and light == 0 b/c hadrons
-       getGhostExtJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);
+       getGhostExtJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck, false);
      }
    else if (fJetLabeling=="GhostIncl")
      {
        // jet labelling (b-, c-, l-) fron DAOD flags  ===>>> ghostB/ChadronCount  ==> can select pure b/c-jets (no double hadrons) and light == 0 b/c hadrons
-       getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);
+       getGhostJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck, false);
      }
    else if (fJetLabeling=="GhostCone")
      {
        // jet labelling (b-, c-, l-) fron DAOD flags - matching labels --- exclusive labeling schemes 
-       getGhostExtJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
+       getGhostExtJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
      }
    else if (fJetLabeling=="GhostConeIncl")
      {
        // jet labelling (b-, c-, l-) fron DAOD flags - matching labels --- exclusive labeling schemes 
-       getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
+       getGhostJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
      }
 
-   getFlavorLabelMatrix(isJet);
+   getFlavorLabelMatrix(isJet_OR);
    if (fDoFlavorLabelMatrix) getJetFeaturesInFlavorLabelMatrix();
    
    m_nBcheck+=isBcheck.size();
@@ -324,7 +325,6 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 */
 
 
-   //SS what's happening with selections ???? 
    if(selections){
      unsigned size_jet=0;
      double RNNIP=0.,DL1=0.;
@@ -2682,6 +2682,33 @@ void DAOD_selector::bookHistosForFlavorLabelStudies()
 	 hVariable = "Labels_"+hNameLab+"_jetPt";
          //HistopT[iX][iY] = new TH1D(hVariable.c_str(),(HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries").c_str(),50,0,300);
 	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries"), 50,0.,300.);
+	 hVariable = "Labels_"+hNameLab+"_jetEta";
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet \eta; Entries"), 100,-3.,3.);
+	 hVariable = "Labels_"+hNameLab+"_bHPt";
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T} [GeV]; Entries"), 50, 0.,300.);
+	 hVariable = "Labels_"+hNameLab+"_bHPtFraction";
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T}/jet p_{T}; Entries"), 50, 0.,300.);
+	 hVariable = "Labels_"+hNameLab+"_bHjetDR";
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron - jet DR; Entries"), 50, 0.,300.);
+	 std::string stringAlgo[5]={"IP2D","IP3D","RNNIP","SV1","JF"};
+	 for (unsigned int algoBit=0; algoBit<5; ++algoBit) /// 0=IP2D, 1=IP3D, 2=RNNIP, 3=SV1, 4=JF
+	   {
+	     hVariable="Labels_"+hNameLab+"_nTrkAlgo_"+stringAlgo[algoBit];
+	     BookHisto(hVariable,
+		       (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); nTrk used by "+stringAlgo[algoBit]+" ; Entries"),
+		       11,-0.5,10.5);
+	   }
+	 BookHisto("Labels_"+hNameLab+"_SV1nVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 nVertices")       ,4,  -0.5 ,3.5);
+	 BookHisto("Labels_"+hNameLab+"_SV1mVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vertex mass")     ,50,  0.  ,20.0);
+	 BookHisto("Labels_"+hNameLab+"_SV1eFc" ,  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vtx Energy frac."),50, -0.1  ,1.1);
+	 BookHisto("Labels_"+hNameLab+"_SV1sig3d", (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vtx 3d sign")     ,100, 0.  ,1000.0);
+	 BookHisto("Labels_"+hNameLab+"_SV1dR",    (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vtx DeltaR")      ,100, 0.  ,1.0);
+
+	 BookHisto("Labels_"+hNameLab+"_JFnVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF nVertices")       ,10,  -0.5 ,9.5);
+	 BookHisto("Labels_"+hNameLab+"_JFmVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vertex mass")     ,50,  0.  ,20.0);
+	 BookHisto("Labels_"+hNameLab+"_JFeFc" ,  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vtx Energy frac."),50,  -.1  ,1.1);
+	 BookHisto("Labels_"+hNameLab+"_JFsig3d", (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vtx 3d sign")     ,100, 0.  ,1000.0);
+	 BookHisto("Labels_"+hNameLab+"_JFdR",    (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vtx DeltaR")      ,100, 0.  ,1.0);
        }
      }      
     }
@@ -2690,7 +2717,6 @@ void DAOD_selector::bookHistosForFlavorLabelStudies()
 
 void DAOD_selector::bookHistosForDiscriminants()
 {
-
    if(discriminants){
 
      int nbin=1400;
@@ -3235,6 +3261,29 @@ void DAOD_selector::getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vec
   isCcheck.clear();
   islcheck.clear();
 
+  int ic=-1;
+  int ig=-1;
+  int jetIndex=0;
+  for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+    jetIndex = *it;
+
+    ig = getGhosFlavLabel(jetIndex);
+    if (diag_trms)
+      {
+	ic= getConeFlavLabel(jetIndex);
+	if      (ig==0 && ic==0) isBcheck.push_back(*it);
+	else if (ig==1 && ic==1) isCcheck.push_back(*it);
+	else if (ig==2 && ic==2) islcheck.push_back(*it);
+      }
+    else
+      {
+	if      (ig==0) isBcheck.push_back(*it);
+	else if (ig==1) isCcheck.push_back(*it);
+	else if (ig==2) islcheck.push_back(*it);
+      }
+  }
+  
+  /*
   bool jet_labelled = false;
   if(diag_trms==false){
     for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
@@ -3263,13 +3312,13 @@ void DAOD_selector::getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vec
         isBcheck.push_back(*it);
         jet_labelled=true;
       }
-      if(jet_ghostCHadCount[*it]==1 && jet_DoubleHadLabel[*it]==4){
+      if(jet_ghostCHadCount[*it]==1 && jet_ghostBHadCount[*it]==0 && jet_DoubleHadLabel[*it]==4){
         isCcheck.push_back(*it);
         jet_labelled=true;
       }
       //SS { 
       //if(jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
-      if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
+      if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && (jet_DoubleHadLabel[*it]==0 || jet_DoubleHadLabel[*it]==15)){
 	//SS }
         islcheck.push_back(*it);
         jet_labelled=true;
@@ -3278,6 +3327,7 @@ void DAOD_selector::getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vec
       if(jet_labelled)  continue;
     }
   }
+  */
 
 }
 void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck, bool diag_trms){
@@ -3285,6 +3335,29 @@ void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector
   isCcheck.clear();
   islcheck.clear();
 
+
+  int ic=-1;
+  int ig=-1;
+  int jetIndex=0;
+  for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+    jetIndex = *it;
+
+    ig = getGhosFlavLabel(jetIndex);
+    if (diag_trms)
+      {
+	ic= getConeFlavLabel(jetIndex);
+	if      ((ig==0 || ig==3 || ig==5) && (ic==0 || ic==3 || ic==5)) isBcheck.push_back(*it);
+	else if ((ig==1 || ig==4         ) && (ic==1 || ic==4         )) isCcheck.push_back(*it);
+	else if ( ig==2                    &&  ic==2                   ) islcheck.push_back(*it);
+      }
+    else
+      {
+	if      (ig==0 || ig==3 || ig==5) isBcheck.push_back(*it);
+	else if (ig==1 || ig==4         ) isCcheck.push_back(*it);
+	else if (ig==2                  ) islcheck.push_back(*it);
+      }
+  }
+  /*
   bool jet_labelled = false;
   if(diag_trms==false){
     for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
@@ -3328,6 +3401,7 @@ void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector
       if(jet_labelled)  continue;
     }
   }
+  */
 
 }
 
@@ -3337,6 +3411,20 @@ void DAOD_selector::getHadronConeFlavourLabel(std::vector<int>& isJet, std::vect
   isCcheck.clear();
   islcheck.clear();
 
+
+  int ic=-1;
+  int ig=-1;
+  int jetIndex=0;
+  for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+    jetIndex = *it;
+
+    ic= getConeFlavLabel(jetIndex);
+    if      (ic==0 || ic==3 || ic==5) isBcheck.push_back(*it);
+    else if (ic==1 || ic==4         ) isCcheck.push_back(*it);
+    else if (ic==2                  ) islcheck.push_back(*it);
+  }
+
+  /*
   bool jet_labelled = false;
 
   for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
@@ -3357,6 +3445,7 @@ void DAOD_selector::getHadronConeFlavourLabel(std::vector<int>& isJet, std::vect
     if(jet_labelled)  continue;
 
   }
+  */
 }
 void DAOD_selector::getHadronConeExtFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck)
 {
@@ -3364,6 +3453,20 @@ void DAOD_selector::getHadronConeExtFlavourLabel(std::vector<int>& isJet, std::v
   isCcheck.clear();
   islcheck.clear();
 
+  int ic=-1;
+  int ig=-1;
+  int jetIndex=0;
+  for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+    jetIndex = *it;
+
+    ic= getConeFlavLabel(jetIndex);
+    if      (ic==0) isBcheck.push_back(*it);
+    else if (ic==1) isCcheck.push_back(*it);
+    else if (ic==2) islcheck.push_back(*it);
+  }
+
+
+  /*
   bool jet_labelled = false;
 
   for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
@@ -3384,6 +3487,7 @@ void DAOD_selector::getHadronConeExtFlavourLabel(std::vector<int>& isJet, std::v
     if(jet_labelled)  continue;
 
   }
+  */
 }
    // jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
 void DAOD_selector::getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck)
@@ -3506,23 +3610,38 @@ void DAOD_selector::getFlavorLabelMatrix(std::vector<int>& isJet)
 int DAOD_selector::getConeFlavLabel(int jetIndex)
 {
   int iflav = -1;
+  // if (jet_DoubleHadLabel[jetIndex]==5) return 0;
+  // if (jet_DoubleHadLabel[jetIndex]==4) return 1;
+  // if (jet_DoubleHadLabel[jetIndex]==0 || jet_DoubleHadLabel[jetIndex]==15) return 2;
+  // if (jet_DoubleHadLabel[jetIndex]==55) return 3;
+  // if (jet_DoubleHadLabel[jetIndex]==44) return 4;
+  // if (jet_DoubleHadLabel[jetIndex]==54) return 5;
+
   if (jet_DoubleHadLabel[jetIndex]==5) return 0;
   if (jet_DoubleHadLabel[jetIndex]==4) return 1;
-  if (jet_DoubleHadLabel[jetIndex]==0 || jet_DoubleHadLabel[jetIndex]==15) return 2;
+  if (jet_DoubleHadLabel[jetIndex]==0 || jet_DoubleHadLabel[jetIndex]==15) return 2; //includes tau 
   if (jet_DoubleHadLabel[jetIndex]==55) return 3;
   if (jet_DoubleHadLabel[jetIndex]==44) return 4;
-  if (jet_DoubleHadLabel[jetIndex]==54) return 5;
+  else
+    return 5; // does not include taus 
   return iflav;
 }
 int DAOD_selector::getGhosFlavLabel(int jetIndex)
 {
   int iflav = -1;
-  if (jet_ghostBHadCount[jetIndex]>1  && jet_ghostCHadCount[jetIndex]>1 ) return 5; 
+  // if (jet_ghostBHadCount[jetIndex]>1  && jet_ghostCHadCount[jetIndex]>1 ) return 5; 
+  // if (jet_ghostBHadCount[jetIndex]==1 ) return 0; 
+  // if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]==1) return 1; 
+  // if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]==0) return 2; 
+  // if (jet_ghostBHadCount[jetIndex]>1  ) return 3; 
+  // if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]>1 ) return 4; 
   if (jet_ghostBHadCount[jetIndex]==1 ) return 0; 
   if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]==1) return 1; 
-  if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]==0) return 2; 
-  if (jet_ghostBHadCount[jetIndex]>1  ) return 3; 
-  if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]>1 ) return 4; 
+  if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]==0) return 2; // includes tau 
+  if (jet_ghostBHadCount[jetIndex]==2 ) return 3; 
+  if (jet_ghostBHadCount[jetIndex]==0 && jet_ghostCHadCount[jetIndex]==2) return 4; 
+  else
+    return 5; 
   return iflav;
 }
 void DAOD_selector::getJetFeaturesInFlavorLabelMatrix()
@@ -3552,7 +3671,61 @@ void DAOD_selector::getJetFeaturesInFlavorLabelMatrix()
 	      // name of the histogram => hVariable
 	      hVariable = "Labels_"+hNameLab+"_jetPt";
 	      //HistopT[iX][iY]->Fill( jet_pt[jetIndex] );
-	      FillHisto(hVariable, 0.001*jet_pt[jetIndex]);
+	      FillHisto(hVariable,                    0.001*jet_pt[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_jetEta",       jet_eta[jetIndex]);
+
+	      
+	      //HistopT[iX][iY]->Fill( jet_pt[jetIndex] );
+	      double ptH = 0.;
+	      double jetEta = jet_eta[jetIndex];
+	      double jetPhi = jet_phi[jetIndex];
+	      double dR=0.;double dPhi=0.;double dEta=0.;
+	      if (jet_nBHadr[jetIndex]>0)
+		{
+		  for (int i=0; i<jet_nBHadr[jetIndex]; ++i)
+		    {
+		      ptH = jet_bH_pt[jetIndex].at(i);
+		      FillHisto("Labels_"+hNameLab+"_bHPt", 0.001*ptH);
+		      FillHisto("Labels_"+hNameLab+"_bHPtFraction", ptH/jet_pt[jetIndex]);
+		      dEta = jetEta - jet_bH_eta[jetIndex].at(i);
+		      dPhi = jetPhi - jet_bH_phi[jetIndex].at(i);
+		      if (fabs(dPhi)>M_PI) dPhi=2*M_PI-abs(dPhi);
+		      dR = sqrt( dEta*dEta + dPhi*dPhi );
+		      FillHisto("Labels_"+hNameLab+"_bHjetDR", dR);
+		    }
+		}
+	      // track variables
+	      int ntIPxD=0;
+	      int ntSV1=0;
+	      int ntJF=0;
+	      int ntInAlgo[5]={0,0,0,0,0};// count tracks used by the vavious algorithms
+	      std::string stringAlgo[5]={"IP2D","IP3D","RNNIP","SV1","JF"};
+	      for (unsigned int algoBit=0; algoBit<5; ++algoBit) /// 0=IP2D, 1=IP3D, 2=RNNIP, 3=SV1, 4=JF
+		{
+		  for (unsigned int i=0; i<jet_trk_pt[jetIndex].size(); ++i)
+		    {
+		      int algoBits=jet_trk_algo[jetIndex].at(i);
+		      if (CHECK_BIT(algoBits,algoBit))
+			{
+			  ntInAlgo[algoBit]+=1;
+			}
+		    }
+		  FillHisto("Labels_"+hNameLab+"_nTrkAlgo_"+stringAlgo[algoBit], ntInAlgo[algoBit]);
+		}
+	      /// algo results 
+	      /// vertices 
+	      //jet_sv1_Nvtx;
+	      FillHisto("Labels_"+hNameLab+"_SV1nVtx", jet_sv1_Nvtx[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_SV1mVtx", 0.001*jet_sv1_m[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_SV1eFc",  jet_sv1_efc[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_SV1sig3d",jet_sv1_sig3d[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_SV1dR",   jet_sv1_deltaR[jetIndex]);
+	      //jet_jf_nvtx;
+	      FillHisto("Labels_"+hNameLab+"_JFnVtx", jet_jf_nvtx[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_JFmVtx", 0.001*jet_jf_m[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_JFeFc",  jet_jf_efc[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_JFsig3d",jet_jf_sig3d[jetIndex]);
+	      FillHisto("Labels_"+hNameLab+"_JFdR",   jet_jf_dR[jetIndex]);
 	    }
 	}
     }
