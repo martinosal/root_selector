@@ -2690,34 +2690,39 @@ void DAOD_selector::bookHistosForFlavorLabelStudies()
 	 hNameLab = HistoName[iX]+"_"+HistoName[iY];
 	 hVariable = "Labels_"+hNameLab+"_jetPt";
          //HistopT[iX][iY] = new TH1D(hVariable.c_str(),(HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries").c_str(),50,0,300);
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Entries"), 60,0.,300.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet p_{T} [GeV]; Number of jets [%] / 5 GeV"), 60,0.,300.);
 	 hVariable = "Labels_"+hNameLab+"_jetEta";
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet \eta; Entries"), 100,-3.,3.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); Jet #eta; Number of jets [%] / 0.1")                   , 60,-3.,3.);
 	 hVariable = "Labels_"+hNameLab+"_bHPt";
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T} [GeV]; Entries"), 60, 0.,300.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T} [GeV]; Number of B-hadrons [%] / 5 GeV")     ,60, 0.,300.);
 	 hVariable = "Labels_"+hNameLab+"_bHPtFraction";
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T}/jet p_{T}; Entries"), 60, 0.,300.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron p_{T}/jet p_{T}; Number of B-hadrons [%] / 0.02") ,51, -0.01, 1.01);
 	 hVariable = "Labels_"+hNameLab+"_bHjetDR";
-	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron - jet DR; Entries"), 60, 0.,300.);
+	 BookHisto(hVariable, (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); B-hadron - jet #Delta R; Number of B-hadrons [%] / 0.02")       ,50, 0.  ,1.);
 	 std::string stringAlgo[5]={"IP2D","IP3D","RNNIP","SV1","JF"};
 	 for (unsigned int algoBit=0; algoBit<5; ++algoBit) /// 0=IP2D, 1=IP3D, 2=RNNIP, 3=SV1, 4=JF
 	   {
 	     hVariable="Labels_"+hNameLab+"_nTrkAlgo_"+stringAlgo[algoBit];
-	     BookHisto(hVariable,
-		       (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); nTrk used by "+stringAlgo[algoBit]+" ; Entries"),
-		       11,-0.5,10.5);
+	     if (algoBit<3) BookHisto(hVariable,
+				      (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); n. of tracks used by "+stringAlgo[algoBit]+" ; Number of jets [%]"),
+				      21,-0.5,20.5);
+	     else
+	       BookHisto(hVariable,
+			 (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); n. of tracks used by "+stringAlgo[algoBit]+" ; Number of jets [%]"),
+			 11,-0.5,10.5);
+	       
 	   }
-	 BookHisto("Labels_"+hNameLab+"_SV1nVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 nVertices")       ,4,  -0.5 ,3.5);
-	 BookHisto("Labels_"+hNameLab+"_SV1mVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vertex mass")     ,50,  0.  ,20.0);
-	 BookHisto("Labels_"+hNameLab+"_SV1eFc" ,  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vtx Energy frac."),50, -0.1  ,1.1);
-	 BookHisto("Labels_"+hNameLab+"_SV1sig3d", (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vtx 3d sign")     ,100, 0.  ,1000.0);
-	 BookHisto("Labels_"+hNameLab+"_SV1dR",    (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vtx DeltaR")      ,100, 0.  ,1.0);
+	 BookHisto("Labels_"+hNameLab+"_SV1nVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 n. of vertices; Number of jets [%]")                 , 6, -0.5   ,  5.5 );
+	 BookHisto("Labels_"+hNameLab+"_SV1mVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vertex mass [GeV];  Number of jets [%] / 0.3 GeV")   ,50,  0.    , 15.0 );
+	 BookHisto("Labels_"+hNameLab+"_SV1eFc" ,  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vertex energy fraction;  Number of jets [%] / 0.02") ,51, -0.01  ,  1.01);
+	 BookHisto("Labels_"+hNameLab+"_SV1sig3d", (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vertex 3d significance;  Number of jets [%] / 10")   ,50,  0.    ,500.0 );
+	 BookHisto("Labels_"+hNameLab+"_SV1dR",    (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); SV1 Vertex #Delta R;  Number of jets [%] / 0.02" )       ,50,  0.    ,  1.  );
 
-	 BookHisto("Labels_"+hNameLab+"_JFnVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF nVertices")       ,10,  -0.5 ,9.5);
-	 BookHisto("Labels_"+hNameLab+"_JFmVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vertex mass")     ,50,  0.  ,20.0);
-	 BookHisto("Labels_"+hNameLab+"_JFeFc" ,  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vtx Energy frac."),50,  -.1  ,1.1);
-	 BookHisto("Labels_"+hNameLab+"_JFsig3d", (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vtx 3d sign")     ,100, 0.  ,1000.0);
-	 BookHisto("Labels_"+hNameLab+"_JFdR",    (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vtx DeltaR")      ,100, 0.  ,1.0);
+	 BookHisto("Labels_"+hNameLab+"_JFnVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF n. of vertices ; Number of jets [%]")                 , 6, -0.5   ,  5.5 );
+	 BookHisto("Labels_"+hNameLab+"_JFmVtx",  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vertex mass [GeV]; Number of jets [%] / 0.3 GeV")     ,50,  0.    , 15.0 );
+	 BookHisto("Labels_"+hNameLab+"_JFeFc" ,  (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vertex energy fraction; Number of jets [%] / 0.02")   ,51, -0.01  ,  1.01);
+	 BookHisto("Labels_"+hNameLab+"_JFsig3d", (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vertex 3d significance; Number of jets [%] / 10")     ,50,  0.    ,500.0 );
+	 BookHisto("Labels_"+hNameLab+"_JFdR",    (HistoName[iX]+" (cone labeling) - "+HistoName[iY]+" (ghost labeling); JF Vertex #Delta R; Number of jets [%] / 0.02" )         ,50,  0.    ,  1.  );
        }
      }      
     }

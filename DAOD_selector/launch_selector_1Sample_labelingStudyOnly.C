@@ -3,11 +3,11 @@
 #include "lxplus_files.C"
 #include "lecce_files.C"
 
-void launch_selector_1Sample(std::string location="Lecce", 
-			     std::string jcoll="bTag_AntiKt4EMPFlowJets_BTagging201903", 
-			     std::string labScheme="Cone", 
-			     bool lowPt=false, 
-			     int nEv=10000000)
+void launch_selector_1Sample_labelingStudyOnly(std::string location="Lecce", 
+					       std::string jcoll="bTag_AntiKt4EMPFlowJets_BTagging201903", 
+					       std::string labScheme="Cone", 
+					       bool lowPt=false, 
+					       int nEv=10000000)
 {
 
   //////////=====================================
@@ -43,13 +43,13 @@ void launch_selector_1Sample(std::string location="Lecce",
 
   
   bool debug=true;
-  bool derived_origin=true;
-  bool selections=true;
-  bool discriminants=true;
-  bool shrinking_cone=false;
-  bool selection_alg=true;
-  bool origin_selection=true;
-  bool geometric_selection=true;
+  bool derived_origin     =false;
+  bool selections         =false;
+  bool discriminants      =false;
+  bool shrinking_cone     =false;
+  bool selection_alg      =false;
+  bool origin_selection   =false;
+  bool geometric_selection=false;
   bool cut=true;
   bool retag=false;
   double m_p1=0.,m_p2=0.,m_p3=0.;
@@ -65,9 +65,9 @@ void launch_selector_1Sample(std::string location="Lecce",
   if (lowPtForVR){
   //////// changing cuts
   // jet pt > 12 GeV 
-  //  jet_pT_infcut=12*1e3;
+    jet_pT_infcut=12*1e3;
   // jet pt > 10 GeV 
-    jet_pT_infcut=10*1e3;
+  //  jet_pT_infcut=10*1e3;
   //////// changing cuts
   }
 
@@ -75,7 +75,8 @@ void launch_selector_1Sample(std::string location="Lecce",
 
   a.setFlags(lxplus,debug,derived_origin,selections,discriminants,shrinking_cone,selection_alg,origin_selection,geometric_selection,cut,retag,m_p1,m_p2,m_p3,decay_mode);
   a.setCuts(jet_pT_infcut,jet_pT_supcut,jet_eta_cut,jet_JVT_cut,DR_bcH_cut,pT_bcH_cut,trk_pT_cut,trk_eta_cut,trk_d0_cut,trk_z0sinth_cut);
-  a.setDoFlavorLabelMatrix(false);
+  a.setDoFlavorLabelMatrix(true);
+  
 
   TChain *f = new TChain(jetcollection);
 
@@ -91,7 +92,7 @@ void launch_selector_1Sample(std::string location="Lecce",
 	  Labeling=="GhostCone" || Labeling=="GhostConeIncl")
 	{
 	  if (Labeling=="GhostConeIncl") a.setDoFlavorLabelMatrix(true);
-	  a.setOutputFNameString(std::string(jetcollection)+"_"+Labeling+"_10GeV");
+	  a.setOutputFNameString("Labels_"+std::string(jetcollection)+"_"+Labeling+"_12GeV");
 	  a.setJetLabeling(Labeling);
 	}
     }
@@ -102,7 +103,7 @@ void launch_selector_1Sample(std::string location="Lecce",
 	  Labeling=="GhostCone" || Labeling=="GhostConeIncl")
 	{
 	  if (Labeling=="GhostConeIncl") a.setDoFlavorLabelMatrix(true);
-	  a.setOutputFNameString(std::string(jetcollection)+"_"+Labeling);
+	  a.setOutputFNameString("Labels_"+std::string(jetcollection)+"_"+Labeling);
 	  a.setJetLabeling(Labeling);
 	}
     }
