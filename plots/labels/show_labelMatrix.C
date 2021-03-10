@@ -3,8 +3,8 @@
 #include <TH2F.h>
 #include <string>
 #include <vector>
-#include "AtlasUtils.C"
-#include "AtlasLabels.C"
+#include "/afs/le.infn.it/user/s/spagnolo/utl/RootUtils/atlasstyle-00-04-02/AtlasUtils.C"
+#include "/afs/le.infn.it/user/s/spagnolo/utl/RootUtils/atlasstyle-00-04-02/AtlasLabels.C"
 
 TCanvas* show2Dplot(TH2F* h,std::string ss="", bool absolute=true)
 {
@@ -58,13 +58,16 @@ void show_labelMatrix()
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
     //
-  std::string loc="/afs/le.infn.it/user/s/spagnolo/atlas/Athena/FTAGmyfork/root_selector/DAOD_selector/finalHistos/";
-  TFile *_file0 = TFile::Open((loc+"debug_bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903_ConeIncl.root").c_str());
-  TFile *_file1 = TFile::Open((loc+"debug_bTag_AntiKtVR30Rmax4Rmin02TrackGhostTagJets_GhostIncl_12GeV.root").c_str());
-  TFile *_file2 = TFile::Open((loc+"debug_bTag_AntiKt4EMPFlowJets_BTagging201903_ConeIncl.root").c_str());
+  std::string loc="/afs/le.infn.it/user/s/spagnolo/atlas/Athena/FTAGmyfork/root_selector/DAOD_selector/finalHistos/forLabelMatrixPlots/";
+  TFile *_file0 = TFile::Open((loc+"debug_Labels_bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903_Cone_20GeV.root").c_str());
+  TFile *_file1 = TFile::Open((loc+"debug_Labels_bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903_Cone_12GeV.root").c_str());
+  TFile *_file2 = TFile::Open((loc+"debug_Labels_bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903_Cone_10GeV.root").c_str());
+  TFile *_file3 = TFile::Open((loc+"debug_Labels_bTag_AntiKt4EMPFlowJets_BTagging201903_Cone.root").c_str());
+
   TH2F* hmatVR20 = (TH2F*)_file0->Get("jetFlavorLabelMatrix");
   TH2F* hmatVR12 = (TH2F*)_file1->Get("jetFlavorLabelMatrix");
-  TH2F* hmatEMPf = (TH2F*)_file2->Get("jetFlavorLabelMatrix");
+  TH2F* hmatVR10 = (TH2F*)_file2->Get("jetFlavorLabelMatrix");
+  TH2F* hmatEMPf = (TH2F*)_file3->Get("jetFlavorLabelMatrix");
   TCanvas* c = new TCanvas("c","c",800,600);
   hmatVR20->Draw();
   hmatVR12->Draw();
@@ -98,6 +101,13 @@ void show_labelMatrix()
       l.DrawLatex(x+0.35,y,(collection).c_str());
       vCanvas.back()->SaveAs("labelmatrix_AntiKtVR30Rmax4Rmin02TrackJets_12GeV.pdf");
       
+      vCanvas.push_back(show2Dplot((TH2F*)hmatVR10,"_VR10",absolute));
+      ATLASLabel(x,y,"Internal");
+      collection = "AntiKtVR30Rmax4Rmin02TrackJets";
+      l.DrawLatex(x+0.35,y+0.035,("mc16d, t#bar{t}, jet p_{T} > 10 GeV"));
+      l.DrawLatex(x+0.35,y,(collection).c_str());
+      vCanvas.back()->SaveAs("labelmatrix_AntiKtVR30Rmax4Rmin02TrackJets_10GeV.pdf");
+      
       vCanvas.push_back(show2Dplot((TH2F*)hmatEMPf,"_EMPf",absolute)); 
       ATLASLabel(x,y,"Internal");
       collection = "AntiKt4EMPFlowJets";
@@ -110,6 +120,8 @@ void show_labelMatrix()
       //  else
       //    {
       gStyle->SetPaintTextFormat("6.4f");
+      hmatVR10N=hmatVR10->Clone();
+      ((TH2F*)hmatVR10N)->Scale(100./((TH2F*)hmatVR10N)->GetEntries());
       hmatVR12N=hmatVR12->Clone();
       ((TH2F*)hmatVR12N)->Scale(100./((TH2F*)hmatVR12N)->GetEntries());
       hmatEMPfN=hmatEMPf->Clone();
@@ -117,6 +129,7 @@ void show_labelMatrix()
       hmatVR20N=hmatVR20->Clone();
       ((TH2F*)hmatVR20N)->Scale(100./((TH2F*)hmatVR20N)->GetEntries());
       c->cd();
+      hmatVR10N->Draw();
       hmatVR12N->Draw();
       hmatVR20N->Draw();
       hmatEMPfN->Draw();
@@ -136,6 +149,13 @@ void show_labelMatrix()
       l.DrawLatex(x+0.35,y+0.035,("mc16d, t#bar{t}, jet p_{T} > 12 GeV"));
       l.DrawLatex(x+0.35,y,(collection).c_str());
       vCanvas.back()->SaveAs("labelmatrix_AntiKtVR30Rmax4Rmin02TrackJets_12GeV_rel.pdf");
+      
+      vCanvas.push_back(show2Dplot((TH2F*)hmatVR10N,"_VR10N",absolute)); 
+      ATLASLabel(x,y,"Internal");
+      collection = "AntiKtVR30Rmax4Rmin02TrackJets";
+      l.DrawLatex(x+0.35,y+0.035,("mc16d, t#bar{t}, jet p_{T} > 10 GeV"));
+      l.DrawLatex(x+0.35,y,(collection).c_str());
+      vCanvas.back()->SaveAs("labelmatrix_AntiKtVR30Rmax4Rmin02TrackJets_10GeV_rel.pdf");
       
       vCanvas.push_back(show2Dplot((TH2F*)hmatEMPfN,"_EMPfN",absolute)); 
       ATLASLabel(x,y,"Internal");

@@ -999,7 +999,7 @@ public :
      TH2F *hist_single_matched_DR_trk_pTfraction;
      TH1F *hist_single_matched_d0_B;
 
-     TH2F *hist2_jetFlavorMatrix;// = new TH2F("jetFlavorLabelMatrix","jetFlavorLabelMatrix",6,-0.5,5.5,6,-0.5,5.5);
+     //TH2F *hist2_jetFlavorMatrix;// = new TH2F("jetFlavorLabelMatrix","jetFlavorLabelMatrix",6,-0.5,5.5,6,-0.5,5.5);
 
 
      std::map<std::string, TH1D*>    fHisto1DMap;            

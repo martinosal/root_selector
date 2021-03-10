@@ -65,9 +65,9 @@ void launch_selector_1Sample_labelingStudyOnly(std::string location="Lecce",
   if (lowPtForVR){
   //////// changing cuts
   // jet pt > 12 GeV 
-    jet_pT_infcut=12*1e3;
+  //  jet_pT_infcut=12*1e3;
   // jet pt > 10 GeV 
-  //  jet_pT_infcut=10*1e3;
+    jet_pT_infcut=10*1e3;
   //////// changing cuts
   }
 
@@ -92,7 +92,7 @@ void launch_selector_1Sample_labelingStudyOnly(std::string location="Lecce",
 	  Labeling=="GhostCone" || Labeling=="GhostConeIncl")
 	{
 	  if (Labeling=="GhostConeIncl") a.setDoFlavorLabelMatrix(true);
-	  a.setOutputFNameString("Labels_"+std::string(jetcollection)+"_"+Labeling+"_12GeV");
+	  a.setOutputFNameString("Labels_"+std::string(jetcollection)+"_"+Labeling+"_10GeV");
 	  a.setJetLabeling(Labeling);
 	}
     }
