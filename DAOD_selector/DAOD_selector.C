@@ -254,14 +254,14 @@ Bool_t DAOD_selector::Process(Long64_t entry)
 //select one between getTrueJetFlavourLabel (custom labeling), getGhostJetFlavourLabel(with diag_trms==false) and getHadronConeFlavourLabel
    if(jetlabeling=="DIAGjetlab"){
      //     std::cout<<"jetlabeling: "<<jetlabeling<<std::endl;
-     getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
+     getGhostJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck, true);//diag_trms=false: not diagonal terms
    }
    else if(jetlabeling=="CONEjetlab"){
 //   getTrueJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
-   getHadronConeFlavourLabel(isJet, isBcheck, isCcheck, islcheck);
+   getHadronConeFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck);
    }
    else if(jetlabeling=="GHOSTjetlab"){
-     getGhostJetFlavourLabel(isJet, isBcheck, isCcheck, islcheck, false);
+     getGhostJetFlavourLabel(isJet_OR, isBcheck, isCcheck, islcheck, false);
    }
    else std::cout<<"Wrong jetlabeling name"<<std::endl;
 
@@ -3151,7 +3151,8 @@ void DAOD_selector::OverlapRemoval(std::vector<int>& isJet, std::vector<int>& is
     for(unsigned l=0;l<isJet.size();l++){
       n_good=0;
       idx_l=isJet[l];
-      for(unsigned k=l+1;k<isJet.size();k++){
+      for(unsigned k=0;k<isJet.size();k++){
+	if(k!=l){
         idx_k=isJet[k];
         D_eta=jet_eta[idx_l]-jet_eta[idx_k];
         if(abs(jet_phi[idx_l]-jet_phi[idx_k])>M_PI){
@@ -3168,8 +3169,9 @@ void DAOD_selector::OverlapRemoval(std::vector<int>& isJet, std::vector<int>& is
 //          isJet_OR.push_back(l);
           n_good=n_good+1;
         }
+	}
       }
-      if(n_good==isJet.size()-l-1){
+      if(n_good==isJet.size()-1){
         isJet_OR.push_back(l);
       }
     }
