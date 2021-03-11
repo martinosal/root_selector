@@ -23,16 +23,15 @@ void launch_selector()
 
   std::string decay_mode="false";//can be "leptonic" or "hadronic", set "false" or any other value for decay_mode=false
   std::string jetlabeling="DIAGjetlab";//can be "DIAGjetlab", "CONEjetlab" or "GHOSTjetlab"
+  std::string collection="EMPFlow";
 
 
-
-  float jet_pT_infcut,jet_pT_supcut=1000*1e4,jet_eta_cut=2.5,jet_JVT_cut=0.2;//was 0.5
+  float jet_pT_infcut,jet_pT_supcut=1e8,jet_eta_cut=2.5,jet_JVT_cut=0.2;//was 0.5
   
   float DR_bcH_cut=0.3,pT_bcH_cut=5*1e3;
   float trk_pT_cut=0.4*1e3,trk_eta_cut=2.4,trk_d0_cut=50.*1e3,trk_z0sinth_cut=50.*1e3;
   //float trk_pT_cut=1e3,trk_eta_cut=2.4,trk_d0_cut=1.;
 
-  std::string collection="EMPFlow";
 
     const char *jetcollection="";
 
