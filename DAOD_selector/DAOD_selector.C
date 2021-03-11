@@ -333,7 +333,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
          if(sv1_llr[*it]!=-99){
            hist_sv1_llr_B->Fill(sv1_llr[*it]); //llr is computed as log(pb/pu)
            hist_sv1_llr_jetpt_B->Fill(sv1_llr[*it],jet_pt[*it]*0.001);
-           hist_sv1_llr_ntrks_B->Fill(jet_sv1_llr[*it],jet_trk_pt[*it].size());
+           hist_sv1_llr_ntrks_B->Fill(sv1_llr[*it],jet_trk_pt[*it].size());
            if(jet_bH_pt[*it].size()==1){
              hist_sv1_llr_bH_singleB->Fill(sv1_llr[*it],jet_bH_pt[*it][0]*0.001);
              hist_sv1_llr_jetpt_singleB->Fill(sv1_llr[*it],jet_pt[*it]*0.001);
