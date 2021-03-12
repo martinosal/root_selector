@@ -381,10 +381,10 @@ public :
    void bookHistosForShrinkingCone();
    void bookHistosForSelectionAlgos();
 
-   void OverlapRemoval(std::vector<int>& isJet, std::vector<int>& isJet_OR);
+   void OverlapRemoval(std::vector<int>& isJet, std::vector<int>& isJet_OR, float DR_cut);
    void getTrueJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
    void getHadronConeFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl);
-   void getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl, bool diag_trms);
+   void getGhostJetFlavourLabel(std::vector<int>& isJet_x, std::vector<int>& isJetB, std::vector<int>& isJetC, std::vector<int>& isJetl, bool diag_trms);
 
    ClassDef(DAOD_selector,0);
 

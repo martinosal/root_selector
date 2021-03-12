@@ -74,9 +74,7 @@ void launch_selector()
   }
 
 
-    f->Process(&a);
-  //  f->Process(&a,"",1,100); //for developing
-
-//  f->Process("DAOD_selector.C");
+      f->Process(&a);
+  //    f->Process(&a,"",10000,1); //for developing
 
 }

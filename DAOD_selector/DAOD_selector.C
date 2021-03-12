@@ -213,7 +213,12 @@ Bool_t DAOD_selector::Process(Long64_t entry)
        if(jet_JVT[i]<jet_JVT_cut) continue;      // failing JVT
      }
      m_njets_2_passJVT++;
+
+
      isJet.push_back(i);         //// Here's the vector of jets passing the jet-selection
+
+
+
 
      if(jet_nBHadr[i]>0){
        nBjets_2++;
@@ -246,8 +251,17 @@ Bool_t DAOD_selector::Process(Long64_t entry)
    m_nJetBCoverlap+=overlap(isB_1,isC_1);
    m_nJetBCoverlap_postJetSel+=overlap(isB_2,isC_2);
 
-   OverlapRemoval(isJet, isJet_OR);//checks isolated jets with DR>1
-
+   OverlapRemoval(isJet, isJet_OR, 1.);//checks isolated jets with DR>1
+   //   if(isJet.size()!=isJet_OR.size())      std::cout<<isJet.size()<<"\t"<<isJet_OR.size()<<"\n";
+   /*
+   for(unsigned i=0;i<isJet.size();i++){
+     std::cout<<isJet.at(i)<<std::endl;
+   }
+   std::cout<<"\n";
+   for(unsigned i=0;i<isJet_OR.size();i++){
+     std::cout<<isJet_OR.at(i)<<std::endl;
+   }
+   */
 // jet labelling (b-, c-, l-) based on truth (with pt, Deta cuts), Clusive samples
 
 
@@ -2413,7 +2427,8 @@ void DAOD_selector::Terminate()
         std::cout<<"\n"<<decay_mode<<" mode:";
       }
 
-      std::cout<<"\nb jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << ", light jets "<<m_nlcheck<<"\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
+      std::cout<<"\n# of jets: "<< m_nBcheck+m_nCcheck+m_nlcheck << " of which:\n";
+      std::cout<<"b jets: " << m_nBcheck << ", c jets: "<< m_nCcheck << ", light jets "<<m_nlcheck<<"\nB-C overlap: "<<ov_check<<" ("<< (float) 100*ov_check/m_nBcheck<<" %)\n";
       std::cout<<"\nTRACK/CHILDREN CUTS\npT > "<<1e-3*trk_pT_cut<<" GeV\n"<<"|eta| < "<<trk_eta_cut<<"\n";//<<"|d0| < "<<trk_d0_cut<<" mm"<<"\n"<<"|z0*sin(theta)| < "<<trk_z0sinth_cut<<" mm"<<"\n";
       std::cout<<"\n(JF_ntrk, SV1_ntrk, SV0_ntrk, IP2D_ntrk, IP3D_ntrk)\n"<<JF_ntrk<<", \t"<<SV1_ntrk<<", \t"<<SV0_ntrk<<", \t"<<IP2D_ntrk<<", \t"<<IP3D_ntrk<<"\n";
       std::cout<<"Number of jets: "<<b_cnt<<"\tCut b-jets: "<<b_trkcut_cnt<<"\n";
@@ -3142,48 +3157,48 @@ void DAOD_selector::initCounters()
   return;
 }
 
-void DAOD_selector::OverlapRemoval(std::vector<int>& isJet, std::vector<int>& isJet_OR)
+void DAOD_selector::OverlapRemoval(std::vector<int>& isJet, std::vector<int>& isJet_OR, float DR_cut)
 {
 //  isJet_OR=isJet;
   double D_eta = 0.,D_phi = 0.;
   double DeltaR=0;
-  int idx_l=0,idx_k=0.;
-  //  unsigned n_good=0;
+  unsigned idx_l=0,idx_k=0;
+  unsigned n_good=0;
     for(unsigned l=0;l<isJet.size();l++){
-      //      n_good=0;
+      n_good=0;
       idx_l=isJet[l];
       for(unsigned k=0;k<isJet.size();k++){
-	if(k!=l){
-        idx_k=isJet[k];
-        D_eta=jet_eta[idx_l]-jet_eta[idx_k];
-        if(abs(jet_phi[idx_l]-jet_phi[idx_k])>M_PI){
-          D_phi=2*M_PI-abs(jet_phi[idx_l]-jet_phi[idx_k]);
-        }
-        else{
-          D_phi=jet_phi[idx_l]-jet_phi[idx_k];
-        }
-        DeltaR=sqrt(D_eta*D_eta+D_phi*D_phi);
-        if(DeltaR<1.0){
-	  //          n_good=n_good+1;
-	  continue;
-        }
-	}
+	//	if(k!=l){
+	  idx_k=isJet[k];
+	  D_eta=jet_eta[idx_l]-jet_eta[idx_k];
+	  if(abs(jet_phi[idx_l]-jet_phi[idx_k])>M_PI){
+	    D_phi=2*M_PI-abs(jet_phi[idx_l]-jet_phi[idx_k]);
+	  }
+	  else{
+	    D_phi=jet_phi[idx_l]-jet_phi[idx_k];
+	  }
+	  DeltaR=sqrt(D_eta*D_eta+D_phi*D_phi);
+	  if(DeltaR>DR_cut && k!=l){
+	    n_good=n_good+1;
+	    //continue;
+	  }
+	  //    	}
       }
-      //      if(n_good==isJet.size()-1){
-      isJet_OR.push_back(l);
-	//      }
+      if(n_good==isJet.size()-1){
+	isJet_OR.push_back(isJet.at(l));
+      }
     }
-//    std::cout<<isJet.size()<<"\t"<<isJet_OR.size()<<"\n";
+    //    if(isJet.size()!=isJet_OR.size())      std::cout<<isJet.size()<<"\t"<<isJet_OR.size()<<"\n";
 }
 
-void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck, bool diag_trms){
+void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet_x, std::vector<int>& isBcheck, std::vector<int>& isCcheck, std::vector<int>& islcheck, bool diag_trms){
   isBcheck.clear();
   isCcheck.clear();
   islcheck.clear();
 
   bool jet_labelled = false;
   if(diag_trms==false){
-    for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+    for(std::vector<int>::iterator it = isJet_x.begin(); it != isJet_x.end(); ++it){
       jet_labelled=false;
 
       if(jet_ghostBHadCount[*it]>0){
@@ -3202,7 +3217,7 @@ void DAOD_selector::getGhostJetFlavourLabel(std::vector<int>& isJet, std::vector
     }
   }
   if(diag_trms==true){
-    for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
+    for(std::vector<int>::iterator it = isJet_x.begin(); it != isJet_x.end(); ++it){
       jet_labelled=false;
 
       //jet_DoubleHadLabel=HadronConeExclExtendedTruthLabelID
