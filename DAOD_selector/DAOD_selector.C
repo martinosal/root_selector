@@ -321,6 +321,7 @@ Bool_t DAOD_selector::Process(Long64_t entry)
           }
          }
          if(jet_rnnip_pb[*it]!=-99){
+	   //	   m_fcRNNIP=0.;
            RNNIP=log(jet_rnnip_pb[*it]/(m_fcRNNIP*jet_rnnip_pc[*it]+(1.-m_fcRNNIP)*jet_rnnip_pu[*it]));
            hist_rnnip_llr_B->Fill(RNNIP); //llr is computed as log(pb/pu)
            hist_rnnip_llr_jetpt_B->Fill(RNNIP,jet_pt[*it]*0.001);
@@ -3147,9 +3148,9 @@ void DAOD_selector::OverlapRemoval(std::vector<int>& isJet, std::vector<int>& is
   double D_eta = 0.,D_phi = 0.;
   double DeltaR=0;
   int idx_l=0,idx_k=0.;
-  unsigned n_good=0;
+  //  unsigned n_good=0;
     for(unsigned l=0;l<isJet.size();l++){
-      n_good=0;
+      //      n_good=0;
       idx_l=isJet[l];
       for(unsigned k=0;k<isJet.size();k++){
 	if(k!=l){
@@ -3162,18 +3163,15 @@ void DAOD_selector::OverlapRemoval(std::vector<int>& isJet, std::vector<int>& is
           D_phi=jet_phi[idx_l]-jet_phi[idx_k];
         }
         DeltaR=sqrt(D_eta*D_eta+D_phi*D_phi);
-        if(DeltaR>1.0){
-//          std::cout<<"Overlap\t"<<isJet.size()<<" "<<isJet_OR.size()<<" "<<l<<"\n";
-//          isJet_OR.erase(isJet_OR.begin()+l);
-//          continue;
-//          isJet_OR.push_back(l);
-          n_good=n_good+1;
+        if(DeltaR<1.0){
+	  //          n_good=n_good+1;
+	  continue;
         }
 	}
       }
-      if(n_good==isJet.size()-1){
-        isJet_OR.push_back(l);
-      }
+      //      if(n_good==isJet.size()-1){
+      isJet_OR.push_back(l);
+	//      }
     }
 //    std::cout<<isJet.size()<<"\t"<<isJet_OR.size()<<"\n";
 }
