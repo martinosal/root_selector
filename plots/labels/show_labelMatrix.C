@@ -3,8 +3,10 @@
 #include <TH2F.h>
 #include <string>
 #include <vector>
-#include "/afs/le.infn.it/user/s/spagnolo/utl/RootUtils/atlasstyle-00-04-02/AtlasUtils.C"
-#include "/afs/le.infn.it/user/s/spagnolo/utl/RootUtils/atlasstyle-00-04-02/AtlasLabels.C"
+//#include "/afs/le.infn.it/user/s/spagnolo/utl/RootUtils/atlasstyle-00-04-02/AtlasUtils.C"
+//#include "/afs/le.infn.it/user/s/spagnolo/utl/RootUtils/atlasstyle-00-04-02/AtlasLabels.C"
+#include "atlasstyle-00-04-02/AtlasUtils.C"
+#include "atlasstyle-00-04-02/AtlasLabels.C"
 
 TCanvas* show2Dplot(TH2F* h,std::string ss="", bool absolute=true)
 {
@@ -16,7 +18,7 @@ TCanvas* show2Dplot(TH2F* h,std::string ss="", bool absolute=true)
   cLinTot->SetLeftMargin(cLinTot->GetLeftMargin()*1.);
   cLinTot->SetRightMargin(cLinTot->GetRightMargin()*3.8);
   cLinTot->SetBottomMargin(cLinTot->GetBottomMargin()*1.3);
-  std::string labX[6] = {"1B", "1D, 0B", "0B 0D", ">1B", ">1D, 0B", ">1B, >1D"};
+  std::string labX[6] = {"1B", "1D, 0B", "0B 0D", ">1B", ">1D, 0B", "#geq1B, >1D"};
   for (int i=0; i<6; ++i)
     {
       h->GetXaxis()->SetBinLabel(i+1,labX[i].c_str());
@@ -58,8 +60,8 @@ void show_labelMatrix()
   gStyle->SetOptStat(0);
   gStyle->SetOptTitle(0);
     //
-  std::string loc="/afs/le.infn.it/user/s/spagnolo/atlas/Athena/FTAGmyfork/root_selector/DAOD_selector/finalHistos/forLabelMatrixPlots/";
-  TFile *_file0 = TFile::Open((loc+"debug_Labels_bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903_Cone_20GeV.root").c_str());
+  std::string loc="/afs/le.infn.it/user/s/spagnolo/atlas/Athena/FTAGmyfork/root_selector/DAOD_selector/finalHistos/hForLabels/";
+  TFile *_file0 = TFile::Open((loc+"debug_Labels_bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903_Cone.root").c_str());
   TFile *_file1 = TFile::Open((loc+"debug_Labels_bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903_Cone_12GeV.root").c_str());
   TFile *_file2 = TFile::Open((loc+"debug_Labels_bTag_AntiKtVR30Rmax4Rmin02TrackJets_BTagging201903_Cone_10GeV.root").c_str());
   TFile *_file3 = TFile::Open((loc+"debug_Labels_bTag_AntiKt4EMPFlowJets_BTagging201903_Cone.root").c_str());

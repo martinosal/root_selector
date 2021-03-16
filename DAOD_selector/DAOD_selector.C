@@ -3279,6 +3279,7 @@ void DAOD_selector::getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vec
   isBcheck.clear();
   isCcheck.clear();
   islcheck.clear();
+  
 
   int ic=-1;
   int ig=-1;
@@ -3301,23 +3302,30 @@ void DAOD_selector::getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vec
 	else if (ig==2) islcheck.push_back(*it);
       }
   }
-  
+
   /*
+  std::vector<int> isBcheckOld;
+  isBcheckOld.clear();
+  std::vector<int> isCcheckOld;
+  isCcheckOld.clear();
+  std::vector<int> islcheckOld;
+  islcheckOld.clear();
+  
   bool jet_labelled = false;
   if(diag_trms==false){
     for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it){
       jet_labelled=false;
 
       if(jet_ghostBHadCount[*it]==1){
-        isBcheck.push_back(*it);
+        isBcheckOld.push_back(*it);
         jet_labelled=true;
       }
       if(jet_ghostCHadCount[*it]==1 && jet_ghostBHadCount[*it]==0){
-        isCcheck.push_back(*it);
+        isCcheckOld.push_back(*it);
         jet_labelled=true;
       }
       if(jet_ghostCHadCount[*it]==0 && jet_ghostBHadCount[*it]==0){
-        islcheck.push_back(*it);
+        islcheckOld.push_back(*it);
         jet_labelled=true;
       }
       if(jet_labelled)  continue;
@@ -3328,24 +3336,36 @@ void DAOD_selector::getGhostExtJetFlavourLabel(std::vector<int>& isJet, std::vec
       jet_labelled=false;
 
       if(jet_ghostBHadCount[*it]==1 && jet_DoubleHadLabel[*it]==5){
-        isBcheck.push_back(*it);
+        isBcheckOld.push_back(*it);
         jet_labelled=true;
       }
       if(jet_ghostCHadCount[*it]==1 && jet_ghostBHadCount[*it]==0 && jet_DoubleHadLabel[*it]==4){
-        isCcheck.push_back(*it);
+        isCcheckOld.push_back(*it);
         jet_labelled=true;
       }
       //SS { 
-      //if(jet_ghostCHadCount[*it]==0 && jet_DoubleHadLabel[*it]==0){
-      if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && (jet_DoubleHadLabel[*it]==0 || jet_DoubleHadLabel[*it]==15)){
+      //if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && (jet_DoubleHadLabel[*it]==0 || jet_DoubleHadLabel[*it]==15)){
+      if(jet_ghostBHadCount[*it]==0 && jet_ghostCHadCount[*it]==0 && (jet_DoubleHadLabel[*it]==0)){
 	//SS }
-        islcheck.push_back(*it);
+        islcheckOld.push_back(*it);
         jet_labelled=true;
       }
       // SS the line below is irrelevant 
       if(jet_labelled)  continue;
     }
   }
+  if (isBcheckOld.size() != isBcheck.size())
+    {
+      std::cout<<"+++++++++++++++++++PROBLEM FOUND n input Jets "
+	<<isJet.size()<<" nB mio "
+	<<isBcheck.size()<<" "<<isBcheckOld.size()<<std::endl;
+       int nj=0; 
+       for(std::vector<int>::iterator it = isJet.begin(); it != isJet.end(); ++it)
+	 {
+	   nj++;
+	   std::cout<<" input jet n. "<<nj<<" jet-index= "<<*it<<" cone-flag "<<jet_DoubleHadLabel[*it]<<" nB/C ghost hadrons "<<jet_ghostBHadCount[*it]<<"/"<<jet_ghostCHadCount[*it]<<std::endl;
+	 }
+    }
   */
 
 }
