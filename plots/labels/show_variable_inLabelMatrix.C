@@ -10,8 +10,8 @@
 
 void show_variable_inLabelMatrix(std::string coll, std::string var, std::string ConeLab, bool savePlot=true)
 {
-  std::string loc="/afs/le.infn.it/user/s/spagnolo/atlas/Athena/FTAGmyfork/root_selector/DAOD_selector/finalHistos/hForLabels/";
-  //std::string loc="/afs/le.infn.it/project/itk/forWEB/FTag/DOADsel_finalHistos/hForLabels/";
+  //std::string loc="/afs/le.infn.it/user/s/spagnolo/atlas/Athena/FTAGmyfork/root_selector/DAOD_selector/finalHistos/hForLabels/";
+  std::string loc="/afs/le.infn.it/project/itk/forWEB/FTag/DOADsel_finalHistos/hForLabels/";
   std::string fileName;
   std::string jetCollection;
   std::string outputName;
@@ -95,10 +95,11 @@ void show_variable_inLabelMatrix(std::string coll, std::string var, std::string 
   
   double ymax = 0.;
   unsigned int imax = 0;
-
+  double minNEntries = 70.;
+  
   for (unsigned int i=0; i<6; ++i)
     {
-      if (h[i]->GetEntries()<100) continue;
+      if (h[i]->GetEntries()<minNEntries) continue;
       std::cout<<"Before scaling Histogram "<<h[i]->GetName()<<" has "<<h[i]->GetEntries()<<" entries and it will be used - integral "<<h[i]->Integral()<<std::endl;
       std::cout<<"Before scaling  Histogram "<<h[i]->GetName()<<" has "<<h[i]->GetEntries()<<" entries and it will be used - integral (sum of bin content) "<<h[i]->Integral()<<" integral (mat style) "<<h[i]->Integral("width")<<std::endl;
 
@@ -131,14 +132,17 @@ void show_variable_inLabelMatrix(std::string coll, std::string var, std::string 
   legend->SetFillStyle(0);
   legend->SetTextFont(42);
   legend->SetTextSize(0.035);
-    
+
+  if (var=="jetPt" && imax<3) hN[imax]->SetMinimum(0.0001);
+  if (var=="jetEta") hN[imax]->SetMinimum(0.001);
+  if (var=="bHpt") hN[imax]->SetMinimum(0.0001);
   hN[imax]->Draw();
   //return;
   //std::vector<int> color = {2,3,6,7,9,94};
   std::vector<int> color = {63,2,8,9,6,94};
   for (unsigned int i=0; i<6; ++i)
     {
-      if (h[i]->GetEntries()<100) continue;
+      if (h[i]->GetEntries()<minNEntries) continue;
       std::string title = hN[i]->GetTitle();
       if(title!=ConeLab) {
 	hN[i]->SetMarkerSize(1.);
@@ -153,11 +157,34 @@ void show_variable_inLabelMatrix(std::string coll, std::string var, std::string 
       }
       if(var=="nTrkAlgo_IP3D") hN[i]->GetXaxis()->SetTitle("# of tracks used by IPxD and RNNIP");
       if(var=="JFdR") hN[i]->GetXaxis()->SetTitle("JF vertex #DeltaR");
-      if(var=="bHjetDR") hN[i]->GetXaxis()->SetTitle("#DeltaR(b-hadron,jet)");
-      if(var=="jetPt" || var=="SV1mVtx" || var=="SV1sig3d" || var=="bHPt") hN[i]->SetMaximum(ymax*10);
-      else if (var=="jetEta") hN[i]->SetMaximum(ymax*15);
+      if(var=="bHjetDR") hN[i]->GetXaxis()->SetTitle("#DeltaR(B-hadron,jet)");
+      if(var=="jetPt" || var=="SV1mVtx" || var=="SV1sig3d" || var=="bHPt" ) hN[i]->SetMaximum(ymax*10);
+      else if(var=="bHPtFraction") {
+	hN[i]->SetMaximum(ymax*10);
+	hN[i]->SetMinimum(0.0001);
+      }
+      else if (var=="jetEta") hN[i]->SetMaximum(ymax*10);
       else if(var=="SV1nVtx") hN[i]->SetMaximum(ymax+0.22);
       else if(var=="nTrkAlgo_SV1" || var=="SV1eFc" || var=="nTrkAlgo_IP3D" || var=="SV1dR") hN[i]->SetMaximum(ymax*20);
+      if(var=="bHjetDR" && i==0) {
+	hN[i]->SetMinimum(0.0005);
+	hN[i]->SetMaximum(5.*hN[i]->GetMaximum());
+      }
+      if(var=="jetPt") {
+	hN[i]->SetMinimum(0.0001);
+      }
+      if(var=="bHPt") {
+	hN[i]->SetMinimum(0.0001);
+      }
+      if (var=="SV1eFc" && i<3) {
+	hN[i]->SetMinimum(0.001);
+      }
+      if(var=="SV1mVtx" ){
+	hN[i]->SetMinimum(0.001);
+      }
+      if (var=="SV1sig3d") {
+	hN[i]->SetMinimum(0.0001);
+      }
       hN[i]->GetXaxis()->SetDecimals();
       hN[i]->GetYaxis()->SetDecimals();
       hN[i]->Draw("SAME");
@@ -172,8 +199,8 @@ void show_variable_inLabelMatrix(std::string coll, std::string var, std::string 
   TLatex l;
   l.SetNDC();
   l.SetTextFont(42);
-  l.SetTextSize(0.03);
-  l.DrawLatex(x,y-0.03,("mc16d, t#bar{t}, "+jetCollection).c_str());
+  l.SetTextSize(0.035);
+  l.DrawLatex(x,y-0.04,("mc16d, t#bar{t}, "+jetCollection).c_str());
 
   //string outputDir = "/afs/le.infn.it/project/itk/forWEB/FTag/DOADsel_finalHistos/hForLabels/plots/";
   string outputDir = "./tmp/";
